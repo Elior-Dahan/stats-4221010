@@ -10,7 +10,7 @@ lectures.json              single source of truth: course info + list of lecture
 lectures/NN-slug/index.html  the study guide for lecture NN (self-contained page)
 lectures/NN-slug/solutions.html  optional: solutions to the lecturer's booklet for that lecture (git-ignored until released)
 assets/site.css            landing-page styles
-assets/common.js           injected into every lecture page: top/bottom nav (prev / home / next)
+assets/common.js           injected into every lecture page: top/bottom nav (prev / home / next) and the back-to-top button
 tools/build.py             validates the site and builds _site/ (published content only)
 .github/workflows/deploy.yml  CI: build.py -> deploy _site/ to Pages
 ```
@@ -43,6 +43,26 @@ The repo is public, so anything committed is readable on github.com even when it
 - The existing guides are finished work. Do not remove or rewrite their content unless asked.
 - Material beyond the lecture slides goes in collapsible extensions (`<details>`), clearly marked as an extension.
 
+## Guide conventions (every lecture follows these)
+
+The four guides share one design system and one set of conventions. A new lecture starts as a copy of an existing guide's CSS/JS and must match all of the following.
+
+- **Page title:** `<title>הרצאה N – <landing title> · סטטיסטיקה</title>` (en dash after the number; the landing title is the lecture's `title` in `lectures.json`).
+- **Masthead:** `<h1>` is the landing title; the creative line goes in `<span class="h1-second">` inside it.
+- **Controls bar**, in this order and with this exact text:
+  - legend: `<span class="ext-badge">הרחבה</span> חומר שמעבר לחומר ההרצאה. מקופל כברירת מחדל.`
+  - theme button `#toggle-theme` ("מצב כהה" / "מצב בהיר"), saved under `localStorage["stats-guide-theme"]`
+  - one extensions button `#toggle-ext-open`: "פתח את כל ההרחבות" / "סגור את כל ההרחבות". Extensions are closed by default. There is no "hide extensions" mode.
+- **Footer:** `<footer class="foot">` after the layout, with the text: `מדריך למידה לקורס סטטיסטיקה 4221010, אוניברסיטת אריאל. חומר שמסומן "הרחבה" הוא מעבר לחומר ההרצאה.`
+- **Exercises chapter** (when a lecture has one): heading "תרגילים פתורים", table-of-contents entry "תרגילים".
+- **Spelling:** "גיאומטרית", "היפרגיאומטרית" (as on the lecturer's formula sheet).
+- **Distribution notation:** `Geo(p)`, `Pois(\lambda)`, `Exp(\lambda)`, `B(n,p)`, `U(a,b)`, `N(\mu,\sigma^2)`.
+- **Operators in formulas:** `\mathrm{Var}`, `\mathrm{Cov}` (upright), never bare `Var` / `Cov` inside TeX.
+- **Cross-lecture references:** always "הרצאה N" with the natural Hebrew prefix (בהרצאה 1, מהרצאה 3, להרצאה 2), written as a relative link to that lecture and to the chapter when one fits: `<a href="../01-descriptive/#transform">בהרצאה 1</a>`. Never "בשיעור על…", "בשיעור הקודם" or "היחידה". "ההרצאה" without a number means the current lecture.
+- **Tables:** wrap in `<div class="table-wrap">`, and `.table-wrap` has `position: relative` (keeps KaTeX's hidden copies from widening the page on phones).
+- **Design tokens:** the `:root` tokens (palette, `--font-body`, `--font-head`) are identical in every guide, and `assets/site.css` (landing page) mirrors them. Change a token everywhere or nowhere.
+- **Back-to-top button and prev/home/next nav** come from `assets/common.js`. Do not add either inside a guide.
+
 ## Technical rules
 
 - Every lecture page keeps its own CSS/JS. Do not refactor or restyle across pages unless asked.
@@ -69,5 +89,6 @@ Then open http://localhost:8000. (`--drafts` includes unpublished content; omit 
 
 1. Create `lectures/NN-slug/index.html` (two-digit NN, short English slug).
 2. Add the two `<head>` lines above.
-3. Add an entry to `lectures.json` with `"published": false`.
-4. `python tools/build.py --check`, preview, then publish only when the user says so.
+3. Follow every item under "Guide conventions".
+4. Add an entry to `lectures.json` with `"published": false`.
+5. `python tools/build.py --check`, preview, then publish only when the user says so.
