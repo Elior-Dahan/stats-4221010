@@ -56,7 +56,7 @@ The four guides share one design system and one set of conventions. A new lectur
 - **Footer:** `<footer class="foot">` after the layout, with the text: `מדריך למידה לקורס סטטיסטיקה 4221010, אוניברסיטת אריאל. חומר שמסומן "הרחבה" הוא מעבר לחומר ההרצאה.`
 - **Exercises chapter** (when a lecture has one): heading "תרגילים פתורים", table-of-contents entry "תרגילים".
 - **Spelling:** "גיאומטרית", "היפרגיאומטרית" (as on the lecturer's formula sheet).
-- **Distribution notation:** `Geo(p)`, `Pois(\lambda)`, `Exp(\lambda)`, `B(n,p)`, `U(a,b)`, `N(\mu,\sigma^2)`.
+- **Distribution notation:** `Geo(p)`, `Pois(\lambda)`, `Exp(\lambda)`, `B(n,p)`, `N(\mu,\sigma^2)`, and for the uniform `U(a,b)` when continuous, `U[a,b]` when discrete.
 - **Operators in formulas:** `\mathrm{Var}`, `\mathrm{Cov}` (upright), never bare `Var` / `Cov` inside TeX.
 - **Cross-lecture references:** always "הרצאה N" with the natural Hebrew prefix (בהרצאה 1, מהרצאה 3, להרצאה 2), written as a relative link to that lecture and to the chapter when one fits: `<a href="../01-descriptive/#transform">בהרצאה 1</a>`. Never "בשיעור על…", "בשיעור הקודם" or "היחידה". "ההרצאה" without a number means the current lecture.
 - **Tables:** wrap in `<div class="table-wrap">`, and `.table-wrap` has `position: relative` (keeps KaTeX's hidden copies from widening the page on phones).

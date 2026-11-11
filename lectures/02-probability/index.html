@@ -959,7 +959,7 @@ select { max-width: 100%; }
   <p>בכל שאלה, הדבר הראשון הוא לשאול <strong>מה המשתנה סופר או מודד</strong>. התשובה כמעט תמיד מזהה את ההתפלגות:</p>
   <div class="table-wrap"><table class="t">
     <tr><th>מה קורה בשאלה</th><th>התפלגות</th><th>סימון</th></tr>
-    <tr><td>כל הערכים בטווח שווים בסיכוי</td><td>אחידה (בדידה או רציפה)</td><td class="n">\(U(a,b)\)</td></tr>
+    <tr><td>כל הערכים בטווח שווים בסיכוי</td><td>אחידה (בדידה או רציפה)</td><td class="n">\(U[a,b]\) בדידה, \(U(a,b)\) רציפה</td></tr>
     <tr><td>מספר <strong>קבוע</strong> של ניסיונות בלתי תלויים, אותה הסתברות הצלחה בכל אחד, וסופרים הצלחות</td><td>בינומית</td><td class="n">\(B(n,p)\)</td></tr>
     <tr><td>חוזרים על ניסיון <strong>עד ההצלחה הראשונה</strong>, וסופרים כמה ניסיונות נדרשו</td><td>גיאומטרית</td><td class="n">\(Geo(p)\)</td></tr>
     <tr><td>סופרים אירועים שקורים באקראי <strong>בפרק זמן</strong> (או בשטח), בקצב ממוצע קבוע</td><td>פואסון</td><td class="n">\(Pois(\lambda)\)</td></tr>
@@ -2153,7 +2153,7 @@ window.addEventListener("DOMContentLoaded", function () {
     if (kind === "unifD") {
       const a = p.a, b = Math.max(p.b, p.a + 1);
       return { d: true, lo: a, hi: b, pmf: k => (k >= a && k <= b) ? 1 / (b - a + 1) : 0, mean: (a + b) / 2, varr: ((b - a + 1) ** 2 - 1) / 12,
-        tex: `P(X=k)=\\frac{1}{b-a+1}=\\frac{1}{${b - a + 1}},\\quad E=\\frac{a+b}{2},\\quad \\mathrm{Var}=\\frac{(b-a+1)^2-1}{12}`, name: `U(${a}, ${b})`, xlo: a - 1, xhi: b + 1 };
+        tex: `P(X=k)=\\frac{1}{b-a+1}=\\frac{1}{${b - a + 1}},\\quad E=\\frac{a+b}{2},\\quad \\mathrm{Var}=\\frac{(b-a+1)^2-1}{12}`, name: `U[${a}, ${b}]`, xlo: a - 1, xhi: b + 1 };
     }
     if (kind === "binom") {
       const n = p.n, q = p.p;
