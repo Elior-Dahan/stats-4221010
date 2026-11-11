@@ -853,6 +853,7 @@ table.t td.n { direction: ltr; }
     <p><strong>א.</strong> \(f(\vec{x};\lambda)=\prod_{i=1}^{5}\frac{e^{-\lambda}\lambda^{x_i}}{x_i!}=\frac{e^{-5\lambda}\lambda^{\sum x_i}}{\prod x_i!}\)</p>
     <p><strong>ב.</strong> מציבים: \(\sum x_i=10\), \(\prod x_i! = 3!\cdot1!\cdot4!\cdot2!\cdot0! = 6\cdot1\cdot24\cdot2\cdot1=288\). לכן \(L(\lambda)=\frac{e^{-5\lambda}\lambda^{10}}{288}\).</p>
     <p><strong>ג.</strong> \(\ln L = -5\lambda+10\ln\lambda-\ln288\). הנגזרת: \(-5+\frac{10}{\lambda}=0\), ולכן \(\hat\lambda=2\). התוצאה היא בדיוק \(\bar{x}=10/5=2\), כמו בטבלת האומדים המוכרים.</p>
+    <p><strong>בדיקת מקסימום:</strong> \((\ln L)''=-\frac{10}{\lambda^2}&lt;0\) לכל \(\lambda&gt;0\), ולכן אין צורך להציב. \(\hat\lambda=2\) היא נקודת מקסימום, והיא הנקודה הקריטית היחידה: זה המקסימום המוחלט.</p>
   </div></details>
 
   <h3>תרגיל 2: אורך חיים של נורות</h3>
@@ -860,6 +861,7 @@ table.t td.n { direction: ltr; }
   <p><strong>א.</strong> מצאו את אומדן הנראות המקסימלית ל-\(\lambda\). <strong>ב.</strong> מה המשמעות של האומדן? <strong>ג.</strong> האם האומד חסר הטיה?</p>
   <details class="reveal"><summary>הצג פתרון</summary><div class="reveal-body">
     <p><strong>א.</strong> \(L(\lambda)=\lambda^3e^{-\lambda(2+0.5+1.5)}=\lambda^3e^{-4\lambda}\). \(\ln L=3\ln\lambda-4\lambda\), והנגזרת \(\frac{3}{\lambda}-4=0\) נותנת \(\hat\lambda=0.75\).</p>
+    <p><strong>בדיקת מקסימום:</strong> \((\ln L)''=-\frac{3}{\lambda^2}&lt;0\) לכל \(\lambda&gt;0\), ולכן אין צורך להציב. \(\hat\lambda=0.75\) היא נקודת מקסימום, והיא הנקודה הקריטית היחידה: זה המקסימום המוחלט.</p>
     <p><strong>ב.</strong> \(\lambda\) הוא קצב: 0.75 נורות שנשרפות בשנה, בממוצע. אורך החיים הממוצע הוא \(1/\hat\lambda = 4/3\approx 1.33\) שנים, וזה בדיוק ממוצע המדגם.</p>
     <p><strong>ג.</strong> לא. \(\hat\lambda = 1/\bar{X}\) הוא טרנספורמציה לא לינארית של \(\bar{X}\), ולכן בממוצע הוא יוצא גדול מ-\(\lambda\) האמיתי. ההטיה קטנה ככל ש-\(n\) גדל.</p>
   </div></details>
@@ -885,6 +887,9 @@ table.t td.n { direction: ltr; }
     <p><strong>א.</strong> \(L(\theta)=\prod\frac{x_i}{\theta}e^{-x_i^2/(2\theta)}=\frac{\prod x_i}{\theta^n}\,e^{-\sum x_i^2/(2\theta)}\).</p>
     <p>\(\ln L=\sum\ln x_i-n\ln\theta-\frac{\sum x_i^2}{2\theta}\). האיבר הראשון לא תלוי ב-\(\theta\), והנגזרת שלו 0.</p>
     <p>\(\frac{d}{d\theta}\ln L=-\frac{n}{\theta}+\frac{\sum x_i^2}{2\theta^2}=0\). כופלים ב-\(\theta^2\): \(-n\theta+\frac{\sum x_i^2}{2}=0\), ולכן \(\hat\theta=\frac{\sum x_i^2}{2n}\).</p>
+    <p><strong>בדיקת מקסימום:</strong> \((\ln L)''=\frac{n}{\theta^2}-\frac{\sum x_i^2}{\theta^3}\). כאן יש איבר חיובי ואיבר שלילי, והסימן תלוי ב-\(\theta\). לכן <strong>חייבים להציב את \(\hat\theta\)</strong>. מ-\(\hat\theta=\frac{\sum x_i^2}{2n}\) נובע \(\sum x_i^2=2n\hat\theta\), ולכן:</p>
+    <div class="math-block">$$(\ln L)''(\hat\theta)=\frac{n}{\hat\theta^2}-\frac{2n\hat\theta}{\hat\theta^3}=-\frac{n}{\hat\theta^2}&lt;0$$</div>
+    <p>זו נקודת מקסימום, והיא הנקודה הקריטית היחידה בתחום \(\theta&gt;0\). לכן זה המקסימום המוחלט.</p>
     <p><strong>ב.</strong> \(\sum x_i^2=1+4+9=14\). לכן \(\hat\theta=\frac{14}{6}\approx2.33\).</p>
   </div></details>
 </section>
