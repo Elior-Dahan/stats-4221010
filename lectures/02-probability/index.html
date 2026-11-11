@@ -805,17 +805,17 @@ select { max-width: 100%; }
   </table></div>
 
   <h3>שונות: כמה המשתנה מתפזר סביב התוחלת</h3>
-  <div class="math-block">$$\sigma^2 = Var(X) = E\left[(X - \mu)^2\right] = E(X^2) - \left[E(X)\right]^2$$</div>
+  <div class="math-block">$$\sigma^2 = \mathrm{Var}(X) = E\left[(X - \mu)^2\right] = E(X^2) - \left[E(X)\right]^2$$</div>
   <p>ההגדרה השמאלית היא בדיוק הרעיון מהרצאה 1: ממוצע של ריבועי הסטיות מהמרכז, רק משוקלל לפי הסתברויות. הנוסחה הימנית שקולה לה, ונוחה לחישוב: מחשבים \(E(X^2) = \sum x^2 P(X=x)\) ומחסירים את ריבוע התוחלת. בקובייה:</p>
-  <div class="math-block">$$E(X^2) = \frac{1+4+9+16+25+36}{6} = \frac{91}{6} \qquad Var(X) = \frac{91}{6} - 3.5^2 = \frac{35}{12} \approx 2.92 \qquad \sigma \approx 1.71$$</div>
+  <div class="math-block">$$E(X^2) = \frac{1+4+9+16+25+36}{6} = \frac{91}{6} \qquad \mathrm{Var}(X) = \frac{91}{6} - 3.5^2 = \frac{35}{12} \approx 2.92 \qquad \sigma \approx 1.71$$</div>
 
   <h4>תכונות השונות</h4>
   <div class="table-wrap"><table class="t">
     <tr><th>תכונה</th><th>נוסחה</th><th>במילים</th></tr>
-    <tr><td>קבוע</td><td class="n">\(Var(a) = 0\)</td><td>קבוע לא מתפזר.</td></tr>
-    <tr><td>טרנספורמציה</td><td class="n">\(Var(aX + b) = a^2 \cdot Var(X)\)</td><td>הזזה לא משנה פיזור, כפל נכנס בריבוע. כמו בהרצאה 1.</td></tr>
-    <tr><td>סכום</td><td class="n">\(Var(X \pm Y) = Var(X) + Var(Y) \pm 2\,Cov(X,Y)\)</td><td>כאן נכנסת השונות המשותפת, הנושא של הפרק הבא.</td></tr>
-    <tr><td>סכום, בלתי תלויים</td><td class="n">\(Var(X \pm Y) = Var(X) + Var(Y)\)</td><td>גם בהפרש מחברים את השונויות.</td></tr>
+    <tr><td>קבוע</td><td class="n">\(\mathrm{Var}(a) = 0\)</td><td>קבוע לא מתפזר.</td></tr>
+    <tr><td>טרנספורמציה</td><td class="n">\(\mathrm{Var}(aX + b) = a^2 \cdot \mathrm{Var}(X)\)</td><td>הזזה לא משנה פיזור, כפל נכנס בריבוע. כמו בהרצאה 1.</td></tr>
+    <tr><td>סכום</td><td class="n">\(\mathrm{Var}(X \pm Y) = \mathrm{Var}(X) + \mathrm{Var}(Y) \pm 2\,Cov(X,Y)\)</td><td>כאן נכנסת השונות המשותפת, הנושא של הפרק הבא.</td></tr>
+    <tr><td>סכום, בלתי תלויים</td><td class="n">\(\mathrm{Var}(X \pm Y) = \mathrm{Var}(X) + \mathrm{Var}(Y)\)</td><td>גם בהפרש מחברים את השונויות.</td></tr>
   </table></div>
   <div class="callout">
     <p class="callout-h">למה בהפרש השונויות מתחברות?</p>
@@ -824,8 +824,8 @@ select { max-width: 100%; }
 
   <h4>דוגמה: המשתנים מהפרק הקודם</h4>
   <p>X = מספר העצים בשלוש הטלות. לפי הטבלה בפרק 4:</p>
-  <div class="math-block">$$E(X) = 0\cdot\tfrac18 + 1\cdot\tfrac38 + 2\cdot\tfrac38 + 3\cdot\tfrac18 = 1.5 \qquad E(X^2) = \tfrac{0+3+12+9}{8} = 3 \qquad Var(X) = 3 - 1.5^2 = 0.75$$</div>
-  <p>והרווח \(Z = 20X - 30\)? לא צריך לחשב מאפס: \(E(Z) = 20\cdot1.5 - 30 = 0\), כלומר המשחק הוגן, ו-\(Var(Z) = 20^2 \cdot 0.75 = 300\).</p>
+  <div class="math-block">$$E(X) = 0\cdot\tfrac18 + 1\cdot\tfrac38 + 2\cdot\tfrac38 + 3\cdot\tfrac18 = 1.5 \qquad E(X^2) = \tfrac{0+3+12+9}{8} = 3 \qquad \mathrm{Var}(X) = 3 - 1.5^2 = 0.75$$</div>
+  <p>והרווח \(Z = 20X - 30\)? לא צריך לחשב מאפס: \(E(Z) = 20\cdot1.5 - 30 = 0\), כלומר המשחק הוגן, ו-\(\mathrm{Var}(Z) = 20^2 \cdot 0.75 = 300\).</p>
   <p class="note">הקשר להרצאה 1: \(\bar{x}\) ו-\(s^2\) מחושבים מנתונים שנאספו, והם <strong>אומדים</strong> ל-\(\mu\) ול-\(\sigma^2\), שמתארים את המשתנה המקרי עצמו. על הקשר הזה בנוי כל ההמשך של הקורס.</p>
 </section>
 
@@ -866,7 +866,7 @@ select { max-width: 100%; }
   <div class="math-block">$$Cov(X,Y) = E\left[(X-\mu_X)(Y-\mu_Y)\right]$$</div>
   <p>לחישוב בפועל נוחה יותר נוסחת קיצור. מקבלים אותה אם פותחים את הסוגריים שבתוך התוחלת, ומשתמשים בכך שתוחלת של סכום היא סכום התוחלות ושקבוע אפשר להוציא מהתוחלת:</p>
   <div class="math-block">$$E\left[(X-\mu_X)(Y-\mu_Y)\right] = E(XY) - \mu_X\mu_Y - \mu_X\mu_Y + \mu_X\mu_Y = E(XY) - E(X)\,E(Y)$$</div>
-  <p class="note">זה בדיוק אותו מעבר כמו בשונות, \(Var(X) = E(X^2) - \mu^2\). ושימו לב ש-\(Cov(X,X) = Var(X)\): שונות היא שונות משותפת של משתנה עם עצמו.</p>
+  <p class="note">זה בדיוק אותו מעבר כמו בשונות, \(\mathrm{Var}(X) = E(X^2) - \mu^2\). ושימו לב ש-\(Cov(X,X) = \mathrm{Var}(X)\): שונות היא שונות משותפת של משתנה עם עצמו.</p>
 
   <h3>מה המספר אומר, ומה הוא לא אומר</h3>
   <p><strong>הסימן הוא הכיוון.</strong> כאן הוא חיובי: גובה ומשקל זזים יחד. אם רוב האנשים היו גבוהים-ורזים או נמוכים-וכבדים, רוב המכפלות היו שליליות. אם אין שום דפוס, החיוביות והשליליות מתקזזות, ויוצא בערך 0.</p>
@@ -904,11 +904,11 @@ select { max-width: 100%; }
   <p class="note">ועוד הערה שכדאי לזכור: מתאם הוא לא סיבתיות. מכירת גלידה ומספר הטובעים בים מתואמים חיובית, כי שניהם עולים בקיץ, לא כי גלידה גורמת לטביעה.</p>
 
   <h3>הקשר לשונות של סכום</h3>
-  <p>עכשיו אפשר להבין את הנוסחה מהפרק הקודם, \(Var(X+Y) = Var(X) + Var(Y) + 2Cov(X,Y)\). השונות של הסכום מודדת כמה הסכום מתרחק מהממוצע שלו.</p>
+  <p>עכשיו אפשר להבין את הנוסחה מהפרק הקודם, \(\mathrm{Var}(X+Y) = \mathrm{Var}(X) + \mathrm{Var}(Y) + 2Cov(X,Y)\). השונות של הסכום מודדת כמה הסכום מתרחק מהממוצע שלו.</p>
   <ul>
     <li><strong>אם X ו-Y נוטים לזוז יחד</strong> (Cov חיובית), אז כש-X מעל הממוצע שלו, גם Y נוטה להיות מעל הממוצע שלו. שתי החריגות מצטברות, והסכום מתרחק מהממוצע עוד יותר, למעלה או למטה. לכן הפיזור של הסכום גדל.</li>
     <li><strong>אם הם נוטים לזוז הפוך</strong> (Cov שלילית), אז כשאחד מעל הממוצע, השני נוטה להיות מתחתיו. החריגות מקזזות זו את זו, והסכום נשאר קרוב לממוצע. לכן הפיזור של הסכום קטן.</li>
-    <li><strong>אם הם בלתי תלויים</strong>, Cov = 0, ונשאר רק \(Var(X) + Var(Y)\).</li>
+    <li><strong>אם הם בלתי תלויים</strong>, Cov = 0, ונשאר רק \(\mathrm{Var}(X) + \mathrm{Var}(Y)\).</li>
   </ul>
   <p>על הרעיון הזה בנוי פיזור תיק השקעות: מניות שנוטות לזוז הפוך מייצבות את התיק.</p>
 </section>
@@ -1116,7 +1116,7 @@ select { max-width: 100%; }
 
   <h3>הממוצע הוא משתנה מקרי</h3>
   <p>לפני שמגיעים למשפט, צריך לראות את הנקודה הזו: ממוצע המדגם \(\bar{X}\) הוא משתנה מקרי. הניסוי הוא "בוחרים n אנשים באקראי", והכלל הוא "מחשבים את הממוצע שלהם". מדגם אחר ייתן ממוצע אחר. לכן יש לממוצע תוחלת, שונות והתפלגות משלו. מתכונות התוחלת והשונות, עבור תצפיות בלתי תלויות:</p>
-  <div class="math-block">$$E(\bar{X}) = \mu \qquad\qquad Var(\bar{X}) = \frac{\sigma^2}{n} \qquad\qquad SE = \frac{\sigma}{\sqrt{n}}$$</div>
+  <div class="math-block">$$E(\bar{X}) = \mu \qquad\qquad \mathrm{Var}(\bar{X}) = \frac{\sigma^2}{n} \qquad\qquad SE = \frac{\sigma}{\sqrt{n}}$$</div>
   <p>הממוצע מכוון למקום הנכון, ומתפזר <strong>פחות</strong> מתצפית בודדת. ממוצעים מקזזים: תצפית גבוהה במיוחד ותצפית נמוכה במיוחד מבטלות זו את זו. סטיית התקן של הממוצע נקראת <strong>טעות התקן</strong> (SE), והיא תמיד קטנה מסטיית התקן של האוכלוסייה.</p>
 
   <h3>המשפט</h3>
@@ -1264,7 +1264,7 @@ select { max-width: 100%; }
         <div class="math-block">$$P(X=k) = 0.97^{k-1}\cdot 0.03 \quad (k = 1,\dots,29) \qquad P(X=30) = 0.97^{29} \approx 0.413$$</div>
         <p>\(P(X=30) = 0.413\) גדול מ-0.401 של סעיף ג, כי הוא כולל גם את המקרה שהתלמיד ה-30 הוא המתאים הראשון.</p>
         <p>מחשבים מהטבלה \(E(X) = \sum k\,P(X=k) \approx 19.97\) ו-\(E(X^2) = \sum k^2 P(X=k)\), ומקבלים:</p>
-        <div class="math-block">$$Var(X) = E(X^2) - [E(X)]^2 \approx 110.5 \qquad \sigma \approx 10.5$$</div>
+        <div class="math-block">$$\mathrm{Var}(X) = E(X^2) - [E(X)]^2 \approx 110.5 \qquad \sigma \approx 10.5$$</div>
         <p><strong>המלכודת:</strong> הנוסחה הגיאומטרית \(\frac{1-p}{p^2}\) נותנת 1,078, כלומר סטיית תקן של 32.8. זה בלתי אפשרי, כי X כלוא בין 1 ל-30. הגרף האינטראקטיבי בהרחבה של פרק 7 מראה למה: כל הזנב של הגיאומטרית נערם על העמודה של 30.</p>
       </div></details></div>
   </div>
@@ -1326,12 +1326,12 @@ select { max-width: 100%; }
   </div>
 
   <h3>שאלה נוספת 1: שונות של צירוף</h3>
-  <p>ל-X שונות 4 ול-Y שונות 9, והשונות המשותפת שלהם 2. חשבו את \(Var(2X - Y)\). מה הייתה התשובה אם X ו-Y היו בלתי תלויים?</p>
+  <p>ל-X שונות 4 ול-Y שונות 9, והשונות המשותפת שלהם 2. חשבו את \(\mathrm{Var}(2X - Y)\). מה הייתה התשובה אם X ו-Y היו בלתי תלויים?</p>
   <div class="steps">
     <div class="step"><p class="step-h">פתרון</p>
       <details class="reveal"><summary>הצג</summary><div class="reveal-body">
-        <p>נגדיר \(U = 2X\). אז \(Var(U) = 4\cdot4 = 16\) ו-\(Cov(U, Y) = 2\cdot Cov(X,Y) = 4\). לפי נוסחת ההפרש:</p>
-        <div class="math-block">$$Var(2X - Y) = 16 + 9 - 2\cdot4 = 17$$</div>
+        <p>נגדיר \(U = 2X\). אז \(\mathrm{Var}(U) = 4\cdot4 = 16\) ו-\(Cov(U, Y) = 2\cdot Cov(X,Y) = 4\). לפי נוסחת ההפרש:</p>
+        <div class="math-block">$$\mathrm{Var}(2X - Y) = 16 + 9 - 2\cdot4 = 17$$</div>
         <p>אם היו בלתי תלויים, השונות המשותפת 0, והתשובה \(16 + 9 = 25\). הקשר החיובי מקטין את השונות של ההפרש, כי X ו-Y זזים יחד ומקזזים זה את זה.</p>
       </div></details></div>
   </div>
@@ -1376,7 +1376,7 @@ select { max-width: 100%; }
     <li><strong>להשתמש ב-\(\#A/\#\Omega\) במרחב שאינו אחיד</strong>, למשל לחשוב שכל הסכומים של שתי קוביות שווים בסיכוי.</li>
     <li><strong>להגדיר את המשתנה הלא נכון.</strong> עוברים או נכשלים? הצלחות או כישלונות? כתבו את הגדרת המשתנה במילים לפני כל חישוב.</li>
     <li><strong>לא להבחין בין &lt; ל-≤ בבדיד.</strong> \(P(X>2) = P(X\ge3)\), לא \(P(X\ge2)\).</li>
-    <li><strong>לחסר שונויות בהפרש.</strong> \(Var(X - Y) = Var(X) + Var(Y)\) למשתנים בלתי תלויים.</li>
+    <li><strong>לחסר שונויות בהפרש.</strong> \(\mathrm{Var}(X - Y) = \mathrm{Var}(X) + \mathrm{Var}(Y)\) למשתנים בלתי תלויים.</li>
     <li><strong>להסיק אי-תלות משונות משותפת 0.</strong> היא אומרת רק שאין קשר לינארי.</li>
     <li><strong>לבלבל שונות וסטיית תקן ב-\(N(\mu,\sigma^2)\).</strong> \(N(70,9)\) פירושו σ = 3.</li>
     <li><strong>לתקנן ממוצע לפי σ במקום לפי \(\sigma/\sqrt{n}\).</strong></li>
@@ -2142,35 +2142,35 @@ window.addEventListener("DOMContentLoaded", function () {
     if (kind === "unifD") {
       const a = p.a, b = Math.max(p.b, p.a + 1);
       return { d: true, lo: a, hi: b, pmf: k => (k >= a && k <= b) ? 1 / (b - a + 1) : 0, mean: (a + b) / 2, varr: ((b - a + 1) ** 2 - 1) / 12,
-        tex: `P(X=k)=\\frac{1}{b-a+1}=\\frac{1}{${b - a + 1}},\\quad E=\\frac{a+b}{2},\\quad Var=\\frac{(b-a+1)^2-1}{12}`, name: `U[${a}, ${b}]`, xlo: a - 1, xhi: b + 1 };
+        tex: `P(X=k)=\\frac{1}{b-a+1}=\\frac{1}{${b - a + 1}},\\quad E=\\frac{a+b}{2},\\quad \\mathrm{Var}=\\frac{(b-a+1)^2-1}{12}`, name: `U[${a}, ${b}]`, xlo: a - 1, xhi: b + 1 };
     }
     if (kind === "binom") {
       const n = p.n, q = p.p;
       return { d: true, lo: 0, hi: n, pmf: k => binomPmf(k, n, q), mean: n * q, varr: n * q * (1 - q),
-        tex: "P(X=k)=\\binom{n}{k}p^k(1-p)^{n-k},\\quad E=np,\\quad Var=np(1-p)", name: `B(${n}, ${fmt(q, 2)})`, xlo: -0.5, xhi: n + 0.5 };
+        tex: "P(X=k)=\\binom{n}{k}p^k(1-p)^{n-k},\\quad E=np,\\quad \\mathrm{Var}=np(1-p)", name: `B(${n}, ${fmt(q, 2)})`, xlo: -0.5, xhi: n + 0.5 };
     }
     if (kind === "pois") {
       const l = p.l, hi = Math.max(10, Math.ceil(l + 4.5 * Math.sqrt(l) + 2));
-      return { d: true, lo: 0, hi, pmf: k => poisPmf(k, l), mean: l, varr: l, tex: "P(X=k)=\\frac{e^{-\\lambda}\\lambda^k}{k!},\\quad E=Var=\\lambda", name: `Pois(${fmt(l, 1)})`, xlo: -0.5, xhi: hi + 0.5, open: true };
+      return { d: true, lo: 0, hi, pmf: k => poisPmf(k, l), mean: l, varr: l, tex: "P(X=k)=\\frac{e^{-\\lambda}\\lambda^k}{k!},\\quad E=\\mathrm{Var}=\\lambda", name: `Pois(${fmt(l, 1)})`, xlo: -0.5, xhi: hi + 0.5, open: true };
     }
     if (kind === "geo") {
       const q = p.p; let hi = 1; while (1 - Math.pow(1 - q, hi) < 0.995 && hi < 80) hi++;
       return { d: true, lo: 1, hi, pmf: k => k >= 1 ? Math.pow(1 - q, k - 1) * q : 0, mean: 1 / q, varr: (1 - q) / (q * q),
-        tex: "P(X=k)=(1-p)^{k-1}p,\\quad E=\\frac{1}{p},\\quad Var=\\frac{1-p}{p^2}", name: `Geo(${fmt(q, 2)})`, xlo: 0.5, xhi: hi + 0.5, open: true };
+        tex: "P(X=k)=(1-p)^{k-1}p,\\quad E=\\frac{1}{p},\\quad \\mathrm{Var}=\\frac{1-p}{p^2}", name: `Geo(${fmt(q, 2)})`, xlo: 0.5, xhi: hi + 0.5, open: true };
     }
     if (kind === "unifC") {
       const a = p.a, b = Math.max(p.b, p.a + 0.5);
       return { d: false, pdf: x => (x >= a && x <= b) ? 1 / (b - a) : 0, cdf: x => clamp((x - a) / (b - a), 0, 1), mean: (a + b) / 2, varr: (b - a) ** 2 / 12,
-        tex: "f(x)=\\frac{1}{b-a},\\quad E=\\frac{a+b}{2},\\quad Var=\\frac{(b-a)^2}{12}", name: `U(${fmt(a, 1)}, ${fmt(b, 1)})`, xlo: a - (b - a) * 0.25, xhi: b + (b - a) * 0.25 };
+        tex: "f(x)=\\frac{1}{b-a},\\quad E=\\frac{a+b}{2},\\quad \\mathrm{Var}=\\frac{(b-a)^2}{12}", name: `U(${fmt(a, 1)}, ${fmt(b, 1)})`, xlo: a - (b - a) * 0.25, xhi: b + (b - a) * 0.25 };
     }
     if (kind === "exp") {
       const l = p.l;
       return { d: false, pdf: x => x >= 0 ? l * Math.exp(-l * x) : 0, cdf: x => x >= 0 ? 1 - Math.exp(-l * x) : 0, mean: 1 / l, varr: 1 / (l * l),
-        tex: "f(x)=\\lambda e^{-\\lambda x},\\quad F(x)=1-e^{-\\lambda x},\\quad E=\\frac{1}{\\lambda},\\quad Var=\\frac{1}{\\lambda^2}", name: `Exp(${fmt(l, 1)})`, xlo: 0, xhi: 5.5 / l };
+        tex: "f(x)=\\lambda e^{-\\lambda x},\\quad F(x)=1-e^{-\\lambda x},\\quad E=\\frac{1}{\\lambda},\\quad \\mathrm{Var}=\\frac{1}{\\lambda^2}", name: `Exp(${fmt(l, 1)})`, xlo: 0, xhi: 5.5 / l };
     }
     const m = p.m, s = p.s;
     return { d: false, pdf: x => phi((x - m) / s) / s, cdf: x => Phi((x - m) / s), mean: m, varr: s * s,
-      tex: "f(x)=\\frac{1}{\\sigma\\sqrt{2\\pi}}e^{-\\frac{(x-\\mu)^2}{2\\sigma^2}},\\quad E=\\mu,\\quad Var=\\sigma^2", name: `N(${fmt(m, 1)}, ${fmt(s * s, 2)})`, xlo: m - 4 * s, xhi: m + 4 * s };
+      tex: "f(x)=\\frac{1}{\\sigma\\sqrt{2\\pi}}e^{-\\frac{(x-\\mu)^2}{2\\sigma^2}},\\quad E=\\mu,\\quad \\mathrm{Var}=\\sigma^2", name: `N(${fmt(m, 1)}, ${fmt(s * s, 2)})`, xlo: m - 4 * s, xhi: m + 4 * s };
   }
 
   W.dist = function (root) {
