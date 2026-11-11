@@ -3,6 +3,7 @@
  * Include in every lecture page's <head>:
  *   <script src="../../assets/common.js" defer></script>
  * Renders inside Shadow DOM so it never clashes with the page's own CSS.
+ * Light/dark follows <html data-theme> when the page sets it, otherwise the OS setting.
  */
 (() => {
   const me = document.currentScript;
@@ -33,14 +34,24 @@
     .home { justify-self: center; font-weight: 700; }
     .next { justify-self: end; text-align: left; }
     .lbl { display: block; font-size: 12px; color: #8a92a2; font-weight: 400; }
-    @media (prefers-color-scheme: dark) {
-      nav { color: #9aa3b5; }
-      .top { border-color: #2a3242; } .bottom { border-color: #2a3242; }
-      a { color: #7b9cff; }
-    }
+    :host([data-theme="dark"]) nav { color: #9aa3b5; }
+    :host([data-theme="dark"]) .top, :host([data-theme="dark"]) .bottom { border-color: #2a3242; }
+    :host([data-theme="dark"]) a { color: #7b9cff; }
     @media print { nav { display: none; } }
     @media (max-width: 520px) { .t { display: none; } }
   `;
+
+  // Theme: follow the page's own choice (<html data-theme="dark|light">, set by the
+  // guides' theme toggle) and fall back to the OS setting when the page has none.
+  const osDark = window.matchMedia('(prefers-color-scheme: dark)');
+  const hosts = [];
+  const theme = () => {
+    const t = document.documentElement.dataset.theme;
+    return t === 'dark' || t === 'light' ? t : osDark.matches ? 'dark' : 'light';
+  };
+  const syncTheme = () => hosts.forEach(h => h.setAttribute('data-theme', theme()));
+  new MutationObserver(syncTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  osDark.addEventListener('change', syncTheme);
 
   const link = (cls, lec, label) => {
     const span = document.createElement('span');
@@ -76,7 +87,9 @@
       nav.append(link('prev', prev, '→ הקודמת'), home, link('next', next, 'הבאה ←'));
       shadow.append(style, nav);
       where === 'top' ? document.body.prepend(host) : document.body.append(host);
+      hosts.push(host);
     }
+    syncTheme();
   };
 
   const run = () =>
