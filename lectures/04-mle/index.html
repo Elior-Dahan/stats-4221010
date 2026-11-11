@@ -740,10 +740,12 @@ table.t td.n { direction: ltr; }
   <div class="math-block">$$\ln L = -n\lambda + \Big(\sum x_i\Big)\ln\lambda - \ln\Big(\prod x_i!\Big)$$</div>
   <p>האיבר האחרון לא תלוי ב-\(\lambda\), ולכן הנגזרת שלו 0:</p>
   <div class="math-block">$$\frac{d}{d\lambda}\ln L = -n + \frac{\sum x_i}{\lambda}=0 \;\Rightarrow\; \hat\lambda = \frac{\sum x_i}{n}=\bar{X}$$</div>
+  <p>נגזרת שנייה: \((\ln L)''=-\frac{\sum x_i}{\lambda^2}&lt;0\) לכל \(\lambda&gt;0\) (כשלא כל התצפיות הן 0). לכן \(\hat\lambda=\bar{X}\) היא נקודת מקסימום. זו הנקודה הקריטית היחידה, ולכן זה המקסימום המוחלט.</p>
 
   <h3>הוכחה: מעריכית</h3>
   <p>מהדוגמה של האוטובוס בפרק <a href="#sample-fn">פונקציית התפלגות המדגם</a>: \(L(\lambda)=\lambda^n e^{-\lambda\sum x_i}\).</p>
   <div class="math-block">$$\ln L = n\ln\lambda - \lambda\sum x_i \qquad \frac{d}{d\lambda}\ln L = \frac{n}{\lambda}-\sum x_i = 0 \;\Rightarrow\; \hat\lambda=\frac{n}{\sum x_i}=\frac{1}{\bar{X}}$$</div>
+  <p>נגזרת שנייה: \((\ln L)''=-\frac{n}{\lambda^2}&lt;0\) לכל \(\lambda&gt;0\). לכן \(\hat\lambda=\frac{1}{\bar{X}}\) היא נקודת מקסימום. זו הנקודה הקריטית היחידה, ולכן זה המקסימום המוחלט.</p>
 
   <h3>המקרה המיוחד: אחידה</h3>
   <p>ב-\(U(0,b)\) כל המספרים בין 0 ל-\(b\) סבירים באותה מידה, ו-\(b\) לא ידוע. נניח שיצאו התצפיות 3.1, 7.4, 5.2, 8.6. מה ה-\(b\) הכי סביר?</p>
