@@ -1665,7 +1665,7 @@ window.addEventListener("DOMContentLoaded", function () {
       lastActive = cur;
       links.forEach(l => l.classList.remove("active"));
       const a = map.get(cur.id);
-      if (a) { a.classList.add("active"); if (window.innerWidth <= 920) a.scrollIntoView({ block: "nearest", inline: "center" }); }
+      if (a) { a.classList.add("active"); if (window.innerWidth <= 920) { const toc = a.closest("nav.toc"), r = a.getBoundingClientRect(), t = toc.getBoundingClientRect(); toc.scrollBy({ left: (r.left + r.width / 2) - (t.left + t.width / 2), behavior: "smooth" }); } }
     }
     window.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(syncToc); } }, { passive: true });
     syncToc();

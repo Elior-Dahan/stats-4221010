@@ -71,6 +71,7 @@ The four guides share one design system and one set of conventions. A new lectur
   <meta name="robots" content="noindex">
   <script src="../../assets/common.js" defer></script>
   ```
+- Never use `scrollIntoView` in guides: it scrolls the page itself, which cancels the reader's scroll momentum on phones. To bring an item into view inside a scrollable bar (for example the contents bar at 920px and below), call `scrollBy` on that bar.
 - Relative links only. The site is served under a sub-path (`https://<org>.github.io/<repo>/`), so a link starting with `/` breaks.
 - Math/charts libraries from a CDN are fine (KaTeX, MathJax, Chart.js…).
 - Never flip `published` (lecture or solutions) to `true` unless the user explicitly says so.
