@@ -3,7 +3,10 @@
  * Include in every lecture page's <head>:
  *   <script src="../../assets/common.js" defer></script>
  * Renders inside Shadow DOM so it never clashes with the page's own CSS.
- * Light/dark follows <html data-theme> when the page sets it, otherwise the OS setting.
+ * It uses the page's own design tokens (--font-body, --muted, --rule, --accent), which do
+ * inherit into the shadow tree, so it matches the guide in both themes. The literal values
+ * are fallbacks (the guides' palette) for a page that defines no tokens; for those,
+ * light/dark follows <html data-theme> when the page sets it, otherwise the OS setting.
  */
 (() => {
   const me = document.currentScript;
@@ -20,24 +23,26 @@
       grid-template-columns: 1fr auto 1fr;
       align-items: center;
       gap: 12px;
-      max-width: 960px;
+      box-sizing: border-box;
+      max-width: 1180px;
       margin: 0 auto;
-      padding: 10px 16px;
-      font: 500 14px/1.4 "Heebo", system-ui, sans-serif;
-      color: #5d6677;
+      padding: 10px 24px;
+      font: 500 14px/1.4 var(--font-body, "IBM Plex Sans Hebrew", "Segoe UI", Arial, sans-serif);
+      color: var(--muted, #6a7486);
     }
-    .top { border-bottom: 1px solid #e2ddd1; }
-    .bottom { border-top: 1px solid #e2ddd1; margin-top: 32px; }
-    a { color: #2b55d6; text-decoration: none; }
+    .top { border-bottom: 1px solid var(--rule, #d6dde7); }
+    .bottom { border-top: 1px solid var(--rule, #d6dde7); margin-top: 32px; }
+    a { color: var(--accent, #1f4e8c); text-decoration: none; }
     a:hover { text-decoration: underline; }
     .prev { justify-self: start; }
-    .home { justify-self: center; font-weight: 700; }
+    .home { justify-self: center; font-weight: 600; }
     .next { justify-self: end; text-align: left; }
-    .lbl { display: block; font-size: 12px; color: #8a92a2; font-weight: 400; }
-    :host([data-theme="dark"]) nav { color: #9aa3b5; }
-    :host([data-theme="dark"]) .top, :host([data-theme="dark"]) .bottom { border-color: #2a3242; }
-    :host([data-theme="dark"]) a { color: #7b9cff; }
+    .lbl { display: block; font-size: 12px; color: var(--muted, #6a7486); font-weight: 400; }
+    :host([data-theme="dark"]) nav, :host([data-theme="dark"]) .lbl { color: var(--muted, #8f9aab); }
+    :host([data-theme="dark"]) .top, :host([data-theme="dark"]) .bottom { border-color: var(--rule, #2f3946); }
+    :host([data-theme="dark"]) a { color: var(--accent, #8db6ec); }
     @media print { nav { display: none; } }
+    @media (max-width: 920px) { nav { padding: 10px 16px; } }
     @media (max-width: 520px) { .t { display: none; } }
   `;
 
