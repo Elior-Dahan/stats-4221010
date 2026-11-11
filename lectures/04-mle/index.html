@@ -701,6 +701,7 @@ table.t td.n { direction: ltr; }
     <li><strong>\(L\) ו-\(\ln L\) מגיעות לשיא באותו מקום.</strong> הגבהים שונים לגמרי, אבל הקו המקווקו זהה בשני הגרפים. זו ההצדקה לשלב 4 בסדר הפעולות.</li>
     <li><strong>השיא הוא בדיוק הנוסחה מהטבלה.</strong> לחצו "קפוץ לשיא" והשוו את האומדן ל-\(\bar{x}\) או ל-\(1/\bar{x}\). הטבלה היא לא קסם, היא פשוט התוצאה של הגזירה.</li>
     <li><strong>האומדן הולך אחרי הנתונים.</strong> שנו מספר אחד וראו את השיא זז. הוסיפו עוד תצפיות וראו שהעקומה נעשית צרה יותר: עם יותר נתונים, פחות עולמות מסבירים אותם היטב.</li>
+    <li><strong>הנגזרת השנייה בשיא שלילית.</strong> המשבצת "נגזרת שנייה של ln L בשיא" מציגה את \((\ln L)''(\hat\theta)\). כל עוד השיא נמצא בתוך התחום, היא יוצאת שלילית בכל מדגם שתזינו: זו הבדיקה שמאשרת שהנקודה שבה השיפוע מתאפס היא נקודת מקסימום.</li>
     <li><strong>מקרה קצה.</strong> בברנולי הזינו 1, 1, 1: השיא נדחף ל-\(p=1\). עכשיו הוסיפו 0 אחד: החטאה אחת פוסלת את העולם \(p=1\), כי בו החטאה בלתי אפשרית, והשיא זז ל-0.75.</li>
   </ul>
 
@@ -1322,19 +1323,23 @@ window.addEventListener("DOMContentLoaded", function () {
       bern: { label: "ברנולי (p)", sym: "p", data: "1, 0, 1", hat: "p̂ = x̄",
         ok: x => x.every(v => v === 0 || v === 1), err: "בברנולי כל תצפית היא 0 או 1.",
         range: () => [0.002, 0.998], mle: x => S.mean(x),
-        ll: (t, x) => { const s = S.sum(x), n = x.length; return (s ? s * Math.log(t) : 0) + (n - s ? (n - s) * Math.log(1 - t) : 0); } },
+        ll: (t, x) => { const s = S.sum(x), n = x.length; return (s ? s * Math.log(t) : 0) + (n - s ? (n - s) * Math.log(1 - t) : 0); },
+        d2: (t, x) => { const s = S.sum(x), n = x.length; return -s / (t * t) - (n - s) / ((1 - t) * (1 - t)); } },
       geom: { label: "גיאומטרית (p)", sym: "p", data: "2, 4, 1", hat: "p̂ = 1/x̄",
         ok: x => x.every(v => Number.isInteger(v) && v >= 1), err: "בגיאומטרית כל תצפית היא שלם 1 ומעלה.",
         range: () => [0.002, 0.998], mle: x => 1 / S.mean(x),
-        ll: (t, x) => { const s = S.sum(x), n = x.length; return n * Math.log(t) + (s - n ? (s - n) * Math.log(1 - t) : 0); } },
+        ll: (t, x) => { const s = S.sum(x), n = x.length; return n * Math.log(t) + (s - n ? (s - n) * Math.log(1 - t) : 0); },
+        d2: (t, x) => { const s = S.sum(x), n = x.length; return -n / (t * t) - (s - n) / ((1 - t) * (1 - t)); } },
       pois: { label: "פואסון (λ)", sym: "λ", data: "3, 1, 4, 2, 0", hat: "λ̂ = x̄",
         ok: x => x.every(v => Number.isInteger(v) && v >= 0), err: "בפואסון כל תצפית היא שלם אי-שלילי.",
         range: x => [0.01, Math.max(6, 2.5 * S.mean(x))], mle: x => S.mean(x),
-        ll: (t, x) => { const s = S.sum(x), n = x.length; let c = 0; x.forEach(v => { for (let i = 2; i <= v; i++) c += Math.log(i); }); return -n * t + (s ? s * Math.log(t) : 0) - c; } },
+        ll: (t, x) => { const s = S.sum(x), n = x.length; let c = 0; x.forEach(v => { for (let i = 2; i <= v; i++) c += Math.log(i); }); return -n * t + (s ? s * Math.log(t) : 0) - c; },
+        d2: (t, x) => -S.sum(x) / (t * t) },
       expo: { label: "מעריכית (λ)", sym: "λ", data: "2, 0.5, 1.5", hat: "λ̂ = 1/x̄",
         ok: x => x.every(v => v > 0), err: "במעריכית כל תצפית חיובית.",
         range: x => [0.01, Math.max(3, 3 / S.mean(x))], mle: x => 1 / S.mean(x),
-        ll: (t, x) => x.length * Math.log(t) - t * S.sum(x) }
+        ll: (t, x) => x.length * Math.log(t) - t * S.sum(x),
+        d2: (t, x) => -x.length / (t * t) }
     };
     let key = "bern", x = [1, 0, 1], th = 0.5;
     const row = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
@@ -1403,6 +1408,9 @@ window.addEventListener("DOMContentLoaded", function () {
       statTile(stats, "האומד", d.hat);
       statTile(stats, "האומדן", fmt(mle, 3));
       statTile(stats, "שיפוע ln L כאן", fmt(slope, 2));
+      // the peak is a critical point only when it lies strictly inside the range (not pushed to an edge)
+      const inside = mle > lo && mle < hi, curv = inside ? d.d2(mle, x) : NaN;
+      statTile(stats, "נגזרת שנייה של ln L בשיא", inside ? "\u2066" + fmt(curv, 2) + (curv < 0 ? " < 0" : curv > 0 ? " > 0" : "") + "\u2069" : "השיא בקצה התחום");
     }
     parse(true);
   };
