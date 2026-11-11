@@ -253,7 +253,6 @@ details.ext[open] > summary::after { content: "−"; }
 details.ext .ext-body { padding: 2px 18px 16px; border-top: 1px dashed var(--ext-rule); }
 details.ext .ext-body > :first-child { margin-top: 12px; }
 details.ext .ext-body h4:first-child { margin-top: 12px; }
-body.hide-ext details.ext, body.hide-ext .ext-only { display: none; }
 
 /* ---------- reveal ---------- */
 details.reveal { margin: 8px 0 16px; }
@@ -449,10 +448,9 @@ input[type="number"] { direction: ltr; text-align: right; }
 </header>
 
 <div class="controls-bar">
-  <span class="legend-ext"><span class="ext-badge">הרחבה</span> חומר שמעבר לחומר היחידה. מקופל כברירת מחדל.</span>
+  <span class="legend-ext"><span class="ext-badge">הרחבה</span> חומר שמעבר לחומר ההרצאה. מקופל כברירת מחדל.</span>
   <button class="btn" id="toggle-theme" type="button" aria-pressed="false">מצב כהה</button>
   <button class="btn" id="toggle-ext-open" type="button">פתח את כל ההרחבות</button>
-  <label><input type="checkbox" id="toggle-ext-hide"> הסתר הרחבות (חומר בסיס בלבד)</label>
 </div>
 
 <div class="layout">
@@ -2305,7 +2303,7 @@ window.addEventListener("DOMContentLoaded", function () {
         const stp = niceStep(hi - lo, 8);
         lo = Math.floor(lo / stp) * stp; hi = Math.ceil(hi / stp) * stp;
         const step = Math.pow(10, -Math.max(0, ...d.map(v => (String(v).split(".")[1] || "").length)));
-        DotStrip(vis, { data: d, min: lo, max: hi, step: step, editable: false, box: !document.body.classList.contains("hide-ext"), tickStep: stp, ariaLabel: "הנתונים" });
+        DotStrip(vis, { data: d, min: lo, max: hi, step: step, editable: false, box: true, tickStep: stp, ariaLabel: "הנתונים" });
       }
       const distinct = Array.from(new Set(d)).sort((a, b) => a - b);
       if (distinct.length <= 15) {
@@ -2321,7 +2319,6 @@ window.addEventListener("DOMContentLoaded", function () {
       }
     }
     go();
-    document.getElementById("toggle-ext-hide").addEventListener("change", go);
   };
 
   W.classify = function (root) {
@@ -2430,14 +2427,12 @@ window.addEventListener("DOMContentLoaded", function () {
 
     // extension controls
     const openBtn = document.getElementById("toggle-ext-open");
-    const hideBox = document.getElementById("toggle-ext-hide");
     let allOpen = false;
     openBtn.addEventListener("click", () => {
       allOpen = !allOpen;
       document.querySelectorAll("details.ext").forEach(d => { d.open = allOpen; });
       openBtn.textContent = allOpen ? "סגור את כל ההרחבות" : "פתח את כל ההרחבות";
     });
-    hideBox.addEventListener("change", () => { document.body.classList.toggle("hide-ext", hideBox.checked); });
 
     // toc highlighting
     const links = Array.from(document.querySelectorAll("nav.toc a"));

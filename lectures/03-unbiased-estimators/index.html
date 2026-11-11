@@ -253,7 +253,6 @@ details.ext[open] > summary::after { content: "−"; }
 details.ext .ext-body { padding: 2px 18px 16px; border-top: 1px dashed var(--ext-rule); }
 details.ext .ext-body > :first-child { margin-top: 12px; }
 details.ext .ext-body h4:first-child { margin-top: 12px; }
-body.hide-ext details.ext, body.hide-ext .ext-only { display: none; }
 
 /* ---------- reveal ---------- */
 details.reveal { margin: 8px 0 16px; }
@@ -2138,14 +2137,12 @@ window.addEventListener("DOMContentLoaded", function () {
 
     // extension controls
     const openBtn = document.getElementById("toggle-ext-open");
-    const hideBox = document.getElementById("toggle-ext-hide");
     let allOpen = false;
     openBtn.addEventListener("click", () => {
       allOpen = !allOpen;
       document.querySelectorAll("details.ext").forEach(d => { d.open = allOpen; });
       openBtn.textContent = allOpen ? "סגור את כל ההרחבות" : "פתח את כל ההרחבות";
     });
-    if (hideBox) hideBox.addEventListener("change", () => { document.body.classList.toggle("hide-ext", hideBox.checked); });
 
     // toc highlighting
     const links = Array.from(document.querySelectorAll("nav.toc a"));
