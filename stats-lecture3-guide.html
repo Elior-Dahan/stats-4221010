@@ -1,0 +1,2182 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>אומד חסר הטיה</title>
+<meta name="description" content="מדריך למידה אינטראקטיבי להרצאה 3 בקורס סטטיסטיקה 4221010: אומדים ואומד חסר הטיה">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=IBM+Plex+Sans+Hebrew:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+:root {
+  color-scheme: light;
+  --paper: #f5f7fa;
+  --grid: rgba(31, 78, 140, 0.055);
+  --surface: #ffffff;
+  --surface-2: #eef2f7;
+  --ink: #17202d;
+  --ink-2: #445063;
+  --muted: #6a7486;
+  --rule: #d6dde7;
+  --rule-strong: #b5c0cf;
+  --accent: #1f4e8c;
+  --accent-soft: #e3ecf8;
+  --mean: #2a78d6;
+  --median: #eb6834;
+  --mode: #1baf7a;
+  --neg: #e34948;
+  --pos: #2a78d6;
+  --ext: #5a47cf;
+  --ext-bg: #f2f0fd;
+  --ext-rule: #cfc8f5;
+  --good: #0f7a3e;
+  --good-bg: #e6f4ec;
+  --bad: #b3261e;
+  --bad-bg: #fbe9e7;
+  --radius: 10px;
+  --font-body: "IBM Plex Sans Hebrew", "Segoe UI", Arial, sans-serif;
+  --font-head: "Frank Ruhl Libre", "David", Georgia, serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #13171d;
+    --grid: rgba(140, 170, 220, 0.05);
+    --surface: #1b2129;
+    --surface-2: #232b36;
+    --ink: #e9edf3;
+    --ink-2: #bcc5d2;
+    --muted: #8f9aab;
+    --rule: #2f3946;
+    --rule-strong: #46525f;
+    --accent: #8db6ec;
+    --accent-soft: #22324a;
+    --mean: #3987e5;
+    --median: #d95926;
+    --mode: #199e70;
+    --neg: #e66767;
+    --pos: #3987e5;
+    --ext: #a397f0;
+    --ext-bg: #201d36;
+    --ext-rule: #3d3670;
+    --good: #5fc98d;
+    --good-bg: #17301f;
+    --bad: #f08a80;
+    --bad-bg: #3a1c1a;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #13171d;
+  --grid: rgba(140, 170, 220, 0.05);
+  --surface: #1b2129;
+  --surface-2: #232b36;
+  --ink: #e9edf3;
+  --ink-2: #bcc5d2;
+  --muted: #8f9aab;
+  --rule: #2f3946;
+  --rule-strong: #46525f;
+  --accent: #8db6ec;
+  --accent-soft: #22324a;
+  --mean: #3987e5;
+  --median: #d95926;
+  --mode: #199e70;
+  --neg: #e66767;
+  --pos: #3987e5;
+  --ext: #a397f0;
+  --ext-bg: #201d36;
+  --ext-rule: #3d3670;
+  --good: #5fc98d;
+  --good-bg: #17301f;
+  --bad: #f08a80;
+  --bad-bg: #3a1c1a;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+
+body {
+  margin: 0;
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+
+/* ---------- header ---------- */
+.masthead {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 48px 24px 8px;
+}
+.course-line { color: var(--muted); font-size: 15px; margin: 0 0 10px; }
+.masthead h1 {
+  font-family: var(--font-head);
+  font-weight: 900;
+  font-size: clamp(38px, 6.4vw, 72px);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.masthead h1 .h1-second { display: block; color: var(--ink-2); font-weight: 500; }
+.masthead .lede { max-width: 640px; font-size: 19px; color: var(--ink-2); margin: 18px 0 0; }
+
+.hero-lab { max-width: 1180px; margin: 28px auto 0; padding: 0 24px; }
+
+.controls-bar {
+  max-width: 1180px; margin: 24px auto 0; padding: 0 24px;
+  display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center;
+  font-size: 15px; color: var(--ink-2);
+}
+.legend-ext { display: inline-flex; align-items: center; gap: 8px; }
+
+/* ---------- layout ---------- */
+.layout {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px 24px 80px;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 48px;
+}
+nav.toc {
+  position: sticky; top: 16px; align-self: start;
+  font-size: 15px; line-height: 1.5;
+  max-height: calc(100vh - 32px); overflow: auto;
+}
+nav.toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; }
+nav.toc li { counter-increment: toc; }
+nav.toc a {
+  display: grid; grid-template-columns: 26px 1fr; gap: 4px;
+  padding: 6px 10px; border-radius: 6px; text-decoration: none; color: var(--ink-2);
+  border-inline-start: 2px solid transparent;
+}
+nav.toc a::before { content: counter(toc); color: var(--muted); font-variant-numeric: tabular-nums; }
+nav.toc a:hover { background: var(--surface-2); color: var(--ink); }
+nav.toc a.active { color: var(--ink); border-inline-start-color: var(--accent); background: var(--surface); }
+nav.toc .toc-title { font-weight: 600; color: var(--ink); margin: 0 0 8px; padding-inline-start: 10px; }
+
+main { min-width: 0; max-width: 760px; }
+
+section.chapter { padding-top: 40px; }
+section.chapter + section.chapter { border-top: 1px solid var(--rule); margin-top: 40px; }
+.chapter-num { font-family: var(--font-head); color: var(--muted); font-size: 18px; margin: 0; }
+h2 {
+  font-family: var(--font-head); font-weight: 700;
+  font-size: clamp(28px, 3.6vw, 38px); line-height: 1.15; margin: 2px 0 14px;
+}
+h3 { font-size: 21px; line-height: 1.35; margin: 34px 0 8px; font-weight: 600; }
+h4 { font-size: 17px; margin: 22px 0 4px; font-weight: 600; }
+p { margin: 0 0 14px; }
+ul, ol { margin: 0 0 14px; padding-inline-start: 22px; }
+li { margin-bottom: 4px; }
+strong { font-weight: 600; }
+
+.slide {
+  display: inline-block; font-size: 13px; line-height: 1.4; white-space: nowrap;
+  padding: 1px 8px; border-radius: 999px; vertical-align: 2px;
+  border: 1px solid var(--rule-strong); color: var(--muted); background: var(--surface);
+  margin-inline-start: 6px; font-weight: 500;
+}
+h2 .slide, h3 .slide { vertical-align: 4px; }
+
+.def {
+  border-inline-start: 3px solid var(--accent);
+  padding: 4px 16px; margin: 14px 0 18px; background: var(--surface);
+  border-radius: 0 6px 6px 0;
+}
+[dir="rtl"] .def { border-radius: 6px 0 0 6px; }
+.def p:last-child { margin-bottom: 0; }
+
+.math-block { overflow-x: auto; overflow-y: hidden; padding: 4px 0; margin: 6px 0 14px; }
+.katex { direction: ltr; unicode-bidi: isolate; font-size: 1.05em; }
+.katex-display { margin: 0.4em 0; }
+.ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+.num { font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
+
+table.t {
+  border-collapse: collapse; width: 100%; margin: 10px 0 18px; font-size: 15.5px;
+  background: var(--surface); border-radius: 8px; overflow: hidden;
+}
+.table-wrap { overflow-x: auto; margin: 10px 0 18px; }
+.table-wrap table.t { margin: 0; }
+table.t th, table.t td { padding: 8px 12px; text-align: start; border-bottom: 1px solid var(--rule); }
+table.t th { background: var(--surface-2); font-weight: 600; color: var(--ink); }
+table.t tr:last-child td { border-bottom: 0; }
+table.t td.n, table.t th.n { text-align: center; font-variant-numeric: tabular-nums; unicode-bidi: plaintext; }
+
+.note { color: var(--ink-2); font-size: 15.5px; }
+.callout {
+  background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius);
+  padding: 14px 18px; margin: 16px 0;
+}
+.callout > :last-child { margin-bottom: 0; }
+.callout .callout-h { font-weight: 600; margin-bottom: 4px; }
+.takeaway { font-family: var(--font-head); font-size: 22px; line-height: 1.45; margin: 22px 0; color: var(--ink); }
+
+/* ---------- extension blocks ---------- */
+details.ext {
+  border: 1px solid var(--ext-rule);
+  background: var(--ext-bg);
+  border-radius: var(--radius);
+  margin: 18px 0;
+}
+details.ext > summary {
+  list-style: none; cursor: pointer;
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px;
+  padding: 12px 16px; font-weight: 600; color: var(--ink);
+}
+details.ext > summary::-webkit-details-marker { display: none; }
+details.ext > summary::after {
+  content: "+"; margin-inline-start: auto; color: var(--ext); font-weight: 400; font-size: 22px; line-height: 1;
+}
+details.ext[open] > summary::after { content: "−"; }
+.ext-badge {
+  display: inline-block; font-size: 12.5px; font-weight: 600; line-height: 1.5;
+  color: #fff; background: var(--ext); padding: 1px 9px; border-radius: 999px;
+}
+:root[data-theme="dark"] .ext-badge { color: #15122b; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .ext-badge { color: #15122b; } }
+.ext-later { font-size: 13.5px; font-weight: 400; color: var(--ext); }
+details.ext .ext-body { padding: 2px 18px 16px; border-top: 1px dashed var(--ext-rule); }
+details.ext .ext-body > :first-child { margin-top: 12px; }
+details.ext .ext-body h4:first-child { margin-top: 12px; }
+body.hide-ext details.ext, body.hide-ext .ext-only { display: none; }
+
+/* ---------- reveal ---------- */
+details.reveal { margin: 8px 0 16px; }
+details.reveal > summary {
+  cursor: pointer; display: inline-block; font-size: 15px; font-weight: 600; color: var(--accent);
+  padding: 4px 12px; border: 1px solid var(--rule-strong); border-radius: 999px; background: var(--surface);
+}
+details.reveal > summary::-webkit-details-marker { display: none; }
+details.reveal[open] > summary { margin-bottom: 10px; }
+details.reveal .reveal-body { border-inline-start: 3px solid var(--rule-strong); padding: 2px 16px; }
+
+/* ---------- widgets ---------- */
+figure.lab {
+  margin: 22px 0; padding: 18px 18px 14px; background: var(--surface);
+  border: 1px solid var(--rule); border-radius: 14px;
+}
+.lab-title { font-weight: 600; margin: 0 0 2px; font-size: 16.5px; }
+.lab-hint { color: var(--muted); font-size: 14.5px; margin: 0 0 10px; }
+figure.lab svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: none; }
+figure.lab svg text { font-family: var(--font-body); }
+.lab-row { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin: 10px 0 0; font-size: 15px; }
+.lab-row label { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); }
+.btn {
+  font: inherit; font-size: 14.5px; font-weight: 500; cursor: pointer;
+  padding: 5px 14px; border-radius: 8px; border: 1px solid var(--rule-strong);
+  background: var(--surface); color: var(--ink);
+}
+.btn:hover { background: var(--surface-2); }
+.btn.primary { background: var(--accent); color: var(--surface); border-color: var(--accent); }
+.btn.primary:hover { filter: brightness(1.08); }
+.seg { display: inline-flex; border: 1px solid var(--rule-strong); border-radius: 8px; overflow: hidden; }
+.seg button { font: inherit; font-size: 14.5px; padding: 5px 12px; border: 0; background: var(--surface); color: var(--ink-2); cursor: pointer; }
+.seg button + button { border-inline-start: 1px solid var(--rule-strong); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--surface); }
+input[type="range"] { accent-color: var(--accent); width: 160px; }
+input[type="number"], textarea, select {
+  font: inherit; font-size: 15px; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--rule-strong); border-radius: 6px; padding: 4px 8px;
+}
+input[type="number"] { width: 72px; }
+textarea { width: 100%; min-height: 72px; direction: ltr; text-align: left; font-variant-numeric: tabular-nums; }
+
+.stats {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  gap: 8px; margin-top: 12px;
+}
+.stat {
+  border: 1px solid var(--rule); border-radius: 8px; padding: 6px 10px; background: var(--paper);
+}
+.stat .k { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.stat .v { font-size: 19px; font-weight: 600; font-variant-numeric: tabular-nums; direction: ltr; text-align: right; }
+.stat.ext-stat { border-color: var(--ext-rule); background: var(--ext-bg); }
+.swatch { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+.swatch.mean { background: var(--mean); }
+.swatch.median { background: repeating-linear-gradient(90deg, var(--median) 0 4px, transparent 4px 6px); }
+.swatch.mode { background: repeating-linear-gradient(90deg, var(--mode) 0 2px, transparent 2px 4px); }
+
+.twin { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.twin > div { min-width: 0; }
+.twin .tw-h { font-weight: 600; font-size: 15px; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.twin .tw-h .num { color: var(--ink-2); font-weight: 500; }
+
+.feedback { font-size: 15px; margin-top: 8px; min-height: 1.5em; }
+.feedback.ok { color: var(--good); }
+.feedback.no { color: var(--bad); }
+
+/* classifier */
+.classify { display: grid; gap: 10px; margin-top: 8px; }
+.cl-item { border: 1px solid var(--rule); border-radius: 10px; padding: 10px 12px; background: var(--paper); }
+.cl-item .cl-q { font-weight: 500; margin-bottom: 6px; }
+.cl-opts { display: flex; flex-wrap: wrap; gap: 6px; }
+.cl-opts button {
+  font: inherit; font-size: 14px; padding: 3px 12px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--rule-strong); background: var(--surface); color: var(--ink);
+}
+.cl-opts button.right { background: var(--good-bg); border-color: var(--good); color: var(--good); font-weight: 600; }
+.cl-opts button.wrong { background: var(--bad-bg); border-color: var(--bad); color: var(--bad); }
+.cl-why { font-size: 14.5px; color: var(--ink-2); margin-top: 6px; }
+
+/* quiz */
+.quiz-q { border: 1px solid var(--rule); background: var(--surface); border-radius: 12px; padding: 14px 16px; margin: 12px 0; }
+.quiz-q .qh { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; font-weight: 600; margin-bottom: 8px; }
+.quiz-q .qn { color: var(--muted); font-variant-numeric: tabular-nums; }
+.quiz-opts { display: grid; gap: 6px; }
+.quiz-opts button {
+  font: inherit; text-align: start; padding: 8px 12px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--rule); background: var(--paper); color: var(--ink);
+}
+.quiz-opts button:hover:not(:disabled) { border-color: var(--rule-strong); }
+.quiz-opts button.right { background: var(--good-bg); border-color: var(--good); }
+.quiz-opts button.wrong { background: var(--bad-bg); border-color: var(--bad); }
+.quiz-opts button:disabled { cursor: default; }
+.quiz-exp { margin-top: 10px; font-size: 15.5px; color: var(--ink-2); }
+.score { font-weight: 600; }
+
+/* kibbutz steps */
+.steps { counter-reset: st; }
+.step { border-inline-start: 2px solid var(--rule-strong); padding: 0 16px 6px; margin: 0 0 6px; position: relative; }
+.step-h { font-weight: 600; }
+
+/* tooltips */
+.tip {
+  position: fixed; z-index: 50; pointer-events: none; background: var(--ink); color: var(--paper);
+  font-size: 13.5px; padding: 4px 8px; border-radius: 6px; opacity: 0; transition: opacity .1s;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.tip.on { opacity: 1; }
+
+footer.foot { max-width: 1180px; margin: 0 auto; padding: 24px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--rule); }
+
+/* ---------- responsive ---------- */
+@media (max-width: 920px) {
+  .layout { grid-template-columns: 1fr; gap: 0; padding: 8px 16px 64px; }
+  nav.toc {
+    position: sticky; top: 0; z-index: 20; max-height: none; overflow-x: auto; overflow-y: hidden;
+    background: var(--paper); margin: 0 -16px; padding: 8px 16px; border-bottom: 1px solid var(--rule);
+  }
+  nav.toc .toc-title { display: none; }
+  nav.toc ol { display: flex; gap: 4px; white-space: nowrap; }
+  nav.toc a { display: inline-flex; gap: 6px; padding: 4px 10px; border-inline-start: 0; border-bottom: 2px solid transparent; border-radius: 6px 6px 0 0; }
+  nav.toc a.active { border-bottom-color: var(--accent); }
+  .masthead { padding: 32px 16px 4px; }
+  .hero-lab, .controls-bar { padding: 0 16px; }
+  html { scroll-padding-top: 60px; }
+}
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  .twin { grid-template-columns: 1fr; }
+  figure.lab { padding: 14px 12px 12px; margin-left: -4px; margin-right: -4px; }
+  table.t th, table.t td { padding: 6px 8px; }
+}
+@media print {
+  body { background: #fff; }
+  nav.toc, .controls-bar { display: none; }
+  .layout { display: block; }
+  details.ext { break-inside: avoid; }
+}
+
+figure.lab svg g .ring { opacity: 0; }
+figure.lab svg g:focus .ring { opacity: 1; }
+
+/* range sliders: min on the left, max on the right, like the number line */
+input[type="range"] { direction: ltr; }
+
+/* scales ladder */
+.ladder { display: grid; grid-template-columns: minmax(96px, 1.2fr) repeat(4, minmax(0, 1fr)); gap: 6px; }
+.ld-corner { min-height: 1px; }
+.ld-cap { display: flex; flex-direction: column; align-items: center; justify-content: end; text-align: center; padding: 2px 2px 4px; }
+.ld-sym { font-size: 19px; font-weight: 700; color: var(--ink); letter-spacing: 0.04em; direction: ltr; }
+.ld-capname { font-size: 13px; color: var(--muted); }
+.ld-scale {
+  font: inherit; text-align: start; cursor: pointer; border: 1px solid var(--rule); background: var(--paper);
+  border-radius: 8px; padding: 6px 10px; display: flex; flex-direction: column; line-height: 1.25; color: var(--ink);
+}
+.ld-scale:hover { border-color: var(--rule-strong); }
+.ld-scale.sel { border-color: var(--accent); background: var(--accent-soft); }
+.ld-name { font-weight: 700; font-size: 16px; }
+.ld-en { font-size: 12px; color: var(--muted); direction: ltr; text-align: end; }
+.ld-cell {
+  border-radius: 8px; border: 1px dashed var(--rule); min-height: 46px; position: relative;
+  display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700; direction: ltr;
+  color: var(--accent); transition: background .15s;
+}
+.ld-cell.on { border: 1px solid transparent; background: var(--accent-soft); }
+.ld-cell.on.new { background: var(--accent); color: var(--surface); }
+.ld-cell.sel { box-shadow: 0 0 0 2px var(--accent) inset; }
+.ld-cell.on.new.sel { box-shadow: none; }
+.ld-newtag { position: absolute; top: 2px; inset-inline-end: 6px; font-size: 10px; font-weight: 600; opacity: .85; direction: rtl; }
+.ladder-detail { display: grid; grid-template-columns: 220px 1fr; gap: 16px; align-items: center; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--rule); }
+.ld-art svg { width: 100%; height: auto; }
+.ld-text p { margin: 0 0 8px; }
+.ld-title { font-weight: 700; font-size: 18px; }
+.ld-adds { font-weight: 500; font-size: 14.5px; color: var(--accent); margin-inline-start: 8px; }
+.ld-can strong { color: var(--good); }
+.ld-cant strong { color: var(--bad); }
+@media (max-width: 600px) {
+  .ladder { grid-template-columns: 82px repeat(4, minmax(0, 1fr)); gap: 4px; }
+  .ld-capname { font-size: 11.5px; }
+  .ld-sym { font-size: 16px; }
+  .ld-newtag { display: none; }
+  .ladder-detail { grid-template-columns: 1fr; }
+  .ld-art { max-width: 260px; }
+}
+
+input[type="number"] { direction: ltr; text-align: right; }
+
+
+.steps .step .math-block { margin: 4px 0 8px; }
+.callout .math-block { margin: 4px 0; }
+</style>
+</head>
+<body>
+<header class="masthead">
+  <h1>ניחוש עם חוקים<span class="h1-second">אומדים, ואומד חסר הטיה</span></h1>
+  <p class="lede">את הפרמטר של האוכלוסייה אף אחד לא יודע. מה שיש לנו הוא מדגם ותוכנית לנחש ממנו. המדריך מסביר איך שופטים תוכנית כזו, למה "בממוצע פוגע במטרה" זה לא תמיד מספיק, ואיך מתקנים אומד שמחטיא.</p>
+</header>
+
+<div class="controls-bar">
+  <span class="legend-ext"><span class="ext-badge">הרחבה</span> חומר שמעבר לחומר ההרצאה. מקופל כברירת מחדל.</span>
+  <button class="btn" id="toggle-theme" type="button" aria-pressed="false">מצב כהה</button>
+  <button class="btn" id="toggle-ext-open" type="button">פתח את כל ההרחבות</button>
+</div>
+
+<div class="layout">
+  <nav class="toc" aria-label="תוכן המדריך">
+    <p class="toc-title">תוכן</p>
+    <ol>
+      <li><a href="#intro">פרמטר, אומד ואומדן</a></li>
+      <li><a href="#expect">תוחלת: תזכורת</a></li>
+      <li><a href="#se">טעות תקן</a></li>
+      <li><a href="#unbiased">אומד חסר הטיה</a></li>
+      <li><a href="#variance">שונות של אומד</a></li>
+      <li><a href="#reverse">הנדסה לאחור</a></li>
+      <li><a href="#consist">אומד עקיב</a></li>
+      <li><a href="#prop">פרופורציה</a></li>
+      <li><a href="#cont">משתנה רציף</a></li>
+      <li><a href="#practice">תרגילים</a></li>
+      <li><a href="#quiz">בדקו את עצמכם</a></li>
+      <li><a href="#pitfalls">מלכודות נפוצות</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+<!-- ============ 1 ============ -->
+<section class="chapter" id="intro">
+  <p class="chapter-num">פרק 1</p>
+  <h2>פרמטר, אומד ואומדן</h2>
+  <p>מכאן ועד סוף הקורס השאלה היא אחת: <strong>מה אפשר לומר על האוכלוסייה מתוך המדגם?</strong> כדי לענות עליה צריך להבחין בין כמה סוגים של "מספרים".</p>
+
+  <div class="def">
+    <p><strong>פרמטר:</strong> מספר שמתאר את <strong>האוכלוסייה</strong>. יש לו ערך אחד, קבוע, ובדרך כלל הוא לא ידוע, ולכן דוגמים. מסמנים אותו באותיות יווניות: \(\mu\) (תוחלת), \(\sigma^2\) (שונות), \(p\) (פרופורציה), ובאופן כללי \(\theta\).</p>
+    <p><strong>סטטיסטי:</strong> כל דבר שמחושב <strong>מהמדגם בלבד</strong>, בלי שום פרמטר לא ידוע. מסמנים: \(\bar X\), \(S^2\), \(\hat p\), ובאופן כללי \(\hat\theta\).</p>
+    <p><strong>אומד:</strong> סטטיסטי שבחרנו כדי להעריך פרמטר מסוים. זו <strong>נוסחה</strong>, כלל שמפעילים על המדגם. למשל \(\bar X\) כאומד ל-\(\mu\).</p>
+    <p><strong>אומדן:</strong> הערך המספרי שיוצא כשמפעילים את האומד על המדגם שנאסף בפועל.</p>
+  </div>
+
+  <div class="table-wrap"><table class="t">
+    <tr><th rowspan="2"></th><th rowspan="2">פרמטר</th><th colspan="2" style="text-align:center;background:var(--accent-soft)">סטטיסטי</th></tr>
+    <tr><th style="background:var(--accent-soft)">אומד</th><th style="background:var(--accent-soft)">אומדן</th></tr>
+    <tr><td><strong>שייך ל</strong></td><td>האוכלוסייה</td><td>המדגם (כל מדגם אפשרי)</td><td>המדגם שנאסף בפועל</td></tr>
+    <tr><td><strong>מה זה</strong></td><td>מספר</td><td>נוסחה</td><td>מספר</td></tr>
+    <tr><td><strong>משתנה מקרי?</strong></td><td>לא, קבוע</td><td>כן, משתנה ממדגם למדגם</td><td>לא, כבר יצא</td></tr>
+    <tr><td><strong>ידוע?</strong></td><td>לרוב לא</td><td>הנוסחה ידועה, הערך עוד לא</td><td>כן</td></tr>
+  </table></div>
+  <p class="note">אומד ואומדן הם שניהם סטטיסטיים: שניהם מחושבים מהמדגם. ההבדל ביניהם הוא נוסחה מול מספר.</p>
+
+  <p><strong>דוגמה קצרה (מההרצאה):</strong> תוחלת הציונים בקורס היא \(\mu = 72\), וזה הפרמטר. מחליטים לאמוד אותה בעזרת ממוצע המדגם \(\bar X\), וזה האומד. במדגם של 75 סטודנטים יצא ממוצע 74, וזה האומדן. <strong>טעות האמידה</strong> היא המרחק בין האומדן לפרמטר: \(|74 - 72| = 2\).</p>
+
+  <h3>חידוד חשוב: מה מקרי ומה לא</h3>
+  <ul>
+    <li><strong>האומד הוא משתנה מקרי.</strong> לפני הדגימה לא ידוע אילו סטודנטים ייכנסו למדגם, ולכן לא ידוע מה ייצא. אדם אחר שמפעיל בדיוק אותה נוסחה על מדגם אחר יקבל, נגיד, 71. האומד זהה, האומדן שונה.</li>
+    <li><strong>האומדן אינו משתנה מקרי.</strong> הוא מספר שכבר יצא.</li>
+    <li><strong>גם הפרמטר אינו משתנה מקרי.</strong> הוא לא ידוע, אבל קבוע. "לא ידוע" זה לא "מקרי".</li>
+  </ul>
+  <p>ומכאן העיקר: <strong>את האומד אפשר לשפוט, ואת האומדן לא.</strong> על הנוסחה אפשר לשאול אם בממוצע היא פוגעת בפרמטר וכמה היא מתפזרת, וזה מה שכל שאר ההרצאה עושה. על המספר 74 לבדו אין מה לשאול.</p>
+
+  <figure class="lab" id="w-machine">
+    <p class="lab-title">מכונת הדגימה: נוסחה אחת, הרבה אומדנים</p>
+    <p class="lab-hint">האוכלוסייה: ציונים עם \(\mu = 72\) ו-\(\sigma = 10\). בחרו אומד ולחצו "דגום מדגם". כל לחיצה מייצרת אומדן אחד ומוסיפה אותו להיסטוגרמה. ההיסטוגרמה היא <strong>התפלגות הדגימה</strong> של האומד: כל הערכים שהנוסחה יכולה לתת, ובאיזו שכיחות.</p>
+    <div data-w="machine" data-est="xbar"></div>
+  </figure>
+
+  <h3>איך מזהים מה סטטיסטי ומה לא</h3>
+  <p>שתי שאלות בודקות כמעט כל מקרה:</p>
+  <ol>
+    <li><strong>אפשר לחשב את זה מהנתונים בלבד, בלי לדעת שום פרמטר?</strong> אם כן, זה סטטיסטי. \(\bar X\), \(S^2\) והמקסימום במדגם עוברים. ביטוי שמכיל את \(\mu\) כשהוא לא ידוע לא עובר.</li>
+    <li><strong>במדגם אחר היה יוצא מספר אחר?</strong> אם כן, זה לא פרמטר. פרמטר לא תלוי במדגם בכלל.</li>
+  </ol>
+  <p>ואם זה סטטיסטי, האם הוא <strong>אומד</strong>? רק אם השתמשו בו כדי להעריך פרמטר מסוים. כל אומד הוא סטטיסטי, אבל לא כל סטטיסטי משמש כאומד.</p>
+
+  <h4>בדקו את עצמכם</h4>
+  <p>מה כל אחד מאלה? (1) "כדי להעריך את השונות באוכלוסייה אשתמש ב-\(S^2\)." (2) "יצא לי \(s^2 = 4.1\)." (3) "הציון הגבוה ביותר במדגם", בלי שנאמר בשביל מה. (4) "שיעור המובטלים בישראל".</p>
+  <details class="reveal"><summary>הצג תשובה</summary><div class="reveal-body">
+    <p>(1) אומד: נוסחה לאמוד את \(\sigma^2\). (2) אומדן: מספר שיצא. (3) סטטיסטי: מחושב מהמדגם, אבל לא הוגדר כאומד לשום פרמטר. (4) פרמטר: מתאר את כל האוכלוסייה.</p>
+  </div></details>
+
+  <h3>למה \(E(X_i) = E(X)\)</h3>
+  <p>\(X\) הוא הערך של פריט שנבחר באקראי מהאוכלוסייה, למשל ציון של סטודנט אקראי. \(X_1\) הוא הציון של הסטודנט <strong>הראשון</strong> שנדגם, ו-\(X_3\) של <strong>השלישי</strong>. כל אחד מהם נבחר באקראי <strong>מאותה אוכלוסייה בדיוק</strong>. \(X_1\) הוא לא אדם ספציפי: הוא משתנה מקרי שיכול להיות כל אחד "ממשפחת \(X\)". לכן, לפני הדגימה, \(X_1\) יכול לקבל בדיוק את אותם ערכים כמו \(X\), ובאותן הסתברויות. כך גם \(X_3\), וכך כל \(X_i\).</p>
+  <p>כלומר ל-\(X_1, X_2, \dots, X_n\), לכל אחד מהם, יש <strong>אותה התפלגות</strong> כמו ל-\(X\), ולכן גם אותה תוחלת ואותה שונות:</p>
+  <div class="math-block">$$E(X_1) = E(X_2) = \dots = E(X) = \mu \qquad \mathrm{Var}(X_1) = \dots = \mathrm{Var}(X) = \sigma^2$$</div>
+  <p>האינדקס אומר רק <strong>באיזה סדר</strong> דגמנו. הוא לא משנה את ההתפלגות, כמו שלהטלה השלישית של קובייה יש אותה תוחלת, 3.5, כמו להטלה הראשונה.</p>
+
+  <p><strong>שתי טעויות שכדאי להימנע מהן:</strong></p>
+  <ul>
+    <li><strong>\(E(X_1)\) אינו הערך הראשון שיצא במדגם.</strong> זו תוחלת: מה <strong>צפוי</strong> לצאת בתצפית הראשונה, בממוצע. הערך שיצא בפועל הוא מספר אחר לגמרי.</li>
+    <li><strong>כל \(X_i\) הוא תצפית אחת, לא כל המדגם.</strong> אם כל תצפית היא ניסוי ברנולי, \(E(X_i) = p\) ולא \(np\). \(np\) היא התוחלת של <strong>סכום</strong> כל התצפיות בניסויי ברנולי (אם זה לא מובן עכשיו, זה יתבהר בפרק 8).</li>
+  </ul>
+</section>
+
+<!-- ============ 3 ============ -->
+<section class="chapter" id="expect">
+  <p class="chapter-num">פרק 2</p>
+  <h2>תוחלת: תזכורת ממוקדת</h2>
+  <p>בפרק 4 נשאל על אומד: "אם נחזור על הדגימה שוב ושוב, האם בממוצע הוא פוגע בפרמטר?" את השאלה הזו מנסחים בשפה של תוחלת, ולכן כדאי לוודא שהמושג יושב טוב.</p>
+
+  <div class="def">
+    <p><strong>תוחלת</strong> היא ממוצע משוקלל של הערכים שמשתנה מקרי יכול לקבל, כשהמשקל של כל ערך הוא ההסתברות שלו. במילים פשוטות: זה הערך שאנחנו מצפים לקבל מההתפלגות <strong>בממוצע</strong>. מכאן גם השם והסימון: באנגלית תוחלת היא expectation, ומכאן ה-\(E\).</p>
+  </div>
+  <div class="table-wrap"><table class="t" style="max-width:520px">
+    <tr><th>בדיד</th><th>רציף</th></tr>
+    <tr><td class="n">\(E(X) = \sum_x x\cdot P(X=x)\)</td><td class="n">\(E(X) = \int_{-\infty}^{\infty} x\, f(x)\,dx\)</td></tr>
+  </table></div>
+  <p class="note">קובייה: \(E(X) = (1+2+\dots+6)\cdot\frac16 = 3.5\). אחידה על \([0,1]\): \(E(X) = \int_0^1 x\,dx = \frac12\). ברציף מבצעים את האינטגרל בפועל רק על התחום שבו \(f(x) &gt; 0\).</p>
+
+  <h3>תוחלת אינה ממוצע</h3>
+  <p>זו אותה הבחנה כמו פרמטר ואומדן. התוחלת היא הפרמטר: נתון שנובע מעצם ההתפלגות ומתאר אותה. זה מספר קבוע שקיים בין אם נדע אותו ובין אם לא, ובדרך כלל אנחנו לא יודעים אותו ומנסים לאמוד אותו. הממוצע הוא האומדן שלה: מספר שיצא במדגם מסוים.</p>
+  <ul>
+    <li><strong>תוחלת</strong> מחושבת מ<strong>ההסתברויות</strong>, בלי שום ניסוי. לקובייה הוגנת תוחלת 3.5 גם אם מעולם לא הטלתם אותה.</li>
+    <li><strong>ממוצע</strong> מחושב מ<strong>נתונים</strong> שיצאו בפועל. הטלתם 10 פעמים וקיבלתם 3.2; בפעם הבאה אולי 3.9.</li>
+  </ul>
+  <p><strong>מה הקשר?</strong> ככל שמטילים יותר, הממוצע מתקרב לתוחלת. זה <strong>חוק המספרים הגדולים</strong>. לכן אפשר לחשוב על תוחלת כעל "הממוצע אחרי אינסוף הטלות". אבל זו רק אינטואיציה: ההגדרה היא החישוב מההסתברויות.</p>
+  <p>ומכאן גם שהתוחלת לא חייבת להיות ערך שבאמת יוצא. במטבע, כשכותבים 1 לעץ ו-0 לפלי, התוחלת היא 0.5, אף שאף הטלה לא נותנת 0.5. היא לא "מה שיוצא", אלא המרכז שהממוצע מתקרב אליו.</p>
+
+  <h3>\(\mu\) הוא כינוי לתוחלת</h3>
+  <p>כשכותבים \(\mu\), מתכוונים תמיד לאותו דבר: <strong>התוחלת של \(X\)</strong>, הערך שאנחנו מצפים לקבל בממוצע. מה שמשתנה מהתפלגות להתפלגות הוא <strong>איך מחשבים אותה</strong>.</p>
+  <ul>
+    <li>מטילים מטבע לא הוגן 10 פעמים וסופרים עצים, כשהסיכוי לעץ הוא 0.3. זו בינומית, והתוחלת שלה היא \(np\). לכן כאן \(\mu = 10 \cdot 0.3 = 3\).</li>
+    <li>סופרים שיחות למוקד בדקה, בקצב של 4 בדקה. זו פואסון, והתוחלת שלה היא \(\lambda\). לכן כאן \(\mu = 4\).</li>
+  </ul>
+  <p>בשני המקרים \(\mu\) היא התוחלת. רק הדרך להגיע אליה שונה, ואת הדרך לוקחים מהטבלה:</p>
+  <div class="table-wrap"><table class="t" style="max-width:520px">
+    <tr><th>התפלגות</th><th class="n">\(\mu = E(X)\)</th><th class="n">\(\mathrm{Var}(X)\)</th></tr>
+    <tr><td>ברנולי</td><td class="n">\(p\)</td><td class="n">\(p(1-p)\)</td></tr>
+    <tr><td>בינומית</td><td class="n">\(np\)</td><td class="n">\(np(1-p)\)</td></tr>
+    <tr><td>פואסון</td><td class="n">\(\lambda\)</td><td class="n">\(\lambda\)</td></tr>
+    <tr><td>מעריכית</td><td class="n">\(1/\lambda\)</td><td class="n">\(1/\lambda^2\)</td></tr>
+    <tr><td>אחידה רציפה \(U(a,b)\)</td><td class="n">\(\frac{a+b}{2}\)</td><td class="n">\(\frac{(b-a)^2}{12}\)</td></tr>
+    <tr><td>נורמלית</td><td class="n">\(\mu\)</td><td class="n">\(\sigma^2\)</td></tr>
+  </table></div>
+  <p><strong>בפועל:</strong> כשבשאלה כתוב \(\mu\) ולא נאמר איזו התפלגות, זו פשוט "התוחלת". כשנתונה התפלגות, מחליפים את \(\mu\) בביטוי שלה מהטבלה, למשל \(np\) בבינומית.</p>
+  <p>בנורמלית זה מבלבל: שם, אחד הפרמטרים של ההתפלגות <strong>נקרא</strong> \(\mu\), והוא בעצמו התוחלת. אין מה להחליף.</p>
+
+  <h3>הכלים שנשתמש בהם כל הזמן</h3>
+  <div class="math-block">$$E(aX + b) = aE(X) + b \qquad\qquad E(X + Y) = E(X) + E(Y)$$</div>
+  <p>כלומר התוחלת <strong>לינארית</strong>: קבועים נכנסים ויוצאים ממנה בחופשיות, ותוחלת של סכום היא סכום התוחלות, גם כשהמשתנים תלויים.</p>
+</section>
+
+<!-- ============ 4 ============ -->
+<section class="chapter" id="se">
+  <p class="chapter-num">פרק 3</p>
+  <h2>טעות תקן</h2>
+  <div class="def">
+    <p><strong>טעות תקן</strong> (Standard Error) היא <strong>סטיית התקן של אומד</strong>: כמה האומדנים שהוא נותן "קופצים" ממדגם למדגם. האומד הוא משתנה מקרי, ולכן יש לו סטיית תקן.</p>
+  </div>
+  <p>ההבדל מסטיית התקן הרגילה הוא <em>של מה</em> מודדים פיזור:</p>
+  <ul>
+    <li>\(\sigma\) היא סטיית התקן של <strong>תצפית בודדת</strong>, למשל ציון של סטודנט אחד.</li>
+    <li>\(\frac{\sigma}{\sqrt n}\) היא סטיית התקן של <strong>הממוצע</strong> \(\bar X\). זו טעות התקן של הממוצע. כלומר, אם ניקח כל פעם מדגם אחר ונחשב לו ממוצע, כמה הממוצע הזה יזוז סביב הפרמטר (התוחלת של האוכלוסייה).</li>
+  </ul>
+
+  <h3>למה הממוצע מתפזר פחות</h3>
+  <p>ציון של סטודנט בודד יכול לקפוץ הרבה. ממוצע של 50 סטודנטים יציב הרבה יותר, כי ציונים גבוהים ונמוכים מקזזים זה את זה.</p>
+  <p>חשוב לדייק מה זז כאן. נניח שקובעים גודל מדגם \(n\), ודוגמים <strong>הרבה מדגמים שונים</strong>, כל אחד בגודל \(n\). כל מדגם נותן ממוצע אחר, והממוצעים האלה מתפזרים סביב \(\mu\). טעות התקן מודדת את <strong>הפיזור הזה, בין המדגמים</strong>. אם קובעים \(n\) גדול יותר, הממוצעים של המדגמים השונים מתפזרים פחות סביב \(\mu\). לכן ככל ש-\(n\) גדל, טעות התקן <strong>שואפת</strong> ל-0: היא הולכת וקטנה, אבל אף פעם לא מגיעה ל-0 בדיוק.</p>
+  <div class="table-wrap"><table class="t" style="max-width:380px">
+    <tr><th class="n">גודל מדגם \(n\)</th><th class="n">\(\frac{12}{\sqrt n}\)</th></tr>
+    <tr><td class="n">1</td><td class="n">12</td></tr>
+    <tr><td class="n">4</td><td class="n">6</td></tr>
+    <tr><td class="n">36</td><td class="n">2</td></tr>
+    <tr><td class="n">144</td><td class="n">1</td></tr>
+    <tr><td class="n">14,400</td><td class="n">0.1</td></tr>
+  </table></div>
+
+  <figure class="lab" id="w-spread">
+    <p class="lab-title">ממוצעים של הרבה מדגמים</p>
+    <p class="lab-hint">כל נקודה היא <strong>ממוצע של מדגם אחר</strong>, כלומר אומדן אחד. הקו העבה הוא הפרמטר. הזיזו את \(n\) וראו: כשהמדגמים גדולים, הממוצעים מצטופפים סביב הפרמטר, וכשהם קטנים, הם מתפזרים. הרצועה הכתומה היא טווח של טעות תקן אחת לכל צד.</p>
+    <div data-w="spread"></div>
+  </figure>
+
+  <h3>דוגמה: בקבוקים</h3>
+  <p>מכונה ממלאת בקבוקים. כמות המילוי בבקבוק היא בתוחלת 500 מ"ל, עם סטיית תקן 12 מ"ל. דוגמים 36 בקבוקים ומחשבים ממוצע. <strong>מה הסיכוי שטעות האמידה לא תעלה על 3 מ"ל?</strong> במילים פשוטות: מה הסיכוי ש-\(\bar X\) ייפול בין 497 ל-503?</p>
+
+  <div class="steps">
+    <div class="step"><p class="step-h">שלב 1: איך מתפלג \(\bar X\)</p>
+      <p>המדגם גדול מ-30, ולכן לפי משפט הגבול המרכזי \(\bar X\) מתפלג בקירוב נורמלית, עם מרכז \(\mu = 500\) ופיזור \(\frac{12}{\sqrt{36}} = 2\).</p></div>
+    <div class="step"><p class="step-h">שלב 2: הבעיה</p>
+      <p>יש לנו נורמלית עם מרכז 500 ופיזור 2, אבל טבלה יש רק לנורמלית <strong>סטנדרטית</strong> \(Z\), עם מרכז 0 ופיזור 1. צריך "לתרגם" (לתקנן).</p></div>
+    <div class="step"><p class="step-h">שלב 3: התרגום הוא המרת יחידות</p>
+      <p><strong>מחסירים \(\mu\)</strong>: המרכז זז ל-0. הביטוי \(\bar X - \mu\) הוא "כמה אנחנו רחוקים מהפרמטר שאנחנו מנסים לאמוד". שימו לב שזה <strong>לא מספר</strong>: \(\mu\) קבוע, אבל \(\bar X\) משתנה מקרי, וההפרש שלהם עדיין משתנה מקרי, פשוט מוזז.</p>
+      <p><strong>מחלקים בטעות התקן</strong>: במקום למדוד את הסטייה במ"ל, מודדים אותה <strong>בטעויות תקן</strong>. סטייה של 3 מ"ל היא \(\frac{3}{2} = 1.5\) טעויות תקן.</p>
+      <div class="math-block">$$P(|\bar X - \mu| \le 3) = P\left(\frac{-3}{2} \le \frac{\bar X - \mu}{\sigma/\sqrt n} \le \frac{3}{2}\right) = P(-1.5 \le Z \le 1.5)$$</div>
+      <p class="note">מותר לבצע את שתי הפעולות על שלושת האגפים בבת אחת: חיסור שומר על כיוון אי-השוויון, וגם חילוק במספר חיובי.</p></div>
+    <div class="step"><p class="step-h">שלב 4: מהטבלה</p>
+      <p>ההסתברות להיות בין שני ערכים היא השטח שמשמאל לימני פחות השטח שמשמאל לשמאלי:</p>
+      <div class="math-block">$$P(-1.5 \le Z \le 1.5) = \Phi(1.5) - \Phi(-1.5) = \Phi(1.5) - \big(1 - \Phi(1.5)\big) = 0.9332 - 0.0668 = 0.8664$$</div></div>
+  </div>
+
+  <p>אותו דבר בניסוח אחר: \(P(497 \le \bar X \le 503)\), ומתקננים כל קצה בנפרד: \(\frac{497-500}{2} = -1.5\) ו-\(\frac{503-500}{2} = 1.5\). זו אותה תוצאה. ההבדל הוא רק אם מחסירים את \(\mu\) כבר בניסוח השאלה או בתקנון.</p>
+
+  <div class="callout">
+    <p class="callout-h">השורה התחתונה</p>
+    <p>בכ-87% מהמדגמים של 36 בקבוקים, הממוצע ייפול במרחק של עד 3 מ"ל מהתוחלת האמיתית, 500. זה בדיוק מה שטעות התקן מודדת: הממוצעים של מדגמים שונים מתפזרים סביב הפרמטר עם סטיית תקן 2 מ"ל, ו-3 מ"ל הם 1.5 "צעדים" כאלה. אילו דגמנו 144 בקבוקים, טעות התקן הייתה 1, אותם 3 מ"ל היו 3 טעויות תקן, והסיכוי היה עולה ל-99.7%.</p>
+  </div>
+
+  <figure class="lab" id="w-se">
+    <p class="lab-title">דוגמת הבקבוקים, עם \(n\) ו-\(d\) שאתם בוחרים</p>
+    <p class="lab-hint">אותה שאלה בדיוק: מה הסיכוי שממוצע המדגם ייפול במרחק של עד \(d\) מ"ל מ-500? <strong>הפעמון</strong> מראה איך מתפזרים ממוצעים של מדגמים בגודל \(n\). <strong>השטח הכחול</strong> הוא התשובה. <strong>הסרגל התחתון</strong> הוא אותו ציר בדיוק, אבל ביחידות של טעויות תקן, וכך רואים איך \(d\) הופך ל-\(z\). נסו: השאירו \(d = 3\) והגדילו את \(n\). הפעמון מצטופף, אותם 3 מ"ל שווים יותר טעויות תקן, והסיכוי עולה.</p>
+    <div data-w="se"></div>
+  </figure>
+</section>
+
+<!-- ============ 5 ============ -->
+<section class="chapter" id="unbiased">
+  <p class="chapter-num">פרק 4</p>
+  <h2>אומד חסר הטיה</h2>
+  <p>לכל פרמטר יש אינסוף אומדים אפשריים. כדי לבחור ביניהם צריך לדעת לשפוט אומד, וזה בדיוק מה שמותר לעשות עם תוכנית. התכונה הראשונה שנבדוק היא אם התוכנית <strong>מכוונת למקום הנכון</strong>.</p>
+
+  <div class="def">
+    <p><strong>אומד חסר הטיה</strong> (א.ח.ה) הוא אומד שהתוחלת שלו שווה לפרמטר שהוא מנסה לאמוד:</p>
+    <div class="math-block">$$E(\hat\theta) = \theta$$</div>
+    <p>השוויון צריך להתקיים <strong>לכל ערך אפשרי של \(\theta\)</strong>, לא רק לערך מסוים. ההפרש בין התוחלת לפרמטר נקרא <strong>הטיה</strong>: \(\text{Bias}(\hat\theta) = E(\hat\theta) - \theta\). אומד חסר הטיה הוא אומד שההטיה שלו 0.</p>
+  </div>
+  <p>במילים: אם נחזור על הדגימה הרבה מאוד פעמים, באותו גודל מדגם, ונחשב בכל פעם את האומדן, הממוצע של כל האומדנים יהיה בדיוק הפרמטר. מדגם בודד יכול לתת 74 ומדגם אחר 70.5, אבל בממוצע התוכנית פוגעת במטרה.</p>
+
+  <h3>הטיה ושונות: ארבע מטרות</h3>
+  <p>הכי קל לחשוב על אומד כעל קשת שיורה חיצים. כל חץ הוא אומדן ממדגם אחר, ומרכז המטרה הוא הפרמטר. יש שתי שאלות נפרדות:</p>
+  <ul>
+    <li><strong>הטיה:</strong> האם מרכז החיצים נמצא על מרכז המטרה?</li>
+    <li><strong>שונות:</strong> כמה החיצים מפוזרים זה מזה?</li>
+  </ul>
+  <figure class="lab" id="w-dart4">
+    <p class="lab-title">ארבעה קשתים</p>
+    <p class="lab-hint">הצלב השחור הוא הפרמטר. העיגול הכתום הוא מרכז החיצים, כלומר התוחלת של האומד. לחצו "ירי חדש" כדי לראות שהתמונה לא תלויה במזל של ירי אחד.</p>
+    <div data-w="dart4"></div>
+  </figure>
+  <p>חוסר הטיה מדבר רק על <strong>השורה העליונה</strong>: מרכז החיצים על המטרה. הוא לא אומר כלום על הפיזור. גם הקשת השמאלי העליון, שמפזר חיצים על כל המטרה, חסר הטיה. לכן חוסר הטיה הוא רק הדרישה הראשונה, ובפרק 5 נוסיף את השונות.</p>
+
+  <details class="ext">
+    <summary><span class="ext-badge">הרחבה</span> הטריידאוף בין הטיה לשונות, ו-MSE: לא תמיד חסר ההטיה הוא הטוב ביותר</summary>
+    <div class="ext-body">
+      <p>מה עדיף: קשת שמרכז החיצים שלו בדיוק במטרה אבל הם מפוזרים על כל הלוח, או קשת שמחטיא קצת הצידה אבל כל החיצים שלו צמודים? כדי להכריע צריך מדד אחד שמשלב את שני הדברים. זה ה-<strong>MSE</strong> (Mean Squared Error), התוחלת של ריבוע המרחק מהמטרה:</p>
+      <div class="math-block">$$MSE(\hat\theta) = E\left[(\hat\theta - \theta)^2\right] = \mathrm{Var}(\hat\theta) + \text{Bias}^2$$</div>
+      <p>הפירוק אומר שהטעות הכוללת נובעת משני מקורות: כמה התוכנית מתפזרת, וכמה היא מכוונת למקום הלא נכון. לאומד חסר הטיה ה-MSE שווה פשוט לשונות.</p>
+
+      <figure class="lab" id="w-dart">
+        <p class="lab-title">בנו קשת בעצמכם</p>
+        <p class="lab-hint">הזיזו את ההטיה ואת הפיזור. הפס שמתחת מראה איך ה-MSE מתחלק בין שונות לבין הטיה בריבוע. נסו למצוא קשת מוטה שה-MSE שלו קטן מזה של קשת חסר הטיה עם פיזור 1.5.</p>
+        <div data-w="dart"></div>
+      </figure>
+
+      <h4>דוגמה שמפתיעה</h4>
+      <p>בנתונים נורמליים יש שני אומדים טבעיים לשונות: \(S^2\), שמחלק ב-\(n-1\) וחסר הטיה, ו-\(\hat\sigma^2\), שמחלק ב-\(n\) ומוטה כלפי מטה. עם \(n = 5\) ו-\(\sigma^2 = 1\):</p>
+      <div class="table-wrap"><table class="t" style="max-width:520px">
+        <tr><th>אומד</th><th class="n">הטיה</th><th class="n">MSE</th></tr>
+        <tr><td>\(S^2\) (חלוקה ב-\(n-1\))</td><td class="n">0</td><td class="n">0.50</td></tr>
+        <tr><td>\(\hat\sigma^2\) (חלוקה ב-\(n\))</td><td class="n">−0.2</td><td class="n">0.36</td></tr>
+        <tr><td>חלוקה ב-\(n+1\)</td><td class="n">−0.33</td><td class="n">0.33</td></tr>
+      </table></div>
+      <p>האומד המוטה מנצח: הוא מוותר על קצת דיוק במרכז, ומרוויח הרבה בפיזור. זה הטריידאוף: <strong>מחיר קטן בהטיה יכול לקנות ירידה גדולה בשונות</strong>.</p>
+      <p>המקרה הקיצוני הוא אומד קבוע, למשל "תמיד 70", בלי להסתכל בנתונים. השונות שלו 0, אבל ההטיה היא \(70 - \mu\). אם \(\mu\) במקרה קרוב ל-70 הוא מצוין, ואם לא, הוא גרוע. זה מראה למה אי אפשר להסתכל רק על אחד משני הרכיבים. תרגיל 3 בפרק התרגילים מראה עוד דוגמה כזו.</p>
+      <p class="note">אותו רעיון בדיוק נמצא בלב למידת מכונה: רגולריזציה (Ridge, Lasso) מוסיפה הטיה בכוונה כדי להקטין שונות, ומודל "מורכב מדי" הוא מודל עם הטיה נמוכה ושונות גבוהה.</p>
+    </div>
+  </details>
+
+  <h3>ההוכחה ש-\(\bar X\) חסר הטיה</h3>
+  <div class="math-block">$$E(\bar X) = E\left(\frac{1}{n}\sum_{i=1}^n X_i\right) = \frac1n\sum_{i=1}^n E(X_i) = \frac1n\sum_{i=1}^n \mu = \frac1n \cdot n\mu = \mu$$</div>
+  <p>שני הצעדים: מוציאים את הקבוע \(\frac1n\) מהתוחלת ומפצלים את התוחלת של הסכום (לינאריות), ואז משתמשים בכך שלכל תצפית תוחלת \(\mu\).</p>
+
+  <h3>כלל אצבע: מה שבנוי על ממוצע, חסר הטיה</h3>
+  <p>ההוכחה למעלה השתמשה רק בלינאריות של התוחלת. לכן היא עובדת לכל אומד שהוא <strong>צירוף לינארי של התצפיות</strong>, כשהפרמטר הוא תוחלת או צירוף לינארי של תוחלות. כמובן שאפשר גם להוכיח כל אחד מהם בפני עצמו, באותה דרך:</p>
+  <div class="table-wrap"><table class="t">
+    <tr><th>פרמטר</th><th>אומד חסר הטיה</th><th>למה</th></tr>
+    <tr><td>תוחלת \(\mu\)</td><td class="n">\(\bar X\)</td><td>ממוצע של תצפיות שתוחלתן \(\mu\)</td></tr>
+    <tr><td>פרופורציה \(p\)</td><td class="n">\(\hat p = X/n\)</td><td>ממוצע של אפסים ואחדים (פרק 8)</td></tr>
+    <tr><td>הפרש תוחלות \(\mu_1 - \mu_2\)</td><td class="n">\(\bar X - \bar Y\)</td><td>הפרש של שני ממוצעים</td></tr>
+    <tr><td>הפרש פרופורציות \(p_1 - p_2\)</td><td class="n">\(\hat p_1 - \hat p_2\)</td><td>הפרש של שני ממוצעים</td></tr>
+    <tr><td>מספר ההצלחות הצפוי \(Np\)</td><td class="n">\(N\hat p\)</td><td>ממוצע כפול קבוע</td></tr>
+    <tr><td>\(\lambda\) בפואסון</td><td class="n">\(\bar X\)</td><td>\(\lambda\) היא התוחלת</td></tr>
+  </table></div>
+  <p>ברגע שמופיעה פעולה <strong>לא לינארית</strong>, כמו ריבוע, שורש, מקסימום או \(\frac1x\), הכלל כבר לא מובטח וצריך לבדוק. הדוגמה החשובה ביותר היא השונות.</p>
+
+  <h3>למה \(S^2\) מחלק ב-\(n-1\)</h3>
+
+  <h4>1. הבעיה</h4>
+  <p>השונות באוכלוסייה מוגדרת כתוחלת של ריבוע המרחק מהתוחלת:</p>
+  <div class="math-block">$$\sigma^2 = E\left[(X-\mu)^2\right]$$</div>
+  <p>אילו ידענו את \(\mu\), האומד הטבעי היה ממוצע ריבועי הסטיות ממנה. אבל \(\mu\) לא ידוע, ולכן במדגם מודדים סטיות מהממוצע המדגמי \(\bar X\) במקומה. השאלה היא אם אפשר פשוט לחשב:</p>
+  <div class="math-block">$$\frac{1}{n}\sum_{i=1}^{n}(X_i-\bar X)^2$$</div>
+  <p>התשובה היא לא, אם רוצים אומד חסר הטיה.</p>
+
+  <h4>2. הממוצע המדגמי "צמוד" לנתונים</h4>
+  <p>הבעיה היא שהחישוב הזה יוצא קטן מדי. הסיבה: אנחנו משתמשים <strong>באותם נתונים</strong> גם כדי לקבוע את נקודת המרכז, \(\bar X\), וגם כדי למדוד את המרחקים ממנה. לכן המרכז "מותאם" לנתונים. \(\mu\), לעומת זאת, היא נקודת ייחוס חיצונית שלא יודעת כלום על המדגם שיצא.</p>
+  <p>בהרצאה 1 ראיתם שהממוצע הוא <strong>הנקודה שממזערת את סכום ריבועי הסטיות</strong>. כלומר אין שום נקודה, גם לא \(\mu\), שסכום ריבועי הסטיות ממנה קטן יותר מאשר מ-\(\bar x\):</p>
+  <div class="math-block">$$\sum_{i=1}^{n}(x_i-\bar x)^2 \le \sum_{i=1}^{n}(x_i-\mu)^2$$</div>
+  <p><strong>דוגמה:</strong> \(\mu = 10\), ובמדגם של שתי תצפיות יצא 12 ו-14, ולכן \(\bar x = 13\).</p>
+  <ul>
+    <li>סטיות מ-\(\mu\): \((12-10)^2 + (14-10)^2 = 4 + 16 = 20\).</li>
+    <li>סטיות מ-\(\bar x\): \((12-13)^2 + (14-13)^2 = 1 + 1 = 2\).</li>
+  </ul>
+  <p>הסטיות מ-\(\bar x\) קטנות יותר, ולכן אם נחלק ב-\(n\), בממוצע נקבל אומדן קטן מדי לשונות האמיתית.</p>
+  <p>הדוגמה מראה את <strong>כיוון</strong> ההטיה, אבל עוד לא <strong>כמה</strong> צריך לתקן. לזה מוקדש השלב הבא.</p>
+
+  <h4>3. כמה בדיוק הולך לאיבוד</h4>
+  <p>הרעיון: המרחק של כל תצפית מ-\(\mu\) מתפצל לשני חלקים. מהתצפית עד \(\bar X\), ומ-\(\bar X\) עד \(\mu\):</p>
+  <div class="math-block">$$X_i - \mu = \underbrace{(X_i - \bar X)}_{\text{1}} + \underbrace{(\bar X - \mu)}_{\text{2}}$$</div>
+  <ol>
+    <li>המרחק של התצפית מהממוצע המדגמי. זה מה שהאומד שלנו מודד.</li>
+    <li>המרחק של הממוצע המדגמי מהתוחלת האמיתית. החלק הזה <strong>זהה לכל התצפיות</strong>.</li>
+  </ol>
+
+  <figure class="lab" id="w-decomp">
+    <p class="lab-title">המרחק מתפצל לשניים</p>
+    <p class="lab-hint">מדגם של ארבע תצפיות: 8, 12, 13, 15, כשהתוחלת האמיתית היא \(\mu = 10\).</p>
+    <div data-w="decomp"></div>
+  </figure>
+
+  <p>כשמעלים בריבוע וסוכמים על כל התצפיות, מתקבלת זהות:</p>
+  <div class="math-block">$$\sum_{i=1}^{n}(X_i-\mu)^2 = \sum_{i=1}^{n}(X_i-\bar X)^2 + n(\bar X-\mu)^2$$</div>
+  <p>במילים: הפיזור הכולל סביב \(\mu\) = הפיזור סביב \(\bar X\) + המרחק של \(\bar X\) מ-\(\mu\), בריבוע, \(n\) פעמים (פעם לכל תצפית). באנימציה: \(42 = 26 + 16\).</p>
+  <p class="note">שימו לב: הזהות נכונה רק לסכום על כל התצפיות, לא לכל תצפית לבד. עבור התצפית 8: \((8-10)^2 = 4\), אבל \((8-12)^2 + (12-10)^2 = 20\). בסכום ההפרשים האלה מתקזזים.</p>
+  <details class="reveal"><summary>למה בסכום זה מתקזז?</summary><div class="reveal-body">
+    <p>מעלים בריבוע את הפירוק של כל תצפית:</p>
+    <div class="math-block">$$(X_i-\mu)^2 = (X_i-\bar X)^2 + 2(X_i-\bar X)(\bar X-\mu) + (\bar X-\mu)^2$$</div>
+    <p>וסוכמים על כל \(i\). האיבר האמצעי הוא:</p>
+    <div class="math-block">$$2(\bar X-\mu)\sum_{i=1}^{n}(X_i-\bar X) = 2(\bar X-\mu)\cdot 0 = 0$$</div>
+    <p>הוא מתאפס כי <strong>סכום הסטיות מהממוצע הוא תמיד 0</strong>, עובדה שראיתם בהרצאה 1. נשארים רק שני האיברים האחרים, והאיבר האחרון מופיע \(n\) פעמים.</p>
+  </div></details>
+
+  <p><strong>עכשיו לוקחים תוחלת משני האגפים.</strong></p>
+  <p><strong>האגף השמאלי:</strong> כל איבר \((X_i - \mu)^2\) הוא בתוחלת בדיוק \(\sigma^2\), השונות עצמה, כי זו ההגדרה שלה: \(\sigma^2 = E[(X-\mu)^2]\). יש \(n\) איברים:</p>
+  <div class="math-block">$$E\left[\sum_{i=1}^{n}(X_i-\mu)^2\right] = {\color{#9b5de5}n\sigma^2}$$</div>
+  <p><strong>החלק השני באגף הימני:</strong> \(E[(\bar X-\mu)^2]\) היא התוחלת של ריבוע המרחק בין הממוצע לתוחלת (הפרמטר). לפי הגדרת השונות, זו בדיוק השונות של \(\bar X\), כלומר טעות התקן בריבוע: \(\frac{\sigma^2}{n}\) (פרק 3). לכן:</p>
+  <div class="math-block">$$E\left[n(\bar X-\mu)^2\right] = n\cdot\frac{\sigma^2}{n} = {\color{#2f7ed8}\sigma^2}$$</div>
+  <p><strong>מציבים בזהות</strong> (הצבעים מראים מאיפה הגיע כל חלק):</p>
+  <div class="math-block">$${\color{#9b5de5}n\sigma^2} = E\left[\sum_{i=1}^{n}(X_i-\bar X)^2\right] + {\color{#2f7ed8}\sigma^2}$$</div>
+  <p>ומכאן:</p>
+  <div class="math-block">$$E\left[\sum_{i=1}^{n}(X_i-\bar X)^2\right] = (n-1)\sigma^2$$</div>
+  <p>זו התשובה ל"כמה אנחנו אומדים בחסר": כשמודדים מ-\(\bar X\) במקום מ-\(\mu\), הולכת לאיבוד <strong>בדיוק \(\sigma^2\) אחת</strong>.</p>
+  <p>לאן היא הלכה? לחלק השני, \(n(\bar X-\mu)^2\), החלק הכחול באיור. הוא מודד כמה \(\bar X\) עצמו רחוק מ-\(\mu\). מהפיזור הכולל \(n\sigma^2\), בממוצע \(\sigma^2\) אחת "יושבת" בחלק הזה, והאומד שלנו לא רואה אותה, כי הוא מודד רק את הסטיות מ-\(\bar X\) (החלק הכתום).</p>
+
+  <details class="reveal"><summary>דרך נוספת: ההוכחה מההרצאה</summary><div class="reveal-body">
+    <p><strong>צעד 1: שתי עובדות עזר.</strong></p>
+    <p>בצעד 3 נצטרך לדעת שני דברים: \(E(X_i^2)\) ו-\(E(\bar X^2)\). נמצא אותם עכשיו.</p>
+    <p>מתחילים מנוסחת השונות, שנכונה לכל משתנה מקרי \(Y\), ומעבירים אגף:</p>
+    <div class="math-block">$$\mathrm{Var}(Y) = E(Y^2) - [E(Y)]^2 \quad\Longrightarrow\quad E(Y^2) = \mathrm{Var}(Y) + [E(Y)]^2$$</div>
+    <p>כלומר: התוחלת של הריבוע = השונות + ריבוע התוחלת. עכשיו מציבים בנוסחה הזו שני משתנים שונים.</p>
+    <p><strong>הצבה ראשונה: \(Y = X_i\), תצפית בודדת.</strong> לתצפית בודדת השונות היא \(\sigma^2\) והתוחלת היא \(\mu\) (פרק 1). מציבים:</p>
+    <div class="math-block">$$E(X_i^2) = \underbrace{\mathrm{Var}(X_i)}_{\sigma^2} + \underbrace{[E(X_i)]^2}_{\mu^2} = \sigma^2 + \mu^2$$</div>
+    <p><strong>הצבה שנייה: \(Y = \bar X\), הממוצע.</strong> לממוצע השונות היא \(\frac{\sigma^2}{n}\) (פרק 3) והתוחלת היא \(\mu\) (הוא חסר הטיה). מציבים:</p>
+    <div class="math-block">$$E(\bar X^2) = \underbrace{\mathrm{Var}(\bar X)}_{\sigma^2/n} + \underbrace{[E(\bar X)]^2}_{\mu^2} = \frac{\sigma^2}{n} + \mu^2$$</div>
+
+    <p><strong>צעד 2: אלגברה, עוד בלי תוחלת.</strong></p>
+    <p>פותחים את הריבוע בכל איבר:</p>
+    <div class="math-block">$$(X_i - \bar X)^2 = X_i^2 - 2X_i\bar X + \bar X^2$$</div>
+    <p>סוכמים על כל \(i\). \(\bar X\) זהה בכל האיברים, ולכן יוצא מהסכום:</p>
+    <div class="math-block">$$\sum (X_i - \bar X)^2 = \sum X_i^2 - 2\bar X\sum X_i + n\bar X^2$$</div>
+    <p>מהגדרת הממוצע:</p>
+    <div class="math-block">$$\sum X_i = n\bar X$$</div>
+    <p>מציבים באיבר האמצעי ומקבלים:</p>
+    <div class="math-block">$$\sum (X_i - \bar X)^2 = \sum X_i^2 - 2n\bar X^2 + n\bar X^2 = \sum X_i^2 - n\bar X^2$$</div>
+
+    <p><strong>צעד 3: לוקחים תוחלת ומציבים את צעד 1.</strong></p>
+    <div class="math-block">$$E\left[\sum (X_i - \bar X)^2\right] = \sum E(X_i^2) - n\,E(\bar X^2)$$</div>
+    <div class="math-block">$$= n(\sigma^2 + \mu^2) - n\left(\frac{\sigma^2}{n} + \mu^2\right)$$</div>
+    <div class="math-block">$$= n\sigma^2 + n\mu^2 - \sigma^2 - n\mu^2$$</div>
+    <div class="math-block">$$= (n-1)\sigma^2$$</div>
+    <p>ה-\(n\mu^2\) מתקזזים, ונשאר \(-\sigma^2\) אחד. זה ה"פחת" שנובע מכך שמודדים מ-\(\bar X\) ולא מ-\(\mu\).</p>
+  </div></details>
+
+  <h4>4. התיקון</h4>
+  <p>אם התוחלת של הסכום היא \((n-1)\sigma^2\), מחלקים ב-\(n-1\) ומקבלים אומד שהתוחלת שלו בדיוק \(\sigma^2\). כפי שנראה בפרק 6, זו בדיוק הדרך להפוך אומד מוטה לחסר הטיה: מבטלים את מה שהאומד עשה לפרמטר.</p>
+  <div class="math-block">$$S^2 = \frac{1}{n-1}\sum_{i=1}^n (X_i - \bar X)^2 \qquad\Longrightarrow\qquad E(S^2) = \sigma^2$$</div>
+  <p>לעומת זאת, חלוקה ב-\(n\) נותנת אומד מוטה כלפי מטה:</p>
+  <div class="math-block">$$\hat\sigma^2 = \frac1n\sum_{i=1}^n (X_i-\bar X)^2 \qquad\Longrightarrow\qquad E(\hat\sigma^2) = \frac{n-1}{n}\sigma^2$$</div>
+  <p>לתיקון הזה קוראים <strong>תיקון בסל</strong> (Bessel's correction).</p>
+  <p class="note">המקרה הקיצוני: \(n = 1\). אז \(\bar X = X_1\), הסטייה היא 0, וחלוקה ב-\(n\) נותנת תמיד 0, לא משנה כמה האוכלוסייה מפוזרת.</p>
+
+  <h4>5. אינטואיציה נוספת: דרגות חופש</h4>
+  <p>נניח שיש מדגם של שלושה מספרים, והממוצע שלהם 10. אם שני הראשונים הם 8 ו-11, השלישי חייב להיות 11, כי הסכום חייב להיות 30.</p>
+  <ul>
+    <li>שני ערכים יכולים להשתנות בחופשיות.</li>
+    <li>הערך השלישי כבר מוכתב על ידי שני הראשונים והממוצע.</li>
+  </ul>
+  <p>כלומר יש 3 תצפיות, אבל רק 2 <strong>דרגות חופש</strong>. באופן כללי, אחרי שחישבנו את \(\bar X\) מהמדגם, נשארות \(n-1\) דרגות חופש.</p>
+  <p>שני דיוקים:</p>
+  <ul>
+    <li><strong>לא זורקים תצפית.</strong> כל \(n\) התצפיות משתתפות בחישוב. פשוט רק \(n-1\) מהן "חופשיות".</li>
+    <li><strong>זו אינטואיציה לזכירה, לא הוכחה.</strong> ההוכחה שצריך לחלק דווקא ב-\(n-1\) היא החישוב בשלב 3.</li>
+  </ul>
+
+  <div class="callout">
+    <p class="callout-h">חשוב לדייק</p>
+    <p>חלוקה ב-\(n-1\) לא אומרת שכל מדגם ספציפי ייתן שונות מדויקת יותר. היא אומרת ש<strong>לאורך הרבה מדגמים</strong>, ממוצע האומדנים יהיה בדיוק השונות האמיתית. זו בדיוק ההגדרה של חוסר הטיה.</p>
+  </div>
+
+  <figure class="lab" id="w-sim">
+    <p class="lab-title">סימולציה: \(n\) מול \(n-1\)</p>
+    <p class="lab-hint">כל מדגם נותן שני אומדנים לשונות. הקווים מראים את הממוצע המצטבר של כל אומד לאורך המדגמים. האומד שמחלק ב-\(n\) מתייצב מתחת לערך האמיתי, בדיוק על \(\frac{n-1}{n}\sigma^2\).</p>
+    <div data-w="sim"></div>
+  </figure>
+
+  <p><strong>שימו לב שזה מתיישב עם כלל הטרנספורמציה הלינארית</strong> שנראה בפרק 6: \(\hat\sigma^2 = \frac{n-1}{n}S^2\) הוא כפל של אומד חסר הטיה בקבוע. לכן הוא חסר הטיה, אבל ל-\(\frac{n-1}{n}\sigma^2\), ולא ל-\(\sigma^2\).</p>
+
+  <h3>אומדים חסרי הטיה מוכרים</h3>
+  <p>אם לא מבקשים להוכיח, מותר להשתמש בתוצאות האלה ישירות:</p>
+  <div class="math-block">$$E(\bar X) = \mu \qquad E(\hat p) = p \qquad E(S^2) = \sigma^2$$</div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section class="chapter" id="variance">
+  <p class="chapter-num">פרק 5</p>
+  <h2>שונות של אומד</h2>
+  <p>חוסר הטיה עונה על "האם התוכנית מכוונת נכון". השונות עונה על "כמה היא קופצת". כשיש <strong>שני אומדים חסרי הטיה לאותו פרמטר</strong>, מעדיפים את זה שהשונות שלו קטנה יותר: האומדנים שלו יתרכזו קרוב יותר לפרמטר.</p>
+
+  <h3>המתכון: שלושה שלבים</h3>
+  <div class="steps">
+    <div class="step"><p class="step-h">שלב 1: כתבו את האומד כצירוף של התצפיות</p>
+      <p>כלומר בצורה \(a_1X_1 + a_2X_2 + \dots + c\). למשל \(\frac{10 - 2X_1 - 3X_3}{35} = -\frac{2}{35}X_1 - \frac{3}{35}X_3 + \frac{10}{35}\).</p></div>
+    <div class="step"><p class="step-h">שלב 2: מצאו את השונות של תצפית אחת, \(\mathrm{Var}(X)\)</p>
+      <p>היא זהה לכל ה-\(X_i\). או שהיא נתונה, או שמחשבים: \(\mathrm{Var}(X) = E(X^2) - [E(X)]^2\).</p></div>
+    <div class="step"><p class="step-h">שלב 3: הפעילו את הכלל</p>
+      <div class="math-block">$$\mathrm{Var}(a_1X_1 + a_2X_2 + c) = a_1^2\,\mathrm{Var}(X) + a_2^2\,\mathrm{Var}(X)$$</div>
+      <ul>
+        <li>המקדמים עולים <strong>בריבוע</strong>, ולכן גם מינוס הופך לפלוס.</li>
+        <li>הקבוע \(c\) <strong>נעלם</strong>: הזזה לא משנה פיזור.</li>
+        <li>מותר לחבר שונויות כי התצפיות <strong>בלתי תלויות</strong>. אחרת צריך להוסיף \(2\,\mathrm{Cov}\).</li>
+      </ul></div>
+  </div>
+
+  <p>כך מקבלים גם את השונות של \(\bar X\): יש \(n\) תצפיות, לכל אחת מקדם \(\frac1n\), ולכן</p>
+  <div class="math-block">$$\mathrm{Var}(\bar X) = n \cdot \frac{1}{n^2}\sigma^2 = \frac{\sigma^2}{n}$$</div>
+
+  <div class="callout">
+    <p class="callout-h">גם בהפרש השונויות מתחברות</p>
+    <p>\(\mathrm{Var}(X - Y) = \mathrm{Var}(X) + (-1)^2\mathrm{Var}(Y) = \mathrm{Var}(X) + \mathrm{Var}(Y)\). הפרש של שני משתנים מקריים מתפזר <strong>יותר</strong> מכל אחד מהם, לא פחות.</p>
+  </div>
+
+  <h4>מתי צירוף של תצפיות חסר הטיה לתוחלת?</h4>
+  <p>קחו אומד שהוא צירוף של התצפיות, למשל \(T = a_1X_1 + a_2X_2 + a_3X_3\). לכל תצפית תוחלת \(\mu\), ולכן מלינאריות התוחלת:</p>
+  <div class="math-block">$$E(T) = a_1\mu + a_2\mu + a_3\mu = (a_1 + a_2 + a_3)\,\mu$$</div>
+  <p>כדי שזה ייצא בדיוק \(\mu\), סכום המקדמים חייב להיות 1. זה כלל שימושי לבדיקה מהירה:</p>
+  <ul>
+    <li>\(\frac{X_1 + X_2 + X_3}{3}\): המקדמים \(\frac13 + \frac13 + \frac13 = 1\), ולכן חסר הטיה.</li>
+    <li>\(\frac{X_1 + X_2}{3}\): המקדמים \(\frac13 + \frac13 = \frac23\), ולכן מוטה. התוחלת שלו היא \(\frac23\mu\).</li>
+  </ul>
+
+  <figure class="lab" id="w-varcalc">
+    <p class="lab-title">מחשבון: שני אומדים לתוחלת \(\mu\)</p>
+    <p class="lab-hint">כל אומד הוא צירוף \(a_1X_1 + a_2X_2 + a_3X_3 + a_4X_4\). המחשבון בודק אם הוא חסר הטיה ל-\(\mu\), לפי הכלל שסכום המקדמים צריך להיות 1, ומחשב את השונות שלו ביחידות של \(\sigma^2\). אפשר להקליד שברים, למשל 1/3.</p>
+    <div data-w="varcalc"></div>
+  </figure>
+</section>
+
+<!-- ============ 7 ============ -->
+<section class="chapter" id="reverse">
+  <p class="chapter-num">פרק 6</p>
+  <h2>מאומד מוטה לחסר הטיה: הנדסה לאחור</h2>
+  <p>אם אומד יצא מוטה, לא זורקים אותו. התוחלת שלו מגלה בדיוק <strong>בכמה האומד פספס את הפרמטר (כמה הוא מוטה)</strong>, ואז אפשר לתקן את זה. זו הנדסה לאחור: מסתכלים על מה שקיבלנו, ושואלים אילו פעולות צריך לעשות עליו כדי לחזור ל-\(\theta\) עצמו.</p>
+
+  <h3>הדוגמה מההרצאה</h3>
+  <p>נתון משתנה מקרי \(X\) שההתפלגות שלו תלויה בפרמטר \(\theta\):</p>
+  <div class="table-wrap"><table class="t" style="max-width:420px">
+    <tr><th class="n">\(x\)</th><th class="n">0</th><th class="n">1</th><th class="n">2</th></tr>
+    <tr><td class="n">\(P(X=x)\)</td><td class="n">\(2\theta\)</td><td class="n">\(3\theta\)</td><td class="n">\(1-5\theta\)</td></tr>
+  </table></div>
+
+  <h4>א. האם \(\hat\theta_1 = X\) חסר הטיה ל-\(\theta\)?</h4>
+  <div class="math-block">$$E(\hat\theta_1) = E(X) = 0\cdot2\theta + 1\cdot3\theta + 2(1-5\theta) = 2 - 7\theta \ne \theta$$</div>
+  <p>האומד מוטה. אבל עכשיו יודעים בדיוק מה הוא עשה ל-\(\theta\): <strong>כפל ב-\(-7\), ואחר כך הוסיף 2</strong>.</p>
+
+  <h3>ההנדסה לאחור</h3>
+  <p>כדי לחזור ל-\(\theta\) מבטלים את הפעולות, כל אחת בפעולה ההפוכה לה, <strong>בסדר הפוך</strong>. כמו לצאת מהבית: מי שנעל את הדלת אחרי שסגר אותה, צריך קודם לפתוח את המנעול ורק אחר כך את הדלת.</p>
+  <div class="table-wrap"><table class="t" style="max-width:520px">
+    <tr><th>מה האומד עשה</th><th>הפעולה ההפוכה</th></tr>
+    <tr><td>הוסיף קבוע \(a\)</td><td>מחסירים \(a\)</td></tr>
+    <tr><td>החסיר קבוע \(a\)</td><td>מוסיפים \(a\)</td></tr>
+    <tr><td>כפל בקבוע \(b\)</td><td>מחלקים ב-\(b\)</td></tr>
+    <tr><td>חילק בקבוע \(b\)</td><td>כופלים ב-\(b\)</td></tr>
+  </table></div>
+  <p>יש שתי דרכים לכתוב את המהלך. הן מגיעות לאותו אומד, ובמבחן אפשר לבחור באיזו מהן להשתמש.</p>
+
+  <h4>שיטה 1: מניפולציה על התוחלת (הנדסה לאחור)</h4>
+  <p>עובדים ישירות על האומד. האומד כפל ב-\(-7\) ואז הוסיף 2, ולכן קודם <strong>מחסירים 2</strong>, ואז <strong>מחלקים ב-\(-7\)</strong>:</p>
+  <div class="math-block">$$\hat\theta_2 = \frac{\hat\theta_1 - 2}{-7} = \frac{X - 2}{-7} = \frac{2 - X}{7}$$</div>
+  <p><strong>תמיד בודקים:</strong></p>
+  <div class="math-block">$$E(\hat\theta_2) = \frac{2 - E(X)}{7} = \frac{2 - (2-7\theta)}{7} = \frac{7\theta}{7} = \theta \ \checkmark$$</div>
+
+  <h4>שיטה 2: בידוד הפרמטר</h4>
+  <p>מתחילים מהמשוואה של התוחלת ופותרים אותה עבור \(\theta\), כמו משוואה רגילה. בכל שלב מתייחסים ל-\(E(X)\) כאל מספר:</p>
+  <div class="math-block">$$E(X) = 2 - 7\theta \quad\Rightarrow\quad E(X) - 2 = -7\theta \quad\Rightarrow\quad \frac{E(X) - 2}{-7} = \theta$$</div>
+  <p>בצעד האחרון "מכניסים" את כל הפעולות לתוך ה-\(E\). זה מותר כי התוחלת לינארית: \(aE(Y) + b = E(aY + b)\).</p>
+  <div class="math-block">$$E\left(\frac{X - 2}{-7}\right) = \theta$$</div>
+  <p>עכשיו כתוב "התוחלת של משהו שווה ל-\(\theta\)", וזו בדיוק ההגדרה של אומד חסר הטיה. ה"משהו" שבתוך ה-\(E\) הוא האומד: \(\hat\theta_2 = \frac{X-2}{-7}\), אותו אומד כמו בשיטה 1.</p>
+
+  <figure class="lab" id="w-reverse">
+    <p class="lab-title">מכונת ההנדסה לאחור</p>
+    <p class="lab-hint">הזינו את התוחלת של האומד בצורה \(E(T) = a + b\theta\). המכונה מבטלת את הפעולות בסדר הפוך ובונה אומד חסר הטיה. אפשר להקליד שברים, למשל 10/3.</p>
+    <div data-w="reverse"></div>
+  </figure>
+
+  <h3>כלל הטרנספורמציה הלינארית</h3>
+  <p>כל המהלך הזה הוא מקרה פרטי של כלל אחד. נניח שיש לנו אומד חסר הטיה:</p>
+  <div class="math-block">$$E(\hat\theta) = \theta$$</div>
+  <p>אז אם נעשה לאומד פעולה לינארית, כפל בקבוע \(a\) והוספת קבוע \(b\), נקבל אומד חסר הטיה לאותה פעולה על הפרמטר:</p>
+  <div class="math-block">$$E(a\hat\theta + b) = aE(\hat\theta) + b = a\theta + b$$</div>
+  <p><strong>במילים: מה שעושים לפרמטר, עושים גם לאומד.</strong></p>
+  <p>דוגמה: \(\bar X\) חסר הטיה ל-\(\mu\). לכן \(2\bar X + 5\) חסר הטיה ל-\(2\mu + 5\).</p>
+
+  <h4>זהירות: זה עובד רק בפעולות לינאריות</h4>
+  <p>התוחלת "עוברת" דרך כפל בקבוע וחיבור קבוע, אבל לא דרך ריבוע, שורש או \(\frac1x\):</p>
+  <div class="math-block">$$E(\hat\theta^2) \ne [E(\hat\theta)]^2 \qquad\qquad E(\sqrt{\hat\theta}) \ne \sqrt{E(\hat\theta)}$$</div>
+  <p>לכן אם \(\hat\theta\) חסר הטיה ל-\(\theta\), אי אפשר להסיק ש-\(\hat\theta^2\) חסר הטיה ל-\(\theta^2\).</p>
+</section>
+
+<!-- ============ 8 ============ -->
+<section class="chapter" id="consist">
+  <p class="chapter-num">פרק 7</p>
+  <h2>אומד עקיב</h2>
+  <div class="def">
+    <p><strong>אומד עקיב</strong> הוא אומד שמתקרב לפרמטר ככל שגודל המדגם גדל: כש-\(n \to \infty\), \(\hat\theta \approx \theta\).</p>
+  </div>
+  <p><strong>איך בודקים שאומד עקיב?</strong> בקורס בודקים שני תנאים:</p>
+  <ol>
+    <li><strong>הוא חסר הטיה.</strong> כלומר האומדנים שלו מתרכזים סביב הפרמטר.</li>
+    <li><strong>השונות שלו שואפת ל-0 כש-\(n\) גדל.</strong> כלומר הפיזור סביב המרכז הולך ונעלם.</li>
+  </ol>
+  <p>אם המרכז נמצא על הפרמטר, והפיזור סביבו נעלם, לא נשאר לאומדנים לאן לברוח: במדגם גדול כמעט כולם צמודים לפרמטר. זה בדיוק מה שראיתם בציר המספרים בפרק 3.</p>
+  <p class="note">עקיבות היא בסופו של דבר "האומדן מתקרב לפרמטר". לשם כך צריך ששני דברים ייעלמו כש-\(n\) גדל: ההטיה (המרכז מגיע לפרמטר) והפיזור (האומדנים מצטופפים סביב המרכז). באומד חסר הטיה ההטיה כבר 0, ולכן מספיק לבדוק את הפיזור.</p>
+  <p><strong>\(\bar X\) עקיב:</strong> \(\mathrm{Var}(\bar X) = \frac{\sigma^2}{n}\). המונה קבוע והמכנה שואף לאינסוף, ולכן השונות שואפת ל-0. הפיזור של \(\bar X\) סביב \(\mu\) מתכווץ, כמו שראינו בציר המספרים בפרק 3, ובמדגם גדול כמעט כל אומדן יוצא קרוב ל-\(\mu\).</p>
+
+  <h3>"הרבה מדגמים" מול "מדגם גדול"</h3>
+  <p>חוסר הטיה ועקיבות נשמעים דומה. ההבדל הוא במה שמשתנה:</p>
+  <div class="table-wrap"><table class="t">
+    <tr><th></th><th>חוסר הטיה</th><th>עקיבות</th></tr>
+    <tr><td><strong>גודל המדגם</strong></td><td>קבוע</td><td>גדל</td></tr>
+    <tr><td><strong>מה חוזר</strong></td><td>הדגימה חוזרת הרבה פעמים</td><td>מדגם אחד, שהולך וגדל</td></tr>
+    <tr><td><strong>מה מתקרב לפרמטר</strong></td><td>הממוצע של כל האומדנים</td><td>האומדן עצמו</td></tr>
+    <tr><td><strong>השאלה</strong></td><td>האם התוכנית מכוונת נכון?</td><td>האם יותר נתונים משפרים אותה?</td></tr>
+  </table></div>
+  <p>"לדגום יותר" הוא ביטוי דו-משמעי: <strong>יותר מדגמים</strong> קשור להטיה, ו<strong>מדגם גדול יותר</strong> קשור לעקיבות.</p>
+
+  <h3>שתי דוגמאות שמראות שאלה תכונות נפרדות</h3>
+  <ul>
+    <li><strong>חסר הטיה אבל לא עקיב: \(X_1\) לבד.</strong> זו דוגמה מלאכותית, שנועדה להראות שחוסר הטיה לבד לא מבטיח שהאומד ישתפר עם עוד נתונים. רוצים לאמוד את הגובה הממוצע \(\mu\). יש שני אומדים אפשריים: (א) הממוצע של כל המדגם, \(\bar X\). (ב) הגובה של <strong>האדם הראשון</strong> שנדגם, \(X_1\), תוך התעלמות מכל השאר. שניהם חסרי הטיה, כי \(E(\bar X) = E(X_1) = \mu\). עכשיו מגדילים את המדגם מ-10 אנשים ל-1,000. אומד (א) משתמש עכשיו ב-1,000 אנשים, והוא נעשה מדויק יותר. אומד (ב) עדיין מסתכל רק על אדם אחד, שיכול לצאת 1.55 מ' או 1.95 מ' בדיוק כמו קודם. השונות שלו נשארת \(\sigma^2\) ולא קטנה, ולכן הוא לא עקיב.</li>
+    <li><strong>מוטה אבל עקיב: \(\hat\sigma^2\) עם \(n\) במכנה.</strong> ראינו ש-\(E(\hat\sigma^2) = \frac{n-1}{n}\sigma^2\), כלומר בממוצע הוא קצת קטן מדי. אבל כמה קטן מדי? עם \(n = 5\) הוא נותן בממוצע \(0.8\sigma^2\), כלומר חסרים 20%. עם \(n = 100\) הוא נותן \(0.99\sigma^2\), ועם \(n = 10{,}000\) הוא נותן \(0.9999\sigma^2\). כלומר ההטיה הולכת ונעלמת. גם הפיזור שלו קטן כש-\(n\) גדל. שני הדברים יחד אומרים שבמדגם גדול האומדן קרוב מאוד ל-\(\sigma^2\), ולכן הוא עקיב. אומד יכול להיות מוטה ובכל זאת עקיב.</li>
+  </ul>
+
+  <figure class="lab" id="w-consist">
+    <p class="lab-title">שישה מדגמים שגדלים</p>
+    <p class="lab-hint">כל קו הוא מדגם אחד שמוסיפים לו תצפיות, והאומדן מחושב מחדש אחרי כל תצפית. בחרו אומד וראו: האם הקווים מתכנסים לפרמטר? מתחת: מה יוצא בממוצע על פני הרבה מדגמים קטנים, כלומר בדיקת הטיה.</p>
+    <div data-w="consist"></div>
+  </figure>
+
+  <details class="ext">
+    <summary><span class="ext-badge">הרחבה</span> אינסוף מדגמים מול מדגם אינסופי</summary>
+    <div class="ext-body">
+    <p>יש שני תהליכים שונים שאפשר לדמיין:</p>
+    <ul>
+      <li><strong>אינסוף מדגמים בגודל \(n\) קבוע.</strong> דוגמים שוב ושוב, כל פעם \(n\) תצפיות, ומחשבים את הממוצע של כל האומדנים. התוצאה היא \(E(\hat\theta)\), התוחלת של האומד <strong>עבור אותו \(n\)</strong>. זו שאלת ההטיה.</li>
+      <li><strong>מדגם אחד שגודלו שואף לאינסוף.</strong> מוסיפים עוד ועוד תצפיות לאותו מדגם, ומסתכלים לאן האומדן מגיע. זו שאלת העקיבות.</li>
+    </ul>
+    <p>שני התהליכים לא חייבים לתת אותה תשובה. הנה שני אומדים, כשבתהליך הראשון \(n\) הוא 1, 5 או כל ערך אחר:</p>
+    <div class="table-wrap"><table class="t">
+      <tr><th>אומד</th><th>אינסוף מדגמים, כל אחד בגודל \(n\)</th><th>עם \(n=1\)</th><th>עם \(n=5\)</th><th>מדגם אחד, \(n\to\infty\)</th></tr>
+      <tr><td class="n">\(\bar X\)</td><td class="n">\(\mu\)</td><td class="n">\(\mu\)</td><td class="n">\(\mu\)</td><td class="n">\(\mu\)</td></tr>
+      <tr><td class="n">\(\hat\sigma^2\) (חלוקה ב-\(n\))</td><td class="n">\(\frac{n-1}{n}\sigma^2\)</td><td class="n">0</td><td class="n">\(0.8\sigma^2\)</td><td class="n">\(\sigma^2\)</td></tr>
+    </table></div>
+    <p>ב-\(\bar X\) כל העמודות זהות, כי הוא חסר הטיה לכל \(n\) וגם עקיב. ב-\(\hat\sigma^2\) התשובה של התהליך הראשון תלויה ב-\(n\): עם תצפית אחת הסטייה מהממוצע תמיד 0, ולכן כל האומדנים הם 0. עם 5 תצפיות הממוצע שלהם הוא \(0.8\sigma^2\). רק במדגם שגדל בלי סוף מגיעים ל-\(\sigma^2\).</p>
+    <p><strong>בשורה אחת:</strong> שני התהליכים נותנים אותה תשובה רק כשהאומד גם חסר הטיה וגם עקיב.</p>
+    </div>
+  </details>
+
+  <h3>עקיבות וחוק המספרים הגדולים</h3>
+  <p>בהרצאה ראיתם את חוק המספרים הגדולים: ככל שגודל המדגם גדל, גדלה ההסתברות שהאומדן מאומד חסר הטיה יהיה קרוב לפרמטר. איך זה קשור לעקיבות?</p>
+  <ul>
+    <li><strong>עקיבות</strong> היא שם כללי לתכונה. כל אומד יכול לקיים אותה או לא: \(\bar X\) עקיב, ו-\(X_1\) לבד לא.</li>
+    <li><strong>חוק המספרים הגדולים</strong> מדבר על אומד אחד מסוים, הממוצע \(\bar X\), ואומר שהוא מתקרב ל-\(\mu\). כלומר החוק אומר בדיוק ש-\(\bar X\) עקיב.</li>
+  </ul>
+  <p>לכן החוק הוא <strong>דוגמה אחת</strong> לעקיבות, ולא עוד שם לאותו דבר. הוא שימושי במיוחד כי הרבה אומדים בנויים מממוצעים. למשל הפרופורציה המדגמית \(\hat p\) היא ממוצע של אפסים ואחדים (פרק 8), ולכן גם היא מתקרבת לפרמטר שלה כש-\(n\) גדל.</p>
+</section>
+
+<!-- ============ 9 ============ -->
+<section class="chapter" id="prop">
+  <p class="chapter-num">פרק 8</p>
+  <h2>פרופורציה</h2>
+  <div class="def">
+    <p><strong>פרופורציה</strong> היא שיעור: איזה חלק מהאוכלוסייה מקיים תכונה מסוימת. אחוז הסטודנטים שעברו, אחוז המוצרים הפגומים, אחוז הקליעות.</p>
+    <p><strong>הפרמטר</strong> הוא \(p\), השיעור באוכלוסייה. <strong>האומד</strong> הוא הפרופורציה המדגמית:</p>
+    <div class="math-block">$$\hat p = \frac{X}{n}$$</div>
+    <p class="note">\(X\) הוא מספר ההצלחות במדגם, ו-\(n\) הוא גודל המדגם.</p>
+  </div>
+
+  <h3>פרופורציה היא בעצם גם ממוצע</h3>
+  <p>מסמנים כל תצפית ב-1 אם יש לה את התכונה וב-0 אם אין. כל תצפית כזו היא משתנה <strong>ברנולי</strong>: מקבל 1 בהסתברות \(p\) ו-0 בהסתברות \(1-p\).</p>
+  <p>נניח שבודקים 10 לוחות, ומסמנים לוח פגום ב-1 ולוח תקין ב-0. יצא:</p>
+  <div class="math-block">$$0,\ 1,\ 0,\ 0,\ 1,\ 0,\ 0,\ 0,\ 0,\ 0$$</div>
+  <ul>
+    <li><strong>הסכום</strong> הוא \(0+1+0+0+1+0+0+0+0+0 = 2\). סכום של אפסים ואחדים פשוט <strong>סופר את האחדים</strong>, כלומר את מספר הפגומים.</li>
+    <li><strong>הממוצע</strong> הוא \(\frac{2}{10} = 0.2\). חלוקה ב-\(n\) הופכת את הספירה ל<strong>שיעור</strong>, וזו בדיוק הפרופורציה המדגמית \(\hat p\).</li>
+  </ul>
+  <p>כלומר \(\hat p\) הוא ממוצע מדגם, רק של תצפיות שהן אפסים ואחדים. מכאן שכל מה שלמדנו על \(\bar X\) עובר אליו ישירות:</p>
+  <ul>
+    <li><strong>חסר הטיה:</strong> \(E(\hat p) = p\).</li>
+    <li><strong>שונות:</strong> \(\mathrm{Var}(\hat p) = \frac{p(1-p)}{n}\), וטעות התקן \(\sqrt{\frac{p(1-p)}{n}}\). זה אותו מבנה כמו \(\frac{\sigma^2}{n}\), כי השונות של ברנולי היא \(p(1-p)\).</li>
+    <li><strong>עקיב:</strong> השונות שואפת ל-0.</li>
+    <li><strong>קירוב נורמלי:</strong> במדגם גדול \(\hat p\) מתפלג בקירוב נורמלית, ומתקננים בדיוק כמו בדוגמת הציונים.</li>
+  </ul>
+
+  <h3>ברנולי, בינומית ופרופורציה</h3>
+  <p>שלושה דברים שונים, שקל לבלבל ביניהם:</p>
+  <div class="table-wrap"><table class="t">
+    <tr><th>מה</th><th>התפלגות</th><th>ערכים</th><th class="n">תוחלת</th><th class="n">שונות</th></tr>
+    <tr><td>תצפית אחת \(X_i\)</td><td>ברנולי</td><td>0 או 1</td><td class="n">\(p\)</td><td class="n">\(p(1-p)\)</td></tr>
+    <tr><td>מספר ההצלחות \(X = \sum X_i\)</td><td>בינומית \(B(n,p)\)</td><td class="n">\(0,1,\dots,n\)</td><td class="n">\(np\)</td><td class="n">\(np(1-p)\)</td></tr>
+    <tr><td>הפרופורציה \(\hat p = X/n\)</td><td>בינומית מחולקת ב-\(n\)</td><td class="n">\(0,\frac1n,\dots,1\)</td><td class="n">\(p\)</td><td class="n">\(\frac{p(1-p)}{n}\)</td></tr>
+  </table></div>
+  <h4>למה התוחלת של מספר ההצלחות היא \(np\)?</h4>
+  <p>נסתכל על כל לוח לבד. הוא 1 בהסתברות \(p\) ו-0 בהסתברות \(1-p\), ולכן התוחלת שלו:</p>
+  <div class="math-block">$$E(X_i) = 1\cdot p + 0\cdot(1-p) = p$$</div>
+  <p>מספר הפגומים הוא הסכום של כל הלוחות, \(X = X_1 + X_2 + \dots + X_n\). תוחלת של סכום היא סכום התוחלות:</p>
+  <div class="math-block">$$E(X) = \underbrace{p + p + \dots + p}_{n} = np$$</div>
+  <p>דוגמה: אם 20% מהלוחות פגומים ובודקים 10, צפויים בממוצע \(10 \cdot 0.2 = 2\) פגומים.</p>
+
+  <h4>ומה עם השונות?</h4>
+  <p>אותו מהלך. השונות של לוח בודד היא \(p(1-p)\). הלוחות בלתי תלויים, ולכן השונויות מתחברות:</p>
+  <div class="math-block">$$\mathrm{Var}(X) = \underbrace{p(1-p) + \dots + p(1-p)}_{n} = np(1-p)$$</div>
+  <p>ועכשיו לפרופורציה. \(\hat p = \frac{X}{n}\), כלומר מחלקים את \(X\) בקבוע \(n\). קבוע יוצא מהשונות <strong>בריבוע</strong>:</p>
+  <div class="math-block">$$\mathrm{Var}(\hat p) = \frac{1}{n^2}\mathrm{Var}(X) = \frac{np(1-p)}{n^2} = \frac{p(1-p)}{n}$$</div>
+
+  <figure class="lab" id="w-bern">
+    <p class="lab-title">20 ניסויים, שלוש רמות</p>
+    <p class="lab-hint">כל משבצת היא ניסוי ברנולי. במבט אחד רואים את התצפיות (ברנולי), את מספר ההצלחות (בינומית) ואת הפרופורציה. דגמו הרבה פעמים והשוו את פיזור ה-\(\hat p\) לטעות התקן התיאורטית.</p>
+    <div data-w="bern"></div>
+  </figure>
+
+  <h3>הדוגמה מההרצאה</h3>
+  <p>אחוז הקליעה מקו העונשין של שחקני הכדורסל בישראל הוא 78%. במדגם של 100 זריקות היו 85 קליעות.</p>
+  <ul>
+    <li><strong>הפרמטר:</strong> הפרופורציה באוכלוסייה, \(p = 0.78\).</li>
+    <li><strong>האומד:</strong> הפרופורציה המדגמית \(\hat p = X/n\). <strong>האומדן:</strong> \(\hat p = \frac{85}{100} = 0.85\).</li>
+    <li><strong>טעות האמידה:</strong> \(|0.85 - 0.78| = 0.07\).</li>
+  </ul>
+
+  <details class="ext">
+    <summary><span class="ext-badge">הרחבה</span> דגימה בלי החזרה: ההתפלגות ההיפרגאומטרית</summary>
+    <div class="ext-body">
+      <p>הבינומית מניחה שההסתברות להצלחה קבועה בכל ניסוי. זה נכון כשדוגמים מאוכלוסייה ענקית, או עם החזרה. אבל כשדוגמים <strong>בלי החזרה</strong> מאוכלוסייה <strong>קטנה</strong>, כל הוצאה משנה את ההרכב של מה שנשאר.</p>
+      <p>ההתפלגות ההיפרגאומטרית \(H(N, R, n)\) מתארת בדיוק את זה:</p>
+      <div class="table-wrap"><table class="t" style="max-width:480px">
+        <tr><th>סימון</th><th>משמעות</th></tr>
+        <tr><td class="n">\(N\)</td><td>גודל האוכלוסייה</td></tr>
+        <tr><td class="n">\(R\)</td><td>מספר ה"הצלחות" באוכלוסייה (בספרים אחרים \(K\), \(M\) או \(D\))</td></tr>
+        <tr><td class="n">\(n\)</td><td>גודל המדגם, בלי החזרה</td></tr>
+        <tr><td class="n">\(X\)</td><td>מספר ההצלחות במדגם</td></tr>
+      </table></div>
+      <p>החלק \(\frac RN\) ממלא את התפקיד של \(p\). התוחלת זהה לבינומית, \(E(X) = n\frac RN\), אבל השונות קטנה יותר:</p>
+      <div class="math-block">$$\mathrm{Var}(X) = np(1-p)\cdot\frac{N-n}{N-1}$$</div>
+      <p>הגורם \(\frac{N-n}{N-1}\) נקרא <strong>מקדם התיקון לאוכלוסייה סופית</strong>.</p>
+      <h4>למה בלי החזרה השונות קטנה יותר</h4>
+      <p>עם החזרה אפשר לדגום את אותו פריט פעמיים, וזה מידע כפול שלא מוסיף כלום. בלי החזרה כל תצפית היא פריט חדש. במקרה הקיצוני, אם דוגמים את כל האוכלוסייה בלי החזרה, יודעים את \(R\) בדיוק, והשונות 0. מבחינה מתמטית זה עובר דרך <strong>תלות שלילית</strong>: אם הראשון יצא הצלחה, נשארו פחות הצלחות, והשני נוטה יותר לכישלון. הטעויות מתקזזות, והשונות המשותפת השלילית מקטינה את השונות של הסכום.</p>
+      <p>כש-\(N\) ענק לעומת \(n\), המקדם שואף ל-1 וההבדל נעלם. בגלל זה מותר לעבוד עם בינומית כשדוגמים מאוכלוסייה גדולה.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============ 11 ============ -->
+<section class="chapter" id="cont">
+  <p class="chapter-num">פרק 9</p>
+  <h2>אמידה במשתנה רציף</h2>
+  <p>הכול עובד אותו דבר גם כשהמשתנה רציף. ההבדל היחיד הוא שהתוחלת מחושבת באינטגרל.</p>
+  <p><strong>דוגמה:</strong> נדגמו \(n\) תצפיות בלתי תלויות מהתפלגות עם הצפיפות</p>
+  <div class="math-block">$$f(x) = \frac{3x^2}{\theta^3}, \qquad 0 \le x \le \theta$$</div>
+  <p class="note">בדיקה: \(\int_0^\theta \frac{3x^2}{\theta^3}\,dx = \frac{\theta^3}{\theta^3} = 1\).</p>
+
+  <h4>א. אומד חסר הטיה ל-\(\theta\) שתלוי ב-\(\bar X\)</h4>
+  <div class="math-block">$$E(X) = \int_0^\theta x\cdot\frac{3x^2}{\theta^3}\,dx = \frac{3}{\theta^3}\cdot\frac{\theta^4}{4} = \frac{3\theta}{4}$$</div>
+  <p>\(\bar X\) חסר הטיה לתוחלת, ולכן \(E(\bar X) = \frac{3\theta}{4}\). הנדסה לאחור: האומד כפל את \(\theta\) ב-\(\frac34\), ולכן כופלים ב-\(\frac43\):</p>
+  <div class="math-block">$$\hat\theta = \frac{4\bar X}{3}, \qquad E(\hat\theta) = \frac43\cdot\frac{3\theta}{4} = \theta \ \checkmark$$</div>
+
+  <h4>ב. מה השונות של האומד, והאם הוא עקיב?</h4>
+  <div class="math-block">$$E(X^2) = \int_0^\theta x^2\cdot\frac{3x^2}{\theta^3}\,dx = \frac{3}{\theta^3}\cdot\frac{\theta^5}{5} = \frac{3\theta^2}{5}$$</div>
+  <div class="math-block">$$\mathrm{Var}(X) = \frac{3\theta^2}{5} - \left(\frac{3\theta}{4}\right)^2 = \frac{48\theta^2 - 45\theta^2}{80} = \frac{3\theta^2}{80}$$</div>
+  <div class="math-block">$$\mathrm{Var}(\hat\theta) = \left(\frac43\right)^2\cdot\frac{\mathrm{Var}(X)}{n} = \frac{16}{9}\cdot\frac{3\theta^2}{80n} = \frac{\theta^2}{15n}$$</div>
+  <p>המונה קבוע והמכנה שואף לאינסוף, ולכן השונות שואפת ל-0. האומד חסר הטיה, ולכן <strong>עקיב</strong>. שימו לב שאת העקיבות אפשר לקבוע עוד לפני שמחשבים את \(\mathrm{Var}(X)\): מספיק לראות שהשונות היא קבוע חלקי \(n\).</p>
+</section>
+
+<!-- ============ 12 ============ -->
+<section class="chapter" id="practice">
+  <p class="chapter-num">פרק 10</p>
+  <h2>תרגילים</h2>
+  <p>ארבעה תרגילים לתרגול. נסו לבד לפני שפותחים את הפתרון.</p>
+
+  <h3>תרגיל 1: התפלגות בדידה</h3>
+  <p>משתנה \(X\) מקבל את הערכים 0, 1, 3 בהסתברויות \(\theta\), \(1 - 3\theta\), \(2\theta\) בהתאמה, כאשר \(0 \le \theta \le \frac13\). נדגמו \(n\) תצפיות בלתי תלויות.</p>
+  <p><strong>א.</strong> האם \(X_1\) חסר הטיה ל-\(\theta\)? אם לא, מצאו אומד חסר הטיה ל-\(\theta\) שמבוסס על \(X_1\). <strong>ב.</strong> מצאו אומד חסר הטיה ל-\(\theta\) שמבוסס על \(\bar X\). <strong>ג.</strong> איזה משני האומדים עדיף? <strong>ד.</strong> האם האומד מסעיף ב עקיב? <strong>ה.</strong> מצאו אומד חסר הטיה ל-\(6\theta + 2\).</p>
+  <details class="reveal"><summary>הצג פתרון</summary><div class="reveal-body">
+    <p><strong>א.</strong> \(E(X) = 0\cdot\theta + 1(1-3\theta) + 3\cdot2\theta = 1 + 3\theta \ne \theta\). מוטה. התוכנית כפלה ב-3 והוסיפה 1, אז מחסירים 1 ומחלקים ב-3: \(\hat\theta_1 = \frac{X_1 - 1}{3}\).</p>
+    <p><strong>ב.</strong> \(E(\bar X) = 1 + 3\theta\), ובאותה הנדסה לאחור: \(\hat\theta_2 = \frac{\bar X - 1}{3}\).</p>
+    <p><strong>ג.</strong> \(E(X^2) = 1(1-3\theta) + 9\cdot2\theta = 1 + 15\theta\), ולכן \(\mathrm{Var}(X) = 1 + 15\theta - (1+3\theta)^2 = 9\theta(1-\theta)\).</p>
+    <div class="math-block">$$\mathrm{Var}(\hat\theta_1) = \frac19\cdot9\theta(1-\theta) = \theta(1-\theta) \qquad \mathrm{Var}(\hat\theta_2) = \frac19\cdot\frac{9\theta(1-\theta)}{n} = \frac{\theta(1-\theta)}{n}$$</div>
+    <p>לכל \(n &gt; 1\) האומד \(\hat\theta_2\) עדיף: שניהם חסרי הטיה, ולו שונות קטנה פי \(n\).</p>
+    <p><strong>ד.</strong> \(\hat\theta_2\) חסר הטיה, והשונות \(\frac{\theta(1-\theta)}{n} \to 0\). לכן עקיב. (\(\hat\theta_1\) לא עקיב: השונות שלו לא תלויה ב-\(n\).)</p>
+    <p><strong>ה.</strong> טרנספורמציה לינארית: \(6\hat\theta_2 + 2 = 2(\bar X - 1) + 2 = 2\bar X\). בדיקה: \(E(2\bar X) = 2 + 6\theta\) ✓.</p>
+  </div></details>
+
+  <h3>תרגיל 2: פרופורציה</h3>
+  <p>מפעל בודק 200 מוצרים מקו ייצור ומוצא 14 פגומים. נסמן ב-\(p\) את שיעור הפגומים בקו.</p>
+  <p><strong>א.</strong> מהו הפרמטר, מהו האומד ומהו האומדן? <strong>ב.</strong> הוכיחו שהאומד חסר הטיה. <strong>ג.</strong> מהי שונות האומד, ומהו אומדן לטעות התקן? <strong>ד.</strong> מצאו אומד חסר הטיה למספר הפגומים הצפוי במשלוח של 5,000 מוצרים, וחשבו את האומדן.</p>
+  <details class="reveal"><summary>הצג פתרון</summary><div class="reveal-body">
+    <p><strong>א.</strong> הפרמטר: \(p\), שיעור הפגומים בכל הייצור. האומד: \(\hat p = X/n\). האומדן: \(\hat p = 14/200 = 0.07\).</p>
+    <p><strong>ב.</strong> \(X \sim B(200, p)\), ולכן \(E(\hat p) = \frac{1}{200}E(X) = \frac{200p}{200} = p\).</p>
+    <p><strong>ג.</strong> \(\mathrm{Var}(\hat p) = \frac{p(1-p)}{200}\). היא תלויה ב-\(p\) הלא ידוע, ולכן מציבים את האומדן ומקבלים <strong>אומדן</strong> לשונות: \(\frac{0.07\cdot0.93}{200} = 0.000326\), וטעות תקן משוערת \(\sqrt{0.000326} \approx 0.018\).</p>
+    <p class="note">מציבים \(\hat p\) רק כש-\(p\) לא נתון. אם \(p\) היה ידוע, היינו מציבים אותו.</p>
+    <p><strong>ד.</strong> הפרמטר הוא \(5000p\). לפי הכלל הלינארי \(5000\hat p\) חסר הטיה, והאומדן הוא \(5000\cdot0.07 = 350\).</p>
+  </div></details>
+
+  <h3>תרגיל 3: שלושה אומדים לתוחלת</h3>
+  <p>נדגמו שלוש תצפיות בלתי תלויות מאוכלוסייה עם תוחלת \(\mu\) ושונות \(\sigma^2\). מציעים שלושה אומדים:</p>
+  <div class="math-block">$$T_1 = \frac{X_1 + X_2 + X_3}{3} \qquad T_2 = \frac{X_1 + 2X_2 + X_3}{4} \qquad T_3 = \frac{X_1 + X_2}{3}$$</div>
+  <p><strong>א.</strong> אילו מהם חסרי הטיה ל-\(\mu\)? <strong>ב.</strong> מבין חסרי ההטיה, איזה עדיף? <strong>ג.</strong> תקנו את האומד המוטה כך שיהיה חסר הטיה. <span class="ext-only"><strong>ד.</strong> <span class="ext-badge">הרחבה</span> חשבו את ה-MSE של \(T_3\). מתי הוא עדיף על \(T_1\)?</span></p>
+  <details class="reveal"><summary>הצג פתרון</summary><div class="reveal-body">
+    <p><strong>א.</strong> \(E(T_1) = \frac{3\mu}{3} = \mu\) ✓. \(E(T_2) = \frac{(1+2+1)\mu}{4} = \mu\) ✓. \(E(T_3) = \frac{2\mu}{3} \ne \mu\): מוטה. כלל מהיר: צירוף לינארי חסר הטיה ל-\(\mu\) בדיוק כשסכום המקדמים הוא 1.</p>
+    <p><strong>ב.</strong> \(\mathrm{Var}(T_1) = \frac{3\sigma^2}{9} = \frac{\sigma^2}{3} \approx 0.333\sigma^2\). \(\mathrm{Var}(T_2) = \frac{(1+4+1)\sigma^2}{16} = 0.375\sigma^2\). \(T_1\) עדיף. כשסכום המקדמים קבוע, מקדמים שווים נותנים את השונות הקטנה ביותר.</p>
+    <p><strong>ג.</strong> התוכנית כפלה את \(\mu\) ב-\(\frac23\), אז כופלים ב-\(\frac32\): \(\frac32T_3 = \frac{X_1 + X_2}{2}\).</p>
+    <div class="ext-only">
+    <p><strong>ד.</strong> \(\mathrm{Var}(T_3) = \frac{2\sigma^2}{9}\), וההטיה היא \(\frac{2\mu}{3} - \mu = -\frac{\mu}{3}\). לכן</p>
+    <div class="math-block">$$MSE(T_3) = \frac{2\sigma^2}{9} + \frac{\mu^2}{9} = \frac{2\sigma^2 + \mu^2}{9}$$</div>
+    <p>\(T_3\) עדיף על \(T_1\) כש-\(\frac{2\sigma^2 + \mu^2}{9} &lt; \frac{\sigma^2}{3}\), כלומר כש-\(\mu^2 &lt; \sigma^2\). כשהתוחלת קרובה ל-0 יחסית לפיזור, ההטיה קטנה והחיסכון בשונות שווה אותה. זה בדיוק הטריידאוף מפרק 4.</p>
+    </div>
+  </div></details>
+
+  <h3>תרגיל 4: משתנה רציף</h3>
+  <p>נדגמו \(n\) תצפיות בלתי תלויות מהצפיפות \(f(x) = \frac{2x}{\theta^2}\) עבור \(0 \le x \le \theta\).</p>
+  <p><strong>א.</strong> מצאו אומד חסר הטיה ל-\(\theta\) שמבוסס על \(\bar X\). <strong>ב.</strong> חשבו את שונותו. האם הוא עקיב?</p>
+  <details class="reveal"><summary>הצג פתרון</summary><div class="reveal-body">
+    <p><strong>א.</strong> \(E(X) = \int_0^\theta x\cdot\frac{2x}{\theta^2}dx = \frac{2}{\theta^2}\cdot\frac{\theta^3}{3} = \frac{2\theta}{3}\). כופלים ב-\(\frac32\): \(\hat\theta = \frac{3\bar X}{2}\).</p>
+    <p><strong>ב.</strong> \(E(X^2) = \int_0^\theta x^2\cdot\frac{2x}{\theta^2}dx = \frac{\theta^2}{2}\), ולכן \(\mathrm{Var}(X) = \frac{\theta^2}{2} - \frac{4\theta^2}{9} = \frac{\theta^2}{18}\).</p>
+    <div class="math-block">$$\mathrm{Var}(\hat\theta) = \frac94\cdot\frac{\theta^2}{18n} = \frac{\theta^2}{8n} \to 0$$</div>
+    <p>חסר הטיה, והשונות שואפת ל-0: עקיב.</p>
+  </div></details>
+</section>
+
+<!-- ============ 13 ============ -->
+<section class="chapter" id="quiz">
+  <p class="chapter-num">פרק 11</p>
+  <h2>בדקו את עצמכם</h2>
+  <p>לחצו על תשובה כדי לקבל משוב והסבר. שאלות שמסומנות "הרחבה" עוסקות בחומר המורחב.</p>
+  <div data-w="quiz"></div>
+</section>
+
+<!-- ============ 14 ============ -->
+<section class="chapter" id="pitfalls">
+  <p class="chapter-num">פרק 12</p>
+  <h2>מלכודות נפוצות</h2>
+  <ul>
+    <li><strong>"תוחלת = ממוצע".</strong> תוחלת היא תכונה של ההתפלגות. ממוצע מחושב מנתונים.</li>
+    <li><strong>לכתוב \(x\) קטן בתוך \(E\).</strong> לוקחים תוחלת של משתנה מקרי, \(E(X)\), לא של מספר.</li>
+    <li><strong>"\(E(X_i) = np\)" כשכל \(X_i\) הוא ניסוי בודד.</strong> לניסוי ברנולי אחד \(E(X_i) = p\). \(np\) היא התוחלת של הסכום.</li>
+    <li><strong>לבלבל בין \(\frac{\sigma}{\sqrt n}\) ל-\(\frac{\sigma^2}{n}\).</strong> הראשון הוא טעות התקן, השני הוא השונות.</li>
+    <li><strong>לשכוח להעלות קבוע בריבוע</strong> כשמוציאים אותו מהשונות: \(\mathrm{Var}(5\hat p) = 25\,\mathrm{Var}(\hat p)\).</li>
+    <li><strong>להחסיר שונויות בהפרש.</strong> \(\mathrm{Var}(X - Y) = \mathrm{Var}(X) + \mathrm{Var}(Y)\) כשהם בלתי תלויים.</li>
+    <li><strong>להציב \(n\) לא נכון.</strong> \(n\) הוא מספר התצפיות שבאמת נכנסו לאומד, לא גודל האוכלוסייה.</li>
+    <li><strong>להציב \(\hat p\) כש-\(p\) נתון.</strong> את האומדן מציבים רק כשהפרמטר לא ידוע.</li>
+    <li><strong>להעלות אומד חסר הטיה בריבוע או להוציא לו שורש</strong> ולהניח שהוא נשאר חסר הטיה. הכלל עובד רק לטרנספורמציות לינאריות. לכן \(S\) מוטה.</li>
+    <li><strong>"חסר הטיה = עקיב".</strong> \(X_1\) לבד חסר הטיה ולא עקיב. \(\hat\sigma^2\) מוטה ועקיב.</li>
+    <li><strong>"עקיבות = חוק המספרים הגדולים".</strong> החוק הוא מקרה פרטי: הוא אומר ש-\(\bar X\) עקיב.</li>
+    <li><strong>בהנדסה לאחור, לבטל בסדר הלא נכון.</strong> אם התוכנית כפלה ואז הוסיפה, קודם מחסירים ורק אז מחלקים. ותמיד בודקים שהתוחלת יוצאת \(\theta\).</li>
+  </ul>
+</section>
+
+  </main>
+</div>
+
+<div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+<script>
+
+window.addEventListener("DOMContentLoaded", function () {
+(function () {
+  "use strict";
+
+  /* ================= utilities ================= */
+  const NS = "http://www.w3.org/2000/svg";
+  function svgEl(tag, attrs, parent) {
+    const e = document.createElementNS(NS, tag);
+    if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function h(tag, attrs, parent, html) {
+    const e = document.createElement(tag);
+    if (attrs) for (const k in attrs) {
+      if (k === "class") e.className = attrs[k];
+      else if (k === "text") e.textContent = attrs[k];
+      else e.setAttribute(k, attrs[k]);
+    }
+    if (html !== undefined) e.innerHTML = html;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function svgText(parent, x, y, str, attrs) {
+    const t = svgEl("text", Object.assign({ x: x, y: y }, attrs || {}), parent);
+    t.textContent = /[\u0590-\u05FF]/.test(str) ? "\u2067" + str.replace(/[−-]?\d[\d.,]*%?/g, m => "\u2066" + m + "\u2069") + "\u2069" : str;
+    return t;
+  }
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const vbW = el => clamp(Math.round((el && el.clientWidth) || 640), 340, 640);
+
+  function fmt(x, d) {
+    if (x === null || x === undefined || Number.isNaN(x)) return "—";
+    if (!Number.isFinite(x)) return "∞";
+    if (d === undefined) d = 2;
+    const r = Number(x.toFixed(d));
+    return (Object.is(r, -0) ? 0 : r).toString();
+  }
+  function fmtList(arr) { return arr.length ? arr.map(v => fmt(v)).join(", ") : "אין"; }
+
+  const S = {
+    sum: a => a.reduce((s, v) => s + v, 0),
+    mean: a => a.length ? S.sum(a) / a.length : NaN,
+    sorted: a => a.slice().sort((x, y) => x - y),
+    median(a) {
+      if (!a.length) return NaN;
+      const s = S.sorted(a), n = s.length, m = Math.floor(n / 2);
+      return n % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+    },
+    modes(a) {
+      if (!a.length) return [];
+      const c = new Map();
+      a.forEach(v => c.set(v, (c.get(v) || 0) + 1));
+      if (c.size === 1) return [a[0]];
+      let mx = 0; c.forEach(v => { if (v > mx) mx = v; });
+      const top = []; c.forEach((v, k) => { if (v === mx) top.push(k); });
+      if (top.length === c.size) return []; // every value equally frequent: no mode (slide 51)
+      return top.sort((x, y) => x - y);
+    },
+    ss(a) { const m = S.mean(a); return a.reduce((s, v) => s + (v - m) * (v - m), 0); },
+    variance(a, ddof) { const n = a.length; return n - ddof > 0 ? S.ss(a) / (n - ddof) : NaN; },
+    sd(a, ddof) { return Math.sqrt(S.variance(a, ddof)); },
+    quartiles(a) {
+      const s = S.sorted(a), n = s.length;
+      if (n < 2) return { q1: NaN, q3: NaN };
+      const half = Math.floor(n / 2);
+      const lower = s.slice(0, half), upper = s.slice(n % 2 ? half + 1 : half);
+      return { q1: S.median(lower), q3: S.median(upper) };
+    },
+    mad(a) { const m = S.mean(a); return S.mean(a.map(v => Math.abs(v - m))); },
+    skew(a) {
+      const n = a.length, m = S.mean(a), s = S.sd(a, 1);
+      if (n < 3 || !(s > 0)) return NaN;
+      return a.reduce((t, v) => t + Math.pow(v - m, 3), 0) / (n * s * s * s);
+    }
+  };
+
+  function niceStep(span, target) {
+    const raw = span / (target || 8);
+    const p = Math.pow(10, Math.floor(Math.log10(raw)));
+    const f = raw / p;
+    return (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * p;
+  }
+
+  /* tooltip */
+  const tip = document.getElementById("tip");
+  function showTip(text, ev) {
+    if (!tip) return;
+    tip.textContent = text;
+    tip.classList.add("on");
+    const x = ev.clientX, y = ev.clientY;
+    const r = tip.getBoundingClientRect();
+    tip.style.left = clamp(x - r.width / 2, 8, window.innerWidth - r.width - 8) + "px";
+    tip.style.top = Math.max(8, y - r.height - 14) + "px";
+  }
+  function hideTip() { if (tip) tip.classList.remove("on"); }
+
+  function svgPoint(svg, ev) {
+    const pt = svg.createSVGPoint();
+    pt.x = ev.clientX; pt.y = ev.clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
+  }
+
+  function statTile(parent, key, value, opts) {
+    opts = opts || {};
+    const d = h("div", { class: "stat" + (opts.ext ? " ext-stat ext-only" : "") }, parent);
+    const k = h("div", { class: "k" }, d);
+    if (opts.swatch) h("span", { class: "swatch " + opts.swatch }, k);
+    h("span", { text: key }, k);
+    h("div", { class: "v", text: value }, d);
+    return d;
+  }
+
+  function seg(parent, options, value, onChange) {
+    const wrap = h("div", { class: "seg", role: "group" }, parent);
+    const btns = options.map(o => {
+      const b = h("button", { type: "button", "aria-pressed": String(o.value === value), text: o.label }, wrap);
+      b.addEventListener("click", () => {
+        btns.forEach(x => x.setAttribute("aria-pressed", "false"));
+        b.setAttribute("aria-pressed", "true");
+        onChange(o.value);
+      });
+      return b;
+    });
+    return wrap;
+  }
+
+  const W = {};
+  W.sim = function (root) {
+    const pops = {
+      two: { label: "{0, 2} בהסתברות שווה (σ² = 1)", s2: 1, draw: () => (Math.random() < 0.5 ? 0 : 2) },
+      die: { label: "קובייה הוגנת 1–6 (σ² ≈ 2.92)", s2: 35 / 12, draw: () => 1 + Math.floor(Math.random() * 6) },
+      norm: { label: "נורמלית μ=50, σ=10 (σ² = 100)", s2: 100, draw: () => 50 + 10 * Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(2 * Math.PI * Math.random()) }
+    };
+    let pop = "two", n = 3;
+    let runN = [], runN1 = [];
+    const ctl = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    const ls = h("label", null, ctl); h("span", { text: "אוכלוסייה:" }, ls);
+    const sel = h("select", { "aria-label": "אוכלוסייה" }, ls);
+    Object.keys(pops).forEach(k => h("option", { value: k, text: pops[k].label }, sel));
+    const ln = h("label", null, ctl); h("span", { text: "גודל מדגם n =" }, ln);
+    const inN = h("input", { type: "range", min: 2, max: 20, step: 1, value: n, "aria-label": "גודל מדגם" }, ln);
+    const vn = h("strong", { class: "num", text: String(n) }, ln);
+    const ctl2 = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    const run = h("button", { class: "btn primary", type: "button", text: "הרץ 2,000 מדגמים" }, ctl2);
+    const more = h("button", { class: "btn", type: "button", text: "הוסף עוד 2,000" }, ctl2);
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    sel.addEventListener("change", () => { pop = sel.value; clear(); });
+    inN.addEventListener("input", () => { n = parseInt(inN.value, 10); vn.textContent = String(n); clear(); });
+    run.addEventListener("click", () => { clear(); simulate(2000); });
+    more.addEventListener("click", () => simulate(2000));
+
+    let sumN = 0, sumN1 = 0, count = 0;
+    function clear() { runN = []; runN1 = []; sumN = 0; sumN1 = 0; count = 0; render(); }
+    function simulate(k) {
+      const P = pops[pop];
+      for (let r = 0; r < k; r++) {
+        const s = []; for (let i = 0; i < n; i++) s.push(P.draw());
+        const ss = S.ss(s);
+        sumN += ss / n; sumN1 += ss / (n - 1); count++;
+        runN.push(sumN / count); runN1.push(sumN1 / count);
+      }
+      render();
+    }
+    function render() {
+      const P = pops[pop];
+      holder.innerHTML = "";
+      const Wd = vbW(holder), Hd = 260, pl = 50, pr = 112, pt = 14, pb = 30;
+      const svg = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "ממוצע מצטבר של שני האומדים" }, holder);
+      const target = P.s2, biased = P.s2 * (n - 1) / n;
+      const N = runN.length;
+      let lo = Math.min(biased, target) * 0.55, hi = target * 1.45;
+      const xS = i => pl + (N > 1 ? i / (N - 1) : 0) * (Wd - pl - pr);
+      const yS = v => Hd - pb - (clamp(v, lo, hi) - lo) / (hi - lo) * (Hd - pb - pt);
+      const stp = niceStep(hi - lo, 5);
+      for (let t = Math.ceil(lo / stp) * stp; t <= hi; t += stp) {
+        svgEl("line", { x1: pl, x2: Wd - pr, y1: yS(t), y2: yS(t), stroke: "var(--rule)" }, svg);
+        svgText(svg, pl - 6, yS(t) + 4, fmt(t, 2), { "text-anchor": "end", "font-size": 11, fill: "var(--muted)" });
+      }
+      svgEl("line", { x1: pl, x2: Wd - pr, y1: yS(target), y2: yS(target), stroke: "var(--ink)", "stroke-width": 1.5, "stroke-dasharray": "6 4" }, svg);
+      svgEl("line", { x1: pl, x2: Wd - pr, y1: yS(biased), y2: yS(biased), stroke: "var(--muted)", "stroke-width": 1, "stroke-dasharray": "2 3" }, svg);
+      const labels = [
+        { y: yS(target), t: `σ² = ${fmt(target, 2)}`, c: "var(--ink)", w: 600 },
+        { y: yS(biased), t: `(n−1)/n·σ² = ${fmt(biased, 2)}`, c: "var(--muted)", w: 400 }
+      ];
+      if (N) {
+        const step = Math.max(1, Math.floor(N / 400));
+        const path = arr => { let d = ""; for (let i = 0; i < N; i += step) d += `${d ? "L" : "M"}${xS(i)},${yS(arr[i])}`; d += `L${xS(N - 1)},${yS(arr[N - 1])}`; return d; };
+        svgEl("path", { d: path(runN1), fill: "none", stroke: "var(--mean)", "stroke-width": 2 }, svg);
+        svgEl("path", { d: path(runN), fill: "none", stroke: "var(--median)", "stroke-width": 2 }, svg);
+        labels.push({ y: yS(runN1[N - 1]), t: "÷ (n−1)", c: "var(--mean)", w: 600 });
+        labels.push({ y: yS(runN[N - 1]), t: "÷ n", c: "var(--median)", w: 600 });
+        svgText(svg, pl, Hd - 8, "1", { "font-size": 11, fill: "var(--muted)" });
+        svgText(svg, Wd - pr, Hd - 8, `${N.toLocaleString("he-IL")} מדגמים`, { "text-anchor": "end", "font-size": 11, fill: "var(--muted)" });
+        // hover crosshair
+        const cross = svgEl("line", { y1: pt, y2: Hd - pb, stroke: "var(--rule-strong)", visibility: "hidden" }, svg);
+        const hit = svgEl("rect", { x: pl, y: pt, width: Wd - pl - pr, height: Hd - pb - pt, fill: "transparent" }, svg);
+        hit.addEventListener("pointermove", ev => {
+          const p = svgPoint(svg, ev);
+          const i = clamp(Math.round((p.x - pl) / (Wd - pl - pr) * (N - 1)), 0, N - 1);
+          cross.setAttribute("x1", xS(i)); cross.setAttribute("x2", xS(i)); cross.setAttribute("visibility", "visible");
+          showTip(`אחרי ${i + 1} מדגמים: ÷(n−1) = ${fmt(runN1[i], 3)}, ÷n = ${fmt(runN[i], 3)}`, ev);
+        });
+        hit.addEventListener("pointerleave", () => { cross.setAttribute("visibility", "hidden"); hideTip(); });
+      } else {
+        svgText(svg, (pl + Wd - pr) / 2, Hd / 2, "לחצו \"הרץ\" כדי להתחיל", { "text-anchor": "middle", "font-size": 14, fill: "var(--muted)" });
+      }
+      labels.sort((a, b) => a.y - b.y);
+      for (let i = 1; i < labels.length; i++) if (labels[i].y - labels[i - 1].y < 14) labels[i].y = labels[i - 1].y + 14;
+      labels.forEach(l => svgText(svg, Wd - pr + 8, l.y + 4, l.t, { "font-size": 11.5, fill: l.c, "font-weight": l.w }));
+      stats.innerHTML = "";
+      statTile(stats, "ערך אמיתי σ²", fmt(target, 3));
+      statTile(stats, "ממוצע האומד ÷(n−1)", N ? fmt(runN1[N - 1], 3) : "—");
+      statTile(stats, "ממוצע האומד ÷n", N ? fmt(runN[N - 1], 3) : "—");
+      statTile(stats, "הצפי לאומד המוטה", fmt(biased, 3));
+    }
+    render();
+  };
+
+
+  /* ================= lecture-3 helpers ================= */
+  function randn() { return Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(2 * Math.PI * Math.random()); }
+  function erf(x) {
+    const s = x < 0 ? -1 : 1; x = Math.abs(x);
+    const t = 1 / (1 + 0.3275911 * x);
+    const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+    return s * y;
+  }
+  const Phi = z => 0.5 * (1 + erf(z / Math.SQRT2));
+  function tex(s) {
+    if (window.katex) { try { return window.katex.renderToString(s, { throwOnError: false }); } catch (e) { /* fall through */ } }
+    return s;
+  }
+  function slider(parent, label, min, max, step, value, onInput, fmtV) {
+    const lab = h("label", null, parent);
+    h("span", null, lab, label);
+    const inp = h("input", { type: "range", min, max, step, value, "aria-label": label.replace(/<[^>]+>/g, "") }, lab);
+    const out = h("strong", { class: "num", style: "min-width:3em" }, lab);
+    const show = () => { out.textContent = fmtV ? fmtV(parseFloat(inp.value)) : inp.value; };
+    inp.addEventListener("input", () => { show(); onInput(parseFloat(inp.value)); });
+    show();
+    return inp;
+  }
+  function btn(parent, text, onClick, cls) {
+    const b = h("button", { class: "btn" + (cls ? " " + cls : ""), type: "button", text }, parent);
+    b.addEventListener("click", onClick);
+    return b;
+  }
+  /* rationals for exact algebra */
+  function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b]; } return a || 1; }
+  function R(n, d) { if (d === undefined) d = 1; if (d < 0) { n = -n; d = -d; } const g = gcd(n, d); return { n: n / g, d: d / g }; }
+  function parseR(str) {
+    str = String(str).trim().replace(/−/g, "-").replace(/\s+/g, "");
+    if (!str) return null;
+    let m = str.match(/^(-?\d+(?:\.\d+)?)(?:\/(-?\d+(?:\.\d+)?))?$/);
+    if (!m) return null;
+    const toR = s => { const k = (s.split(".")[1] || "").length; return R(Math.round(parseFloat(s) * Math.pow(10, k)), Math.pow(10, k)); };
+    const a = toR(m[1]);
+    if (!m[2]) return a;
+    const b = toR(m[2]);
+    if (b.n === 0) return null;
+    return R(a.n * b.d, a.d * b.n);
+  }
+  const rMul = (a, b) => R(a.n * b.n, a.d * b.d);
+  const rDiv = (a, b) => R(a.n * b.d, a.d * b.n);
+  const rNeg = a => R(-a.n, a.d);
+  const rVal = a => a.n / a.d;
+  function rTex(a) {
+    const s = a.n < 0 ? "-" : "", n = Math.abs(a.n);
+    return a.d === 1 ? s + n : s + "\\frac{" + n + "}{" + a.d + "}";
+  }
+  function rTerm(c, sym, first) {
+    // coefficient c times symbol, with sign handling
+    if (c.n === 0) return "";
+    const neg = c.n < 0, abs = R(Math.abs(c.n), c.d);
+    const body = (abs.n === 1 && abs.d === 1 && sym) ? sym : rTex(abs) + (sym ? sym : "");
+    if (first) return (neg ? "-" : "") + body;
+    return (neg ? " - " : " + ") + body;
+  }
+
+  /* simple histogram frame */
+  function axesFrame(holder, H, pl, pr, pt, pb, xmin, xmax, ymax) {
+    holder.innerHTML = "";
+    const Wd = vbW(holder);
+    const svg = svgEl("svg", { viewBox: `0 0 ${Wd} ${H}`, style: "direction:ltr", role: "img" }, holder);
+    const xS = v => pl + (v - xmin) / (xmax - xmin) * (Wd - pl - pr);
+    const yS = v => H - pb - v / ymax * (H - pb - pt);
+    svgEl("line", { x1: pl, x2: Wd - pr, y1: H - pb, y2: H - pb, stroke: "var(--rule-strong)" }, svg);
+    return { svg, Wd, H, xS, yS, base: H - pb, pl, pr, pt, pb };
+  }
+  function xTicks(F, xmin, xmax, step, fmtT) {
+    for (let t = Math.ceil(xmin / step) * step; t <= xmax + 1e-9; t += step) {
+      svgEl("line", { x1: F.xS(t), x2: F.xS(t), y1: F.base, y2: F.base + 4, stroke: "var(--rule-strong)" }, F.svg);
+      svgText(F.svg, F.xS(t), F.base + 17, fmtT ? fmtT(t) : fmt(t), { "text-anchor": "middle", "font-size": 11.5, fill: "var(--muted)" });
+    }
+  }
+  function vLine(F, x, color, dash, label, row) {
+    const ln = svgEl("line", { x1: F.xS(x), x2: F.xS(x), y1: F.pt - 4, y2: F.base, stroke: color, "stroke-width": 2 }, F.svg);
+    if (dash) ln.setAttribute("stroke-dasharray", dash);
+    if (label) svgText(F.svg, clamp(F.xS(x), F.pl + 50, F.Wd - F.pr - 50), F.pt - 8 - (row || 0) * 14, label, { "text-anchor": "middle", "font-size": 12, "font-weight": 600, fill: color });
+  }
+
+  /* ---------- sampling machine ---------- */
+  W.machine = function (root) {
+    const MU = 72, SIG = 10;
+    let est = root.dataset.est || "xbar", n = 5, ests = [], last = null;
+    const E = {
+      xbar: { label: "ממוצע X̄", f: s => S.mean(s), se: () => SIG / Math.sqrt(n), note: "חסר הטיה. ככל ש-n גדל ההיסטוגרמה מצטופפת." },
+      x1: { label: "התצפית הראשונה X₁", f: s => s[0], se: () => SIG, note: "חסר הטיה, אבל לא משתמש בשאר התצפיות. הפיזור לא קטן כש-n גדל." },
+      max: { label: "המקסימום", f: s => Math.max(...s), se: null, note: "מוטה כלפי מעלה: המקסימום תמיד מעל רוב התצפיות, ומרכז ההיסטוגרמה רחוק מ-72." }
+    };
+    const row1 = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+    h("span", { text: "האומד:" }, row1);
+    seg(row1, Object.keys(E).map(k => ({ label: E[k].label, value: k })), est, v => { est = v; clear(); });
+    const row2 = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+    slider(row2, "גודל מדגם n =", 2, 30, 1, n, v => { n = v; clear(); });
+    const row3 = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+    btn(row3, "דגום מדגם", () => draw(1), "primary");
+    btn(row3, "דגום 1,000", () => draw(1000));
+    btn(row3, "נקה", clear);
+    const lastLine = h("p", { class: "note", style: "margin:4px 0 6px;min-height:1.6em" }, root);
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    const note = h("p", { class: "note", style: "margin:10px 0 0" }, root);
+    function draw(k) {
+      for (let r = 0; r < k; r++) {
+        const s = []; for (let i = 0; i < n; i++) s.push(Math.round(MU + SIG * randn()));
+        last = { s, v: E[est].f(s) }; ests.push(last.v);
+      }
+      render();
+    }
+    function clear() { ests = []; last = null; render(); }
+    function render() {
+      lastLine.innerHTML = last
+        ? `המדגם האחרון: <span class="num">${last.s.slice(0, 12).join(", ")}${last.s.length > 12 ? ", …" : ""}</span> &larr; אומדן: <strong class="num">${fmt(last.v, 2)}</strong>`
+        : "עוד לא נדגם אף מדגם.";
+      const xmin = 40, xmax = 110;
+      const bw = 1, counts = new Map();
+      ests.forEach(v => { const b = Math.floor(v / bw) * bw; counts.set(b, (counts.get(b) || 0) + 1); });
+      const ymax = Math.max(5, ...counts.values()) * 1.1;
+      const F = axesFrame(holder, 230, 16, 16, 40, 26, xmin, xmax, ymax);
+      F.svg.setAttribute("aria-label", "היסטוגרמה של האומדנים");
+      xTicks(F, xmin, xmax, 10);
+      counts.forEach((c, b) => {
+        if (b < xmin || b >= xmax) return;
+        const x1 = F.xS(b), x2 = F.xS(b + bw);
+        svgEl("rect", { x: x1 + 0.5, y: F.yS(c), width: Math.max(1, x2 - x1 - 1), height: F.base - F.yS(c), fill: "var(--accent)", "fill-opacity": 0.55 }, F.svg);
+      });
+      vLine(F, MU, "var(--ink)", "6 4", "μ = 72 (הפרמטר)", 0);
+      if (ests.length) vLine(F, S.mean(ests), "var(--median)", null, "ממוצע האומדנים", 1);
+      if (last && last.v >= xmin && last.v <= xmax) svgEl("circle", { cx: F.xS(last.v), cy: F.base - 6, r: 5, fill: "var(--median)", stroke: "var(--surface)", "stroke-width": 1.5 }, F.svg);
+      if (!ests.length) svgText(F.svg, F.Wd / 2, F.H / 2, "לחצו \"דגום מדגם\"", { "text-anchor": "middle", "font-size": 14, fill: "var(--muted)" });
+      stats.innerHTML = "";
+      statTile(stats, "מספר מדגמים", ests.length.toLocaleString("he-IL"));
+      statTile(stats, "ממוצע האומדנים", ests.length ? fmt(S.mean(ests), 2) : "—");
+      statTile(stats, "פיזור האומדנים (SD)", ests.length > 1 ? fmt(S.sd(ests, 1), 2) : "—");
+      statTile(stats, "טעות תקן לפי הנוסחה", E[est].se ? fmt(E[est].se(), 2) : "—");
+      note.innerHTML = E[est].note + (E[est].se ? ` <strong>טעות התקן לפי הנוסחה</strong> היא מה שהתאוריה צופה לפיזור האומדנים (${est === "xbar" ? "σ/√n" : "σ"}). היא לא משתנה כשדוגמים עוד מדגמים, כי היא תלויה רק ב-σ = 10, שקבוע, ${est === "xbar" ? "וב-n" : "ולא תלויה אפילו ב-n"}. השוו אותה לפיזור שנמדד בפועל, במשבצת שלידה: אחרי מספיק מדגמים הם כמעט שווים.` : "");
+    }
+    render();
+  };
+
+  /* ---------- four dartboards ---------- */
+  function drawBoard(svg, cx, cy, Rr) {
+    [1, 0.75, 0.5, 0.25].forEach((k, i) => svgEl("circle", { cx, cy, r: Rr * k, fill: i % 2 ? "var(--surface-2)" : "var(--surface)", stroke: "var(--rule-strong)", "stroke-width": 1 }, svg));
+    svgEl("line", { x1: cx - 7, x2: cx + 7, y1: cy, y2: cy, stroke: "var(--ink)", "stroke-width": 2 }, svg);
+    svgEl("line", { x1: cx, x2: cx, y1: cy - 7, y2: cy + 7, stroke: "var(--ink)", "stroke-width": 2 }, svg);
+  }
+  function shoot(svg, cx, cy, unit, bias, sd, k) {
+    const ang = -Math.PI / 4, bx = bias * Math.cos(ang), by = bias * Math.sin(ang);
+    const pts = [];
+    for (let i = 0; i < k; i++) {
+      const x = bx + sd * randn(), y = by + sd * randn();
+      pts.push([x, y]);
+      svgEl("circle", { cx: cx + x * unit, cy: cy + y * unit, r: 3.2, fill: "var(--mean)", "fill-opacity": 0.85 }, svg);
+    }
+    svgEl("circle", { cx: cx + bx * unit, cy: cy + by * unit, r: 7, fill: "none", stroke: "var(--median)", "stroke-width": 2.5 }, svg);
+    return pts;
+  }
+  W.dart4 = function (root) {
+    const boards = [
+      { b: 0, s: 1.0, t: "חסר הטיה, שונות גדולה" },
+      { b: 0, s: 0.3, t: "חסר הטיה, שונות קטנה" },
+      { b: 1.4, s: 1.0, t: "מוטה, שונות גדולה" },
+      { b: 1.4, s: 0.3, t: "מוטה, שונות קטנה" }
+    ];
+    const grid = h("div", { style: "display:grid;grid-template-columns:1fr 1fr;gap:10px;direction:ltr" }, root);
+    const cells = boards.map(bd => {
+      const c = h("div", { style: "text-align:center;direction:rtl" }, grid);
+      const holder = h("div", null, c);
+      h("div", { style: "font-weight:600;font-size:14.5px", text: bd.t }, c);
+      return { bd, holder };
+    });
+    const row = h("div", { class: "lab-row" }, root);
+    btn(row, "ירי חדש", render);
+    function render() {
+      cells.forEach(({ bd, holder }) => {
+        holder.innerHTML = "";
+        const svg = svgEl("svg", { viewBox: "0 0 200 200", style: "max-width:240px;margin:0 auto", role: "img", "aria-label": bd.t }, holder);
+        drawBoard(svg, 100, 100, 90);
+        shoot(svg, 100, 100, 30, bd.b, bd.s, 18);
+      });
+    }
+    render();
+  };
+
+  /* ---------- interactive dartboard with MSE ---------- */
+  W.dart = function (root) {
+    let bias = 0.8, sd = 0.6;
+    const ctl = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+    slider(ctl, "הטיה", 0, 2, 0.1, bias, v => { bias = v; render(); }, v => fmt(v, 1));
+    slider(ctl, "פיזור (SD)", 0.1, 2, 0.1, sd, v => { sd = v; render(); }, v => fmt(v, 1));
+    btn(ctl, "ירי חדש", () => render());
+    const twin = h("div", { class: "twin" }, root);
+    const left = h("div", null, twin), right = h("div", null, twin);
+    function render() {
+      left.innerHTML = "";
+      const svg = svgEl("svg", { viewBox: "0 0 220 220", style: "max-width:260px;margin:0 auto", role: "img", "aria-label": "מטרה" }, left);
+      drawBoard(svg, 110, 110, 100);
+      shoot(svg, 110, 110, 25, bias, sd, 40);
+      right.innerHTML = "";
+      const v = sd * sd, b2 = bias * bias, mse = v + b2, ref = 2.25;
+      const Wd = 300, Hd = 180, pl = 10, pr = 10;
+      const sv = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "פירוק MSE" }, right);
+      const max = Math.max(mse, ref, 1) * 1.08;
+      const xS = x => pl + x / max * (Wd - pl - pr);
+      svgText(sv, Wd - pr, 22, "הקשת שלכם", { "text-anchor": "end", "font-size": 12.5, "font-weight": 600, fill: "var(--ink)" });
+      svgEl("rect", { x: xS(0), y: 30, width: xS(v) - xS(0), height: 28, fill: "var(--mean)" }, sv);
+      svgEl("rect", { x: xS(v), y: 30, width: xS(mse) - xS(v), height: 28, fill: "var(--median)" }, sv);
+      svgText(sv, xS(mse) + 4 > Wd - 60 ? xS(mse) - 4 : xS(mse) + 4, 49, "MSE " + fmt(mse, 2), { "text-anchor": xS(mse) + 4 > Wd - 60 ? "end" : "start", "font-size": 12, "font-weight": 600, fill: xS(mse) + 4 > Wd - 60 ? "var(--surface)" : "var(--ink)" });
+      svgText(sv, Wd - pr, 92, "חסר הטיה, פיזור 1.5", { "text-anchor": "end", "font-size": 12.5, "font-weight": 600, fill: "var(--ink)" });
+      svgEl("rect", { x: xS(0), y: 100, width: xS(ref) - xS(0), height: 28, fill: "var(--mean)", "fill-opacity": 0.5 }, sv);
+      svgText(sv, xS(ref) - 4, 119, "MSE 2.25", { "text-anchor": "end", "font-size": 12, "font-weight": 600, fill: "var(--ink)" });
+      svgEl("rect", { x: pl, y: 150, width: 12, height: 12, fill: "var(--mean)" }, sv);
+      svgText(sv, pl + 16, 160, "שונות", { "font-size": 12, fill: "var(--ink-2)" });
+      svgEl("rect", { x: pl + 70, y: 150, width: 12, height: 12, fill: "var(--median)" }, sv);
+      svgText(sv, pl + 86, 160, "הטיה בריבוע", { "font-size": 12, fill: "var(--ink-2)" });
+      const verdict = mse < ref ? "הקשת המוטה שלכם עדיף על חסר ההטיה!" : "הקשת חסר ההטיה עדיף כאן.";
+      svgText(sv, Wd / 2, 140, verdict, { "text-anchor": "middle", "font-size": 12.5, fill: mse < ref ? "var(--good)" : "var(--muted)", "font-weight": 600 });
+    }
+    render();
+  };
+
+  /* ---------- decomposition animation ---------- */
+  W.decomp = function (root) {
+    const MU = 10, XS = [8, 12, 13, 15];
+    const XB = XS.reduce((a, b) => a + b, 0) / XS.length;
+    const TOT = XS.reduce((a, x) => a + (x - MU) ** 2, 0);
+    const WIN = XS.reduce((a, x) => a + (x - XB) ** 2, 0);
+    const BET = XS.length * (XB - MU) ** 2;
+    const STEPS = [
+      `ארבע התצפיות, והתוחלת האמיתית <span dir="ltr" style="unicode-bidi:isolate">μ = 10</span>.`,
+      `המרחק של כל תצפית מ-μ. זה מה שהיינו רוצים למדוד.`,
+      `<span dir="ltr" style="unicode-bidi:isolate">x̄ = 12</span> נוחת על הציר, וכל מרחק מתפצל לשניים: מהתצפית עד x̄ (כתום), ומ-x̄ עד μ (כחול). שימו לב שהחלק הכחול זהה בכל השורות.`,
+      `מעלים בריבוע וסוכמים את המרחקים מ-μ: <span dir="ltr" style="unicode-bidi:isolate">Σ(xᵢ − μ)² = ${TOT}</span>.`,
+      `אותו סכום מתפרק לשניים: <span dir="ltr" style="unicode-bidi:isolate">${TOT} = ${WIN} + ${BET}</span>. החלק הכתום הוא מה שהאומד מודד. החלק הכחול "הלך לאיבוד": הוא <span dir="ltr" style="unicode-bidi:isolate">n(x̄ − μ)² = 4 · 2² = ${BET}</span>.`
+    ];
+    const holder = h("div", null, root);
+    const caption = h("p", { style: "margin:10px 0 6px;font-weight:500;min-height:3.2em" }, root);
+    const row = h("div", { class: "lab-row" }, root);
+    const prevB = btn(row, "→ הקודם", () => show(cur - 1));
+    const counter = h("span", { class: "num", style: "font-weight:600" }, row);
+    const nextB = btn(row, "הבא ←", () => show(cur + 1), "primary");
+    let cur = 0, layers = [];
+    const Wd = vbW(holder), pl = 24, pr = 24, xmin = 6, xmax = 17;
+    const xS = v => pl + (v - xmin) / (xmax - xmin) * (Wd - pl - pr);
+    const top = 40, rowH = 38, axisY = top + XS.length * rowH + 8, barY = axisY + 52, barH = 30, Hd = barY + barH * 2 + 44;
+    const svg = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "פירוק המרחק של כל תצפית מהתוחלת" }, holder);
+    const defs = svgEl("defs", null, svg);
+    [["g", "var(--ink-2)"], ["o", "var(--median)"], ["b", "var(--mean)"]].forEach(([k, c]) => {
+      const m = svgEl("marker", { id: "dcm-" + k, viewBox: "0 0 10 10", refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: "auto-start-reverse" }, defs);
+      svgEl("path", { d: "M0,0 L10,5 L0,10 z", fill: c }, m);
+    });
+    const layer = () => { const g = svgEl("g", { style: "transition:opacity .7s ease", opacity: 0 }, svg); layers.push(g); return g; };
+    const L0 = layer(), L1 = layer(), L2 = layer(), L3a = layer(), L3b = layer();
+    // axis + points + mu (stage 0)
+    svgEl("line", { x1: xS(xmin), x2: xS(xmax), y1: axisY, y2: axisY, stroke: "var(--rule-strong)" }, L0);
+    for (let t = xmin; t <= xmax; t++) {
+      svgEl("line", { x1: xS(t), x2: xS(t), y1: axisY, y2: axisY + 4, stroke: "var(--rule-strong)" }, L0);
+      svgText(L0, xS(t), axisY + 18, String(t), { "text-anchor": "middle", "font-size": 11.5, fill: "var(--muted)" });
+    }
+    svgEl("line", { x1: xS(MU), x2: xS(MU), y1: top - 14, y2: axisY, stroke: "var(--ink)", "stroke-width": 2, "stroke-dasharray": "5 4" }, L0);
+    svgText(L0, xS(MU), top - 20, "μ = 10", { "text-anchor": "middle", "font-size": 13, "font-weight": 700, fill: "var(--ink)" });
+    XS.forEach((x, k) => {
+      const y = top + k * rowH;
+      svgEl("circle", { cx: xS(x), cy: y, r: 6, fill: "var(--ink)" }, L0);
+      svgText(L0, xS(x) + (x < MU ? -12 : 12), y + 4, String(x), { "text-anchor": x < MU ? "end" : "start", "font-size": 12, "font-weight": 600, fill: "var(--ink)" });
+    });
+    // stage 1: gray arrows to mu
+    XS.forEach((x, k) => {
+      const y = top + k * rowH;
+      svgEl("line", { x1: xS(x), x2: xS(MU), y1: y, y2: y, stroke: "var(--ink-2)", "stroke-width": 2, "stroke-opacity": 0.55, "marker-end": "url(#dcm-g)" }, L1);
+    });
+    // stage 2: xbar + split arrows
+    svgEl("line", { x1: xS(XB), x2: xS(XB), y1: top - 14, y2: axisY, stroke: "var(--median)", "stroke-width": 2, "stroke-dasharray": "5 4" }, L2);
+    svgText(L2, xS(XB) + 4, top - 20, "x̄ = 12", { "text-anchor": "start", "font-size": 13, "font-weight": 700, fill: "var(--median)" });
+    XS.forEach((x, k) => {
+      const y = top + k * rowH;
+      if (x !== XB) svgEl("line", { x1: xS(x), x2: xS(XB), y1: y + 11, y2: y + 11, stroke: "var(--median)", "stroke-width": 3, "marker-end": "url(#dcm-o)" }, L2);
+      svgEl("line", { x1: xS(XB), x2: xS(MU), y1: y + 19, y2: y + 19, stroke: "var(--mean)", "stroke-width": 3, "marker-end": "url(#dcm-b)" }, L2);
+    });
+    // stage 3: bars
+    const bx = v => pl + v / TOT * (Wd - pl - pr);
+    svgText(L3a, Wd - pr, barY - 8, "Σ(xᵢ − μ)²", { "text-anchor": "end", "font-size": 12.5, "font-weight": 600, fill: "var(--ink)" });
+    svgEl("rect", { x: bx(0), y: barY, width: bx(TOT) - bx(0), height: barH, fill: "var(--ink-2)", "fill-opacity": 0.35 }, L3a);
+    svgText(L3a, (bx(0) + bx(TOT)) / 2, barY + 20, String(TOT), { "text-anchor": "middle", "font-size": 14, "font-weight": 700, fill: "var(--ink)" });
+    const by = barY + barH + 10;
+    svgEl("rect", { x: bx(0), y: by, width: bx(WIN) - bx(0), height: barH, fill: "var(--median)" }, L3b);
+    svgEl("rect", { x: bx(WIN), y: by, width: bx(TOT) - bx(WIN), height: barH, fill: "var(--mean)" }, L3b);
+    svgText(L3b, (bx(0) + bx(WIN)) / 2, by + 20, `Σ(xᵢ − x̄)² = ${WIN}`, { "text-anchor": "middle", "font-size": 13, "font-weight": 700, fill: "var(--surface)" });
+    svgText(L3b, (bx(WIN) + bx(TOT)) / 2, by + 20, `n(x̄ − μ)² = ${BET}`, { "text-anchor": "middle", "font-size": 13, "font-weight": 700, fill: "var(--surface)" });
+    const stageLayers = [[L0], [L1], [L2], [L3a], [L3b]];
+    function show(k) {
+      cur = clamp(k, 0, STEPS.length - 1);
+      stageLayers.forEach((ls, i) => ls.forEach(g => g.setAttribute("opacity", i <= cur ? 1 : 0)));
+      L1.setAttribute("opacity", cur === 1 ? 1 : (cur > 1 ? 0.25 : 0));
+      caption.innerHTML = STEPS[cur];
+      counter.textContent = `שלב ${cur + 1} מתוך ${STEPS.length}`;
+      prevB.disabled = cur === 0; nextB.disabled = cur === STEPS.length - 1;
+    }
+    show(0);
+  };
+
+  /* ---------- spread of sample means on a number line ---------- */
+  W.spread = function (root) {
+    const MU = 62, SIG = 20, K = 60;
+    let n = 4, zs = [];
+    const ctl = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+    slider(ctl, "גודל כל מדגם n =", 1, 200, 1, n, v => { n = v; render(); });
+    btn(ctl, "מדגמים חדשים", () => { gen(); render(); });
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    function gen() { zs = []; for (let k = 0; k < K; k++) zs.push({ z: randn(), y: Math.random() }); }
+    function render() {
+      const se = SIG / Math.sqrt(n);
+      holder.innerHTML = "";
+      const Wd = vbW(holder), Hd = 170, pl = 16, pr = 16, top = 34, bot = 120;
+      const svg = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "ממוצעי מדגמים על ציר מספרים" }, holder);
+      const xS = v => pl + clamp(v, 0, 100) / 100 * (Wd - pl - pr);
+      svgEl("rect", { x: xS(MU - se), y: top - 6, width: Math.max(1, xS(MU + se) - xS(MU - se)), height: bot - top + 12, fill: "var(--median)", "fill-opacity": 0.14 }, svg);
+      svgEl("line", { x1: xS(0), x2: xS(100), y1: bot + 10, y2: bot + 10, stroke: "var(--rule-strong)" }, svg);
+      for (let t = 0; t <= 100; t += 10) {
+        svgEl("line", { x1: xS(t), x2: xS(t), y1: bot + 10, y2: bot + 15, stroke: "var(--rule-strong)" }, svg);
+        svgText(svg, xS(t), bot + 29, String(t), { "text-anchor": "middle", "font-size": 11.5, fill: "var(--muted)" });
+      }
+      zs.forEach(({ z, y }) => {
+        const v = MU + se * z;
+        svgEl("circle", { cx: xS(v), cy: top + y * (bot - top), r: 4.2, fill: "var(--mean)", "fill-opacity": (v < 0 || v > 100) ? 0.25 : 0.8 }, svg);
+      });
+      svgEl("line", { x1: xS(MU), x2: xS(MU), y1: top - 10, y2: bot + 10, stroke: "var(--ink)", "stroke-width": 2.5 }, svg);
+      svgText(svg, xS(MU), top - 16, "μ = 62 (הפרמטר)", { "text-anchor": "middle", "font-size": 12.5, "font-weight": 700, fill: "var(--ink)" });
+      const means = zs.map(({ z }) => MU + se * z);
+      const within = means.filter(v => Math.abs(v - MU) <= 5).length;
+      stats.innerHTML = "";
+      statTile(stats, "טעות תקן σ/√n", fmt(se, 2));
+      statTile(stats, `ממוצעים במרחק עד 5 מהפרמטר (מתוך ${K})`, String(within));
+    }
+    gen(); render();
+  };
+
+  /* ---------- standard error ---------- */
+  W.se = function (root) {
+    const MU = 500, SIG = 12;
+    let n = 36, d = 3;
+    const ctl = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+    slider(ctl, "n =", 5, 400, 1, n, v => { n = v; render(); });
+    slider(ctl, "d (מ\"ל) =", 0.5, 8, 0.5, d, v => { d = v; render(); }, v => fmt(v, 2));
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    const sumLine = h("p", { style: "margin:10px 0 0;font-weight:500" }, root);
+    function render() {
+      const se = SIG / Math.sqrt(n), z = d / se, P = 2 * Phi(z) - 1;
+      const xmin = 484, xmax = 516;
+      const pdf = x => Math.exp(-0.5 * ((x - MU) / se) ** 2) / (se * Math.sqrt(2 * Math.PI));
+      const ymax = pdf(MU) * 1.12;
+      const F = axesFrame(holder, 270, 16, 16, 34, 76, xmin, xmax, ymax);
+      F.svg.setAttribute("aria-label", "התפלגות הממוצע");
+      xTicks(F, xmin, xmax, 4);
+      const N = 300; let path = "", band = "";
+      for (let i = 0; i <= N; i++) { const x = xmin + (xmax - xmin) * i / N; path += `${i ? "L" : "M"}${F.xS(x)},${F.yS(Math.min(pdf(x), ymax))}`; }
+      const lo = MU - d, hi = MU + d;
+      band = `M${F.xS(lo)},${F.base}`;
+      for (let i = 0; i <= 120; i++) { const x = lo + (hi - lo) * i / 120; band += `L${F.xS(x)},${F.yS(Math.min(pdf(x), ymax))}`; }
+      band += `L${F.xS(hi)},${F.base}Z`;
+      svgEl("path", { d: band, fill: "var(--accent)", "fill-opacity": 0.22 }, F.svg);
+      svgEl("path", { d: path, fill: "none", stroke: "var(--ink)", "stroke-width": 2.2 }, F.svg);
+      vLine(F, MU, "var(--ink)", "6 4", "μ = 500");
+      svgText(F.svg, F.xS(MU) + 8, F.yS(pdf(MU) * 0.3), fmt(P * 100, 2) + "%", { "text-anchor": "start", "font-size": 14, "font-weight": 700, fill: "var(--ink)" });
+      // ruler: points vs standard errors
+      const yr = F.base + 40;
+      svgText(F.svg, F.Wd - F.pr, yr - 10, "סרגל בטעויות תקן", { "text-anchor": "end", "font-size": 11.5, fill: "var(--muted)" });
+      svgEl("line", { x1: F.xS(xmin), x2: F.xS(xmax), y1: yr, y2: yr, stroke: "var(--rule-strong)" }, F.svg);
+      const kmax = Math.floor((xmax - MU) / se);
+      const kpx = F.xS(MU + se) - F.xS(MU), kstep = Math.max(1, Math.ceil(24 / kpx));
+      for (let k = -kmax; k <= kmax; k++) {
+        if (k % kstep) continue;
+        const x = MU + k * se;
+        svgEl("line", { x1: F.xS(x), x2: F.xS(x), y1: yr - 4, y2: yr + 4, stroke: "var(--ink-2)" }, F.svg);
+        svgText(F.svg, F.xS(x), yr + 17, String(k), { "text-anchor": "middle", "font-size": 11, fill: "var(--ink-2)" });
+      }
+      svgEl("line", { x1: F.xS(lo), x2: F.xS(hi), y1: yr, y2: yr, stroke: "var(--accent)", "stroke-width": 4 }, F.svg);
+      stats.innerHTML = "";
+      statTile(stats, "טעות תקן σ/√n", fmt(se, 3));
+      statTile(stats, "z: d בטעויות תקן", fmt(z, 2));
+      statTile(stats, "P(|X̄ − μ| ≤ d)", fmt(P, 4));
+      sumLine.innerHTML = `עם ${tex("n = " + n)}, טעות התקן היא ${tex("\\frac{12}{\\sqrt{" + n + "}} = " + fmt(se, 2))}. לכן ${tex("d = " + fmt(d, 2))} מ"ל הם ${tex("\\frac{" + fmt(d, 2) + "}{" + fmt(se, 2) + "} = " + fmt(z, 2))} טעויות תקן, והסיכוי שהממוצע ייפול בטווח הוא <strong class="num">${fmt(P * 100, 1)}%</strong>.`;
+    }
+    render();
+  };
+
+  /* ---------- variance calculator ---------- */
+  W.varcalc = function (root) {
+    const presets = [
+      ["ממוצע של 3", ["1/3", "1/3", "1/3", "0"]],
+      ["(X₁+2X₂+X₃)/4", ["1/4", "1/2", "1/4", "0"]],
+      ["(X₁+X₂)/3", ["1/3", "1/3", "0", "0"]],
+      ["X₁ בלבד", ["1", "0", "0", "0"]],
+      ["ממוצע של 4", ["1/4", "1/4", "1/4", "1/4"]]
+    ];
+    const ests = [{ name: "A", c: presets[0][1].slice() }, { name: "B", c: presets[1][1].slice() }];
+    const out = h("div", null, root);
+    ests.forEach(es => {
+      const box = h("div", { class: "cl-item", style: "margin:8px 0" }, root);
+      const hd = h("div", { class: "lab-row", style: "margin:0 0 6px" }, box);
+      h("strong", { text: "אומד " + es.name + ":" }, hd);
+      presets.forEach(([lab, c]) => { const pb = btn(hd, lab, () => { es.c = c.slice(); es.inputs.forEach((inp, i) => inp.value = es.c[i]); render(); }); if (/^[(X]/.test(lab)) { pb.style.direction = "ltr"; pb.style.unicodeBidi = "isolate"; } });
+      const row = h("div", { class: "lab-row", style: "direction:ltr;justify-content:flex-end" }, box);
+      es.inputs = es.c.map((v, i) => {
+        const wrap = h("span", { style: "display:inline-flex;align-items:center;gap:4px" }, row);
+        const inp = h("input", { type: "text", value: v, "aria-label": `מקדם של X${i + 1} באומד ${es.name}`, style: "width:62px;direction:ltr;text-align:center" }, wrap);
+        h("span", null, wrap, tex(`X_${i + 1}`) + (i < 3 ? " +" : ""));
+        inp.addEventListener("input", () => { es.c[i] = inp.value; render(); });
+        return inp;
+      });
+      es.res = h("div", { class: "note", style: "margin-top:6px" }, box);
+    });
+    const verdict = h("p", { style: "font-weight:600;margin:8px 0 0" }, root);
+    void out;
+    function render() {
+      const res = ests.map(es => {
+        const cs = es.c.map(parseR);
+        if (cs.some(c => !c)) { es.res.textContent = "יש מקדם לא תקין. הקלידו מספר או שבר, למשל 1/3."; return null; }
+        const sum = cs.reduce((a, c) => a + rVal(c), 0);
+        const vr = cs.reduce((a, c) => a + rVal(c) ** 2, 0);
+        const unb = Math.abs(sum - 1) < 1e-9;
+        es.res.innerHTML = `סכום המקדמים: <strong class="num">${fmt(sum, 4)}</strong>, ולכן ${tex(unb ? "E = \\mu" : `E = ${fmt(sum, 4)}\\mu`)}: ${unb ? "<span style=\"color:var(--good)\">חסר הטיה</span>" : "<span style=\"color:var(--bad)\">מוטה</span>"}. ` +
+          `שונות: ${tex(`\\sum a_i^2\\,\\sigma^2 = ${fmt(vr, 4)}\\,\\sigma^2`)}`;
+        return { unb, vr };
+      });
+      if (res.some(r => !r)) { verdict.textContent = ""; return; }
+      const [a, b] = res;
+      if (a.unb && b.unb) verdict.textContent = Math.abs(a.vr - b.vr) < 1e-9 ? "שניהם חסרי הטיה עם אותה שונות." : `שניהם חסרי הטיה. אומד ${a.vr < b.vr ? "A" : "B"} עדיף: השונות שלו קטנה יותר.`;
+      else if (a.unb || b.unb) verdict.textContent = `אומד ${a.unb ? "B" : "A"} מוטה. השוואה לפי שונות בלבד לא מספיקה כאן (ראו MSE בהרחבה של פרק 4).`;
+      else verdict.textContent = "שני האומדים מוטים ל-μ. אפשר לתקן כל אחד בהנדסה לאחור: לחלק בסכום המקדמים.";
+    }
+    render();
+  };
+
+  /* ---------- reverse engineering ---------- */
+  W.reverse = function (root) {
+    const presets = [
+      ["הרצאה, סעיף א", "2", "-7", "X"],
+      ["הרצאה, סעיף ב", "10/3", "-35/3", "T_1"],
+      ["משתנה רציף", "0", "4/3", "\\bar X"],
+      ["תרגיל 1", "1", "3", "\\bar X"]
+    ];
+    const pr = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+    const row = h("div", { class: "lab-row", style: "margin:0 0 10px;direction:ltr;justify-content:flex-end" }, root);
+    const mk = (pre, val, w) => { const s = h("span", { style: "display:inline-flex;align-items:center;gap:4px" }, row); h("span", null, s, pre); const i = h("input", { type: "text", value: val, style: `width:${w}px;direction:ltr;text-align:center` }, s); i.addEventListener("input", render); return i; };
+    const iT = mk(tex("E\\big("), "X", 60);
+    const iA = mk(tex("\\big) ="), "2", 64);
+    const iB = mk(tex("+"), "-7", 64);
+    h("span", null, row, tex("\\theta"));
+    presets.forEach(([lab, a, b, t]) => btn(pr, lab, () => { iA.value = a; iB.value = b; iT.value = t; render(); }));
+    const preview = h("p", { style: "margin:0 0 10px" }, root);
+    const out = h("div", { class: "steps" }, root);
+    function render() {
+      out.innerHTML = "";
+      preview.innerHTML = "";
+      const a = parseR(iA.value), b = parseR(iB.value), T = iT.value.trim() || "T";
+      if (!a || !b) { h("p", { class: "feedback no", text: "הקלידו מספרים או שברים, למשל 10/3." }, out); return; }
+      preview.innerHTML = "כלומר: " + tex(`E(${T}) = ${(rTerm(a, "", true) + rTerm(b, "\\theta", a.n === 0)) || "0"}`);
+      if (b.n === 0) { h("p", { class: "feedback no", text: "המקדם של θ הוא 0: התוחלת לא תלויה ב-θ, ואין מה לשחזר." }, out); return; }
+      const step = (t, m) => { const d = h("div", { class: "step" }, out); h("p", { class: "step-h" }, d, t); h("div", { class: "math-block" }, d, tex(m)); };
+      const what = [];
+      if (!(b.n === 1 && b.d === 1)) what.push("כפלה את θ במקדם " + tex("\\left(" + rTex(b) + "\\right)"));
+      if (a.n !== 0) what.push((a.n > 0 ? "הוסיפה " : "החסירה ") + `<span class="num">${tex(rTex(R(Math.abs(a.n), a.d)))}</span>`);
+      const d0 = h("div", { class: "step" }, out);
+      h("p", { class: "step-h" }, d0, "מה התוכנית עשתה ל-θ?");
+      h("p", null, d0, what.length ? "היא " + what.join(", ואחר כך ") + ". מבטלים בסדר הפוך." : "כלום: האומד כבר חסר הטיה.");
+      let cur = T;
+      if (a.n !== 0) {
+        cur = `${T} ${a.n > 0 ? "-" : "+"} ${rTex(R(Math.abs(a.n), a.d))}`;
+        step(a.n > 0 ? "מחסירים את מה שנוסף" : "מוסיפים את מה שהוחסר", `E\\left(${cur}\\right) = ${rTex(b)}\\theta`);
+      }
+      if (!(b.n === 1 && b.d === 1)) {
+        step("מחלקים במקדם של θ", `E\\left(\\frac{${cur}}{${rTex(b)}}\\right) = \\theta`);
+      }
+      const c1 = rDiv(R(1), b), c0 = rNeg(rDiv(a, b));
+      const expr = (rTerm(c1, " " + T, true) + rTerm(c0, "", false)) || "0";
+      const fin = h("div", { class: "callout" }, out);
+      h("p", { class: "callout-h", text: "האומד חסר ההטיה" }, fin);
+      h("div", { class: "math-block" }, fin, tex(`\\hat\\theta = ${expr}`));
+      h("p", { class: "note" }, fin, "בדיקה: " + tex(`E(\\hat\\theta) = ${rTex(c1)}\\left(${rTex(a)} ${b.n < 0 ? "-" : "+"} ${rTex(R(Math.abs(b.n), b.d))}\\theta\\right) ${c0.n < 0 ? "-" : "+"} ${rTex(R(Math.abs(c0.n), c0.d))} = \\theta \\ \\checkmark`));
+    }
+    render();
+  };
+
+  /* ---------- consistency paths ---------- */
+  W.consist = function (root) {
+    const MU = 72, SIG = 10, NMAX = 400, PATHS = 6;
+    const E = {
+      xbar: { label: "X̄", target: MU, tl: "μ = 72", ymin: 45, ymax: 99, run: (s, sq, n, first) => s / n, verdict: "חסר הטיה ועקיב: כל הקווים מתכנסים ל-μ." },
+      x1: { label: "X₁ בלבד", target: MU, tl: "μ = 72", ymin: 45, ymax: 99, run: (s, sq, n, first) => first, verdict: "חסר הטיה אבל לא עקיב: כל קו נשאר על התצפית הראשונה שלו, לא משנה כמה נוסיף." },
+      sig: { label: "σ̂²", target: SIG * SIG, tl: "σ² = 100", ymin: 0, ymax: 260, run: (s, sq, n) => n < 2 ? null : (sq - s * s / n) / n, verdict: "σ̂² (חלוקה ב-n) מוטה אבל עקיב: במדגמים קטנים הוא נמוך מדי בממוצע, אבל הקווים מתכנסים ל-σ²." },
+      s2: { label: "S²", target: SIG * SIG, tl: "σ² = 100", ymin: 0, ymax: 260, run: (s, sq, n) => n < 2 ? null : (sq - s * s / n) / (n - 1), verdict: "S² (חלוקה ב-n−1) חסר הטיה ועקיב." }
+    };
+    let est = "xbar", data = [];
+    const row = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+    seg(row, Object.keys(E).map(k => ({ label: E[k].label, value: k })), est, v => { est = v; render(); });
+    btn(row, "מדגמים חדשים", () => { gen(); render(); });
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    const verdict = h("p", { style: "font-weight:600;margin:10px 0 0" }, root);
+    function gen() { data = []; for (let p = 0; p < PATHS; p++) { const a = []; for (let i = 0; i < NMAX; i++) a.push(MU + SIG * randn()); data.push(a); } }
+    function render() {
+      const e = E[est];
+      holder.innerHTML = "";
+      const Wd = vbW(holder), Hd = 260, pl = 40, pr = 14, pt = 16, pb = 30;
+      const svg = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "אומדנים כפונקציה של גודל המדגם" }, holder);
+      const xS = n => pl + Math.log(n) / Math.log(NMAX) * (Wd - pl - pr);
+      const yS = v => Hd - pb - (clamp(v, e.ymin, e.ymax) - e.ymin) / (e.ymax - e.ymin) * (Hd - pb - pt);
+      const stp = niceStep(e.ymax - e.ymin, 5);
+      for (let t = Math.ceil(e.ymin / stp) * stp; t <= e.ymax; t += stp) {
+        svgEl("line", { x1: pl, x2: Wd - pr, y1: yS(t), y2: yS(t), stroke: "var(--rule)" }, svg);
+        svgText(svg, pl - 6, yS(t) + 4, fmt(t), { "text-anchor": "end", "font-size": 11, fill: "var(--muted)" });
+      }
+      [1, 2, 5, 10, 20, 50, 100, 200, 400].forEach(n => svgText(svg, xS(n), Hd - 12, String(n), { "text-anchor": "middle", "font-size": 11, fill: "var(--muted)" }));
+      svgText(svg, Wd - pr, Hd - 1, "n (סקאלה לוגריתמית)", { "text-anchor": "end", "font-size": 10.5, fill: "var(--muted)" });
+      const colors = ["var(--mean)", "var(--median)", "var(--mode)", "var(--ext)", "var(--neg)", "var(--ink-2)"];
+      data.forEach((a, p) => {
+        let s = 0, sq = 0, d = "";
+        for (let i = 0; i < NMAX; i++) {
+          s += a[i]; sq += a[i] * a[i];
+          const v = e.run(s, sq, i + 1, a[0]);
+          if (v === null) continue;
+          d += `${d ? "L" : "M"}${xS(i + 1)},${yS(v)}`;
+        }
+        svgEl("path", { d, fill: "none", stroke: colors[p], "stroke-width": 1.6, "stroke-opacity": 0.9 }, svg);
+      });
+      svgEl("line", { x1: pl, x2: Wd - pr, y1: yS(e.target), y2: yS(e.target), stroke: "var(--ink)", "stroke-width": 2, "stroke-dasharray": "6 4" }, svg);
+      svgText(svg, Wd - pr - 4, yS(e.target) - 6, e.tl, { "text-anchor": "end", "font-size": 12, "font-weight": 700, fill: "var(--ink)" });
+      // bias check: many samples of size 5
+      let sum = 0; const K = 4000, n = 5;
+      for (let r = 0; r < K; r++) { let s = 0, sq = 0, first = 0; for (let i = 0; i < n; i++) { const x = MU + SIG * randn(); if (!i) first = x; s += x; sq += x * x; } sum += e.run(s, sq, n, first); }
+      stats.innerHTML = "";
+      statTile(stats, "הפרמטר", fmt(e.target));
+      statTile(stats, "ממוצע על פני 4,000 מדגמים, n=5", fmt(sum / K, 1));
+      statTile(stats, "אחרי 400 תצפיות (ממוצע 6 הקווים)", fmt(S.mean(data.map(a => { let s = 0, sq = 0; a.forEach(x => { s += x; sq += x * x; }); return e.run(s, sq, NMAX, a[0]); })), 1));
+      verdict.textContent = e.verdict;
+    }
+    gen(); render();
+  };
+
+  /* ---------- Bernoulli / binomial / proportion ---------- */
+  W.bern = function (root) {
+    const N = 20;
+    let p = 0.3, cells = null, phats = [];
+    const ctl = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+    slider(ctl, "p =", 0.05, 0.95, 0.05, p, v => { p = v; phats = []; cells = null; render(); }, v => fmt(v, 2));
+    btn(ctl, "דגום", () => draw(1), "primary");
+    btn(ctl, "דגום 500", () => draw(500));
+    btn(ctl, "נקה", () => { phats = []; cells = null; render(); });
+    const grid = h("div", { style: "display:grid;grid-template-columns:repeat(10,1fr);gap:4px;max-width:420px;direction:ltr;margin:6px 0" }, root);
+    const line = h("p", { class: "note", style: "margin:4px 0 8px" }, root);
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    function draw(k) {
+      for (let r = 0; r < k; r++) { cells = []; for (let i = 0; i < N; i++) cells.push(Math.random() < p ? 1 : 0); phats.push(S.sum(cells) / N); }
+      render();
+    }
+    function render() {
+      grid.innerHTML = "";
+      for (let i = 0; i < N; i++) {
+        const v = cells ? cells[i] : null;
+        h("div", { style: `aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;border:1px solid var(--rule);background:${v === 1 ? "var(--accent)" : "var(--paper)"};color:${v === 1 ? "var(--surface)" : "var(--muted)"}`, text: v === null ? "" : String(v) }, grid);
+      }
+      if (cells) {
+        const X = S.sum(cells);
+        line.innerHTML = `<strong>ברנולי:</strong> כל משבצת היא 0 או 1. <strong>בינומית:</strong> X = מספר האחדים = <span class="num">${X}</span>. <strong>פרופורציה:</strong> ${tex(`\\hat p = \\frac{${X}}{20} = ${fmt(X / N, 2)}`)}`;
+      } else line.textContent = "לחצו \"דגום\" כדי לבצע 20 ניסויים.";
+      const counts = new Map(); phats.forEach(v => counts.set(Math.round(v * N), (counts.get(Math.round(v * N)) || 0) + 1));
+      const ymax = Math.max(4, ...counts.values()) * 1.1;
+      const F = axesFrame(holder, 200, 16, 16, 34, 26, -0.025, 1.025, ymax);
+      F.svg.setAttribute("aria-label", "היסטוגרמה של הפרופורציות המדגמיות");
+      xTicks(F, 0, 1, 0.1, t => fmt(t, 1));
+      counts.forEach((c, k) => {
+        const x = k / N, w = (F.xS(1 / N) - F.xS(0)) * 0.8;
+        svgEl("rect", { x: F.xS(x) - w / 2, y: F.yS(c), width: w, height: F.base - F.yS(c), fill: "var(--accent)", "fill-opacity": 0.6 }, F.svg);
+      });
+      vLine(F, p, "var(--ink)", "6 4", "p = " + fmt(p, 2));
+      stats.innerHTML = "";
+      statTile(stats, "מספר מדגמים", String(phats.length));
+      statTile(stats, "ממוצע ה-p̂", phats.length ? fmt(S.mean(phats), 3) : "—");
+      statTile(stats, "פיזור ה-p̂ (SD)", phats.length > 1 ? fmt(S.sd(phats, 1), 3) : "—");
+      statTile(stats, "√(p(1−p)/n)", fmt(Math.sqrt(p * (1 - p) / N), 3));
+    }
+    render();
+  };
+
+  /* ---------- exact hit vs near hit (dice) ---------- */
+  W.exact = function (root) {
+    const holder = h("div", null, root);
+    const rows = [];
+    let dist = [1];
+    for (let n = 1; n <= 40; n++) {
+      const nd = new Array(dist.length + 5).fill(0);
+      dist.forEach((pv, i) => { for (let f = 0; f < 6; f++) nd[i + f] += pv / 6; });
+      dist = nd;
+      if (n % 2 === 0) {
+        const exact = dist[3.5 * n - n];
+        let near = 0; dist.forEach((pv, i) => { const m = (i + n) / n; if (Math.abs(m - 3.5) <= 0.5 + 1e-9) near += pv; });
+        rows.push({ n, exact, near });
+      }
+    }
+    const F = axesFrame(holder, 260, 40, 16, 20, 34, 0, 41, 1);
+    F.svg.setAttribute("aria-label", "הסתברות לממוצע מדויק מול הסתברות לטווח");
+    for (let t = 0; t <= 1; t += 0.2) {
+      svgEl("line", { x1: F.pl, x2: F.Wd - F.pr, y1: F.yS(t), y2: F.yS(t), stroke: "var(--rule)" }, F.svg);
+      svgText(F.svg, F.pl - 6, F.yS(t) + 4, fmt(t, 1), { "text-anchor": "end", "font-size": 11, fill: "var(--muted)" });
+    }
+    [2, 10, 20, 30, 40].forEach(n => svgText(F.svg, F.xS(n), F.base + 16, String(n), { "text-anchor": "middle", "font-size": 11, fill: "var(--muted)" }));
+    svgText(F.svg, (F.Wd) / 2, F.H - 2, "מספר קוביות n", { "text-anchor": "middle", "font-size": 11, fill: "var(--muted)" });
+    const bw = (F.xS(2) - F.xS(0)) * 0.7;
+    rows.forEach(r => {
+      const rect = svgEl("rect", { x: F.xS(r.n) - bw / 2, y: F.yS(r.exact), width: bw, height: F.base - F.yS(r.exact), fill: "var(--median)" }, F.svg);
+      rect.addEventListener("pointermove", ev => showTip(`n = ${r.n}: בדיוק 3.5 — ${fmt(r.exact, 4)}, בטווח — ${fmt(r.near, 4)}`, ev));
+      rect.addEventListener("pointerleave", hideTip);
+    });
+    svgEl("path", { d: rows.map((r, i) => `${i ? "L" : "M"}${F.xS(r.n)},${F.yS(r.near)}`).join(""), fill: "none", stroke: "var(--mean)", "stroke-width": 2.4 }, F.svg);
+    rows.forEach(r => svgEl("circle", { cx: F.xS(r.n), cy: F.yS(r.near), r: 2.8, fill: "var(--mean)" }, F.svg));
+    const lg = h("div", { class: "lab-row" }, root);
+    h("span", null, lg, '<span class="swatch" style="background:var(--median);height:10px;width:14px"></span> בדיוק 3.5 (יורד)');
+    h("span", null, lg, '<span class="swatch mean"></span> בטווח 3.5 ± 0.5 (עולה)');
+  };
+
+  /* ---------- quiz ---------- */
+  W.quiz = function (root) {
+    const Q = [
+      { q: "תוחלת הציונים היא 72. במדגם יצא ממוצע של 74. מהו האומדן?", o: ["72", "74", "X̄", "2"], a: 1, e: "האומדן הוא המספר שיצא במדגם: 74. X̄ הוא האומד (התוכנית), 72 הוא הפרמטר, ו-2 היא טעות האמידה." },
+      { q: "מה ההבדל בין אומד לאומדן?", o: ["אין הבדל, אלו מילים נרדפות", "אומד הוא משתנה מקרי (כלל), אומדן הוא מספר", "אומד הוא מספר, אומדן הוא כלל", "אומד מתאר את האוכלוסייה, אומדן את המדגם"], a: 1, e: "האומד הוא התוכנית, למשל X̄, ויש לו התפלגות. האומדן הוא התוצאה במדגם מסוים, למשל x̄ = 74." },
+      { q: "μ לא ידוע. איזה מהביטויים הבאים <strong>אינו</strong> סטטיסטי?", o: ["X̄", "max Xᵢ", "(X̄ − μ)/(σ/√n)", "ΣXᵢ"], a: 2, e: "סטטיסטי מחושב מהנתונים בלבד. הביטוי השלישי דורש את μ, שלא ידוע." },
+      { q: "σ = 8 ו-n = 64. מהי טעות התקן של הממוצע?", o: ["8", "1", "0.125", "64"], a: 1, e: "<span class=\"ltr\">σ/√n = 8/8 = 1</span>. שימו לב: זו סטיית התקן של X̄. השונות שלו היא 1² = 1 במקרה הזה, אבל בדרך כלל σ²/n." },
+      { q: "איזה מהאומדים הבאים חסר הטיה ל-μ?", o: ["(X₁ + X₂)/3", "(2X₁ + X₂)/3", "X₁ + X₂", "(X₁ + X₂ + X₃)/2"], a: 1, e: "צירוף לינארי חסר הטיה ל-μ בדיוק כשסכום המקדמים 1: <span class=\"ltr\">2/3 + 1/3 = 1</span>." },
+      { q: "מה השונות של <span class=\"ltr\">(2X₁ + X₂)/3</span> כשהתצפיות בלתי תלויות?", o: ["σ²/3", "5σ²/9", "σ²", "3σ²/9"], a: 1, e: "המקדמים עולים בריבוע: <span class=\"ltr\">(4/9 + 1/9)σ² = 5σ²/9</span>. זה יותר מ-σ²/3 של הממוצע הרגיל, ולכן הממוצע הרגיל עדיף." },
+      { q: "<span class=\"ltr\">E(T) = 4 − 2θ</span>. מהו אומד חסר הטיה ל-θ?", o: ["T/2 − 4", "(4 − T)/2", "(T − 4)/2", "2T − 4"], a: 1, e: "התוכנית כפלה ב-(−2) והוסיפה 4. מחסירים 4 ומחלקים ב-(−2): <span class=\"ltr\">(T − 4)/(−2) = (4 − T)/2</span>. בדיקה: <span class=\"ltr\">(4 − (4 − 2θ))/2 = θ</span>." },
+      { q: "S² חסר הטיה ל-σ². מה נכון לגבי S כאומד ל-σ?", o: ["גם הוא חסר הטיה", "הוא מוטה: E(S) < σ", "הוא מוטה: E(S) > σ", "אי אפשר לדעת"], a: 1, e: "שורש היא פעולה לא לינארית, והתוחלת לא עוברת דרכה. E(S) קטן מעט מ-σ, וההטיה נעלמת כש-n גדל." },
+      { q: "מחלקים את סכום ריבועי הסטיות ב-n במקום ב-n−1. מה התוחלת של האומד?", o: ["σ²", "(n−1)σ²/n", "nσ²/(n−1)", "σ²/n"], a: 1, e: "<span class=\"ltr\">E[Σ(Xᵢ − X̄)²] = (n−1)σ²</span>, ולכן חלוקה ב-n נותנת <span class=\"ltr\">(n−1)σ²/n</span>: מוטה כלפי מטה." },
+      { q: "משתמשים רק ב-X₁ כאומד ל-μ, גם כשיש 1,000 תצפיות. האומד הוא:", o: ["חסר הטיה ועקיב", "חסר הטיה ולא עקיב", "מוטה ועקיב", "מוטה ולא עקיב"], a: 1, e: "E(X₁) = μ, אז הוא חסר הטיה. אבל השונות שלו נשארת σ² לא משנה כמה תצפיות יש, ולכן הוא לא עקיב." },
+      { q: "p = 0.5 ו-n = 400. מהי טעות התקן של p̂?", o: ["0.5", "0.025", "0.000625", "0.00125"], a: 1, e: "<span class=\"ltr\">√(0.5·0.5/400) = √0.000625 = 0.025</span>. 0.000625 היא השונות." },
+      { q: "X̄ ו-Ȳ מבוססים על מדגמים בלתי תלויים בגדלים n ו-m. מהי <span class=\"ltr\">Var(X̄ − Ȳ)</span>?", o: ["σx²/n − σy²/m", "σx²/n + σy²/m", "(σx² − σy²)/(n + m)", "0"], a: 1, e: "המקדם (−1) עולה בריבוע, ולכן השונויות מתחברות גם בהפרש." },
+      { q: "חוקר א דגם 100 סטודנטים וחוקר ב 150. אצל מי ההסתברות שהממוצע ייפול בין 69 ל-75 (התוחלת 72) גבוהה יותר?", o: ["חוקר א", "חוקר ב", "שווה", "תלוי בממוצע שיצא"], a: 1, e: "המדגם הגדול נותן פעמון צר יותר, שמרכז יותר הסתברות סביב התוחלת. זה חוק המספרים הגדולים." },
+      { q: "לאומד יש הטיה 1 ושונות 3. מה ה-MSE שלו?", o: ["3", "4", "2", "10"], a: 1, e: "<span class=\"ltr\">MSE = Var + Bias² = 3 + 1 = 4</span>.", ext: true },
+      { q: "דוגמים בלי החזרה מאוכלוסייה קטנה. לעומת הבינומית, שונות מספר ההצלחות:", o: ["גדולה יותר", "קטנה יותר", "זהה", "תלויה רק ב-p"], a: 1, e: "מקדם התיקון לאוכלוסייה סופית <span class=\"ltr\">(N−n)/(N−1)</span> קטן מ-1. כל תצפית היא פריט חדש, והתלות השלילית בין התצפיות מקטינה את השונות.", ext: true }
+    ];
+    const score = h("p", { class: "score" }, root);
+    let right = 0, answered = 0;
+    const upd = () => { score.textContent = `ציון: ${right} מתוך ${answered} שנענו (${Q.length} שאלות)`; };
+    Q.forEach((it, idx) => {
+      const box = h("div", { class: "quiz-q" + (it.ext ? " ext-only" : "") }, root);
+      const qh = h("div", { class: "qh" }, box);
+      h("span", { class: "qn", text: `${idx + 1}.` }, qh);
+      h("span", null, qh, it.q);
+      if (it.ext) h("span", { class: "ext-badge", text: "הרחבה" }, qh);
+      const opts = h("div", { class: "quiz-opts" }, box);
+      const exp = h("div", { class: "quiz-exp" }, box);
+      const btns = it.o.map((t, i) => {
+        const b = h("button", { type: "button", text: t }, opts);
+        b.addEventListener("click", () => {
+          btns.forEach(x => x.disabled = true);
+          answered++;
+          if (i === it.a) { right++; b.classList.add("right"); exp.innerHTML = "<strong>נכון.</strong> " + it.e; }
+          else { b.classList.add("wrong"); btns[it.a].classList.add("right"); exp.innerHTML = "<strong>לא בדיוק.</strong> " + it.e; }
+          upd();
+        });
+        return b;
+      });
+    });
+    upd();
+  };
+
+
+  /* ================= boot ================= */
+  function boot() {
+    document.querySelectorAll("[data-w]").forEach(el => {
+      const fn = W[el.dataset.w];
+      if (fn) {
+        try { fn(el); } catch (e) { console.error("widget " + el.dataset.w, e); el.textContent = "שגיאה בטעינת הרכיב."; }
+      }
+    });
+
+    // theme toggle
+    const themeBtn = document.getElementById("toggle-theme");
+    const root = document.documentElement;
+    const isDark = () => root.dataset.theme ? root.dataset.theme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const syncTheme = () => { themeBtn.textContent = isDark() ? "מצב בהיר" : "מצב כהה"; themeBtn.setAttribute("aria-pressed", String(isDark())); };
+    try { const saved = localStorage.getItem("stats-guide-theme"); if (saved === "dark" || saved === "light") root.dataset.theme = saved; } catch (e) { /* storage unavailable */ }
+    themeBtn.addEventListener("click", () => {
+      root.dataset.theme = isDark() ? "light" : "dark";
+      try { localStorage.setItem("stats-guide-theme", root.dataset.theme); } catch (e) { /* storage unavailable */ }
+      syncTheme();
+    });
+    syncTheme();
+
+    // extension controls
+    const openBtn = document.getElementById("toggle-ext-open");
+    const hideBox = document.getElementById("toggle-ext-hide");
+    let allOpen = false;
+    openBtn.addEventListener("click", () => {
+      allOpen = !allOpen;
+      document.querySelectorAll("details.ext").forEach(d => { d.open = allOpen; });
+      openBtn.textContent = allOpen ? "סגור את כל ההרחבות" : "פתח את כל ההרחבות";
+    });
+    if (hideBox) hideBox.addEventListener("change", () => { document.body.classList.toggle("hide-ext", hideBox.checked); });
+
+    // toc highlighting
+    const links = Array.from(document.querySelectorAll("nav.toc a"));
+    const map = new Map(links.map(a => [a.getAttribute("href").slice(1), a]));
+    const secs = Array.from(document.querySelectorAll("section.chapter"));
+    let lastActive = null, ticking = false;
+    function syncToc() {
+      ticking = false;
+      const line = window.innerHeight * 0.3;
+      let cur = secs[0];
+      secs.forEach(sec => { if (sec.getBoundingClientRect().top <= line) cur = sec; });
+      if (cur === lastActive) return;
+      lastActive = cur;
+      links.forEach(l => l.classList.remove("active"));
+      const a = map.get(cur.id);
+      if (a) { a.classList.add("active"); if (window.innerWidth <= 920) a.scrollIntoView({ block: "nearest", inline: "center" }); }
+    }
+    window.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(syncToc); } }, { passive: true });
+    syncToc();
+
+    // math
+    if (window.renderMathInElement) {
+      window.renderMathInElement(document.body, {
+        delimiters: [{ left: "$$", right: "$$", display: true }, { left: "\\(", right: "\\)", display: false }],
+        throwOnError: false
+      });
+    }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
+})();
+
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,2796 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>אקראיות עם חוקים</title>
+<meta name="description" content="מדריך למידה אינטראקטיבי להרצאה 2 בקורס סטטיסטיקה 4221010: הסתברות, משתנים מקריים, התפלגויות ומשפט הגבול המרכזי">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=IBM+Plex+Sans+Hebrew:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+
+:root {
+  color-scheme: light;
+  --paper: #f5f7fa;
+  --grid: rgba(31, 78, 140, 0.055);
+  --surface: #ffffff;
+  --surface-2: #eef2f7;
+  --ink: #17202d;
+  --ink-2: #445063;
+  --muted: #6a7486;
+  --rule: #d6dde7;
+  --rule-strong: #b5c0cf;
+  --accent: #1f4e8c;
+  --accent-soft: #e3ecf8;
+  --mean: #2a78d6;
+  --median: #eb6834;
+  --mode: #1baf7a;
+  --neg: #e34948;
+  --pos: #2a78d6;
+  --ext: #5a47cf;
+  --ext-bg: #f2f0fd;
+  --ext-rule: #cfc8f5;
+  --good: #0f7a3e;
+  --good-bg: #e6f4ec;
+  --bad: #b3261e;
+  --bad-bg: #fbe9e7;
+  --radius: 10px;
+  --font-body: "IBM Plex Sans Hebrew", "Segoe UI", Arial, sans-serif;
+  --font-head: "Frank Ruhl Libre", "David", Georgia, serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #13171d;
+    --grid: rgba(140, 170, 220, 0.05);
+    --surface: #1b2129;
+    --surface-2: #232b36;
+    --ink: #e9edf3;
+    --ink-2: #bcc5d2;
+    --muted: #8f9aab;
+    --rule: #2f3946;
+    --rule-strong: #46525f;
+    --accent: #8db6ec;
+    --accent-soft: #22324a;
+    --mean: #3987e5;
+    --median: #d95926;
+    --mode: #199e70;
+    --neg: #e66767;
+    --pos: #3987e5;
+    --ext: #a397f0;
+    --ext-bg: #201d36;
+    --ext-rule: #3d3670;
+    --good: #5fc98d;
+    --good-bg: #17301f;
+    --bad: #f08a80;
+    --bad-bg: #3a1c1a;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #13171d;
+  --grid: rgba(140, 170, 220, 0.05);
+  --surface: #1b2129;
+  --surface-2: #232b36;
+  --ink: #e9edf3;
+  --ink-2: #bcc5d2;
+  --muted: #8f9aab;
+  --rule: #2f3946;
+  --rule-strong: #46525f;
+  --accent: #8db6ec;
+  --accent-soft: #22324a;
+  --mean: #3987e5;
+  --median: #d95926;
+  --mode: #199e70;
+  --neg: #e66767;
+  --pos: #3987e5;
+  --ext: #a397f0;
+  --ext-bg: #201d36;
+  --ext-rule: #3d3670;
+  --good: #5fc98d;
+  --good-bg: #17301f;
+  --bad: #f08a80;
+  --bad-bg: #3a1c1a;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+
+body {
+  margin: 0;
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+
+/* ---------- header ---------- */
+.masthead {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 48px 24px 8px;
+}
+.course-line { color: var(--muted); font-size: 15px; margin: 0 0 10px; }
+.masthead h1 {
+  font-family: var(--font-head);
+  font-weight: 900;
+  font-size: clamp(38px, 6.4vw, 72px);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.masthead h1 .h1-second { display: block; color: var(--ink-2); font-weight: 500; }
+.masthead .lede { max-width: 640px; font-size: 19px; color: var(--ink-2); margin: 18px 0 0; }
+
+.hero-lab { max-width: 1180px; margin: 28px auto 0; padding: 0 24px; }
+
+.controls-bar {
+  max-width: 1180px; margin: 24px auto 0; padding: 0 24px;
+  display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center;
+  font-size: 15px; color: var(--ink-2);
+}
+.legend-ext { display: inline-flex; align-items: center; gap: 8px; }
+
+/* ---------- layout ---------- */
+.layout {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px 24px 80px;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 48px;
+}
+nav.toc {
+  position: sticky; top: 16px; align-self: start;
+  font-size: 15px; line-height: 1.5;
+  max-height: calc(100vh - 32px); overflow: auto;
+}
+nav.toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; }
+nav.toc li { counter-increment: toc; }
+nav.toc a {
+  display: grid; grid-template-columns: 26px 1fr; gap: 4px;
+  padding: 6px 10px; border-radius: 6px; text-decoration: none; color: var(--ink-2);
+  border-inline-start: 2px solid transparent;
+}
+nav.toc a::before { content: counter(toc); color: var(--muted); font-variant-numeric: tabular-nums; }
+nav.toc a:hover { background: var(--surface-2); color: var(--ink); }
+nav.toc a.active { color: var(--ink); border-inline-start-color: var(--accent); background: var(--surface); }
+nav.toc .toc-title { font-weight: 600; color: var(--ink); margin: 0 0 8px; padding-inline-start: 10px; }
+
+main { min-width: 0; max-width: 760px; }
+
+section.chapter { padding-top: 40px; }
+section.chapter + section.chapter { border-top: 1px solid var(--rule); margin-top: 40px; }
+.chapter-num { font-family: var(--font-head); color: var(--muted); font-size: 18px; margin: 0; }
+h2 {
+  font-family: var(--font-head); font-weight: 700;
+  font-size: clamp(28px, 3.6vw, 38px); line-height: 1.15; margin: 2px 0 14px;
+}
+h3 { font-size: 21px; line-height: 1.35; margin: 34px 0 8px; font-weight: 600; }
+h4 { font-size: 17px; margin: 22px 0 4px; font-weight: 600; }
+p { margin: 0 0 14px; }
+ul, ol { margin: 0 0 14px; padding-inline-start: 22px; }
+li { margin-bottom: 4px; }
+strong { font-weight: 600; }
+
+.slide {
+  display: inline-block; font-size: 13px; line-height: 1.4; white-space: nowrap;
+  padding: 1px 8px; border-radius: 999px; vertical-align: 2px;
+  border: 1px solid var(--rule-strong); color: var(--muted); background: var(--surface);
+  margin-inline-start: 6px; font-weight: 500;
+}
+h2 .slide, h3 .slide { vertical-align: 4px; }
+
+.def {
+  border-inline-start: 3px solid var(--accent);
+  padding: 4px 16px; margin: 14px 0 18px; background: var(--surface);
+  border-radius: 0 6px 6px 0;
+}
+[dir="rtl"] .def { border-radius: 6px 0 0 6px; }
+.def p:last-child { margin-bottom: 0; }
+
+.math-block { overflow-x: auto; overflow-y: hidden; padding: 4px 0; margin: 6px 0 14px; }
+.katex { direction: ltr; unicode-bidi: isolate; font-size: 1.05em; }
+.katex-display { margin: 0.4em 0; }
+.ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+.num { font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
+
+table.t {
+  border-collapse: collapse; width: 100%; margin: 10px 0 18px; font-size: 15.5px;
+  background: var(--surface); border-radius: 8px; overflow: hidden;
+}
+.table-wrap { overflow-x: auto; margin: 10px 0 18px; }
+.table-wrap table.t { margin: 0; }
+table.t th, table.t td { padding: 8px 12px; text-align: start; border-bottom: 1px solid var(--rule); }
+table.t th { background: var(--surface-2); font-weight: 600; color: var(--ink); }
+table.t tr:last-child td { border-bottom: 0; }
+table.t td.n, table.t th.n { text-align: center; font-variant-numeric: tabular-nums; unicode-bidi: plaintext; }
+
+.note { color: var(--ink-2); font-size: 15.5px; }
+.callout {
+  background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius);
+  padding: 14px 18px; margin: 16px 0;
+}
+.callout > :last-child { margin-bottom: 0; }
+.callout .callout-h { font-weight: 600; margin-bottom: 4px; }
+.takeaway { font-family: var(--font-head); font-size: 22px; line-height: 1.45; margin: 22px 0; color: var(--ink); }
+
+/* ---------- extension blocks ---------- */
+details.ext {
+  border: 1px solid var(--ext-rule);
+  background: var(--ext-bg);
+  border-radius: var(--radius);
+  margin: 18px 0;
+}
+details.ext > summary {
+  list-style: none; cursor: pointer;
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px;
+  padding: 12px 16px; font-weight: 600; color: var(--ink);
+}
+details.ext > summary::-webkit-details-marker { display: none; }
+details.ext > summary::after {
+  content: "+"; margin-inline-start: auto; color: var(--ext); font-weight: 400; font-size: 22px; line-height: 1;
+}
+details.ext[open] > summary::after { content: "−"; }
+.ext-badge {
+  display: inline-block; font-size: 12.5px; font-weight: 600; line-height: 1.5;
+  color: #fff; background: var(--ext); padding: 1px 9px; border-radius: 999px;
+}
+:root[data-theme="dark"] .ext-badge { color: #15122b; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .ext-badge { color: #15122b; } }
+.ext-later { font-size: 13.5px; font-weight: 400; color: var(--ext); }
+details.ext .ext-body { padding: 2px 18px 16px; border-top: 1px dashed var(--ext-rule); }
+details.ext .ext-body > :first-child { margin-top: 12px; }
+details.ext .ext-body h4:first-child { margin-top: 12px; }
+body.hide-ext details.ext, body.hide-ext .ext-only { display: none; }
+details.fold { border: 1px solid var(--rule-strong); background: var(--surface); border-radius: var(--radius); margin: 18px 0; }
+details.fold > summary { list-style: none; cursor: pointer; display: flex; align-items: baseline; gap: 10px; padding: 12px 16px; font-weight: 600; color: var(--ink); }
+details.fold > summary::-webkit-details-marker { display: none; }
+details.fold > summary::after { content: "+"; margin-inline-start: auto; color: var(--accent); font-weight: 400; font-size: 22px; line-height: 1; }
+details.fold[open] > summary::after { content: "−"; }
+details.fold .fold-body { padding: 2px 18px 16px; border-top: 1px dashed var(--rule-strong); }
+details.fold .fold-body > :first-child { margin-top: 12px; }
+.cA { color: var(--accent); font-weight: 700; }
+.cB { color: var(--median); font-weight: 700; }
+
+/* ---------- reveal ---------- */
+details.reveal { margin: 8px 0 16px; }
+details.reveal > summary {
+  cursor: pointer; display: inline-block; font-size: 15px; font-weight: 600; color: var(--accent);
+  padding: 4px 12px; border: 1px solid var(--rule-strong); border-radius: 999px; background: var(--surface);
+}
+details.reveal > summary::-webkit-details-marker { display: none; }
+details.reveal[open] > summary { margin-bottom: 10px; }
+details.reveal .reveal-body { border-inline-start: 3px solid var(--rule-strong); padding: 2px 16px; }
+
+/* ---------- widgets ---------- */
+figure.lab {
+  margin: 22px 0; padding: 18px 18px 14px; background: var(--surface);
+  border: 1px solid var(--rule); border-radius: 14px;
+}
+.lab-title { font-weight: 600; margin: 0 0 2px; font-size: 16.5px; }
+.lab-hint { color: var(--muted); font-size: 14.5px; margin: 0 0 10px; }
+figure.lab svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: none; }
+figure.lab svg text { font-family: var(--font-body); }
+.lab-row { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin: 10px 0 0; font-size: 15px; }
+.lab-row label { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); }
+.btn {
+  font: inherit; font-size: 14.5px; font-weight: 500; cursor: pointer;
+  padding: 5px 14px; border-radius: 8px; border: 1px solid var(--rule-strong);
+  background: var(--surface); color: var(--ink);
+}
+.btn:hover { background: var(--surface-2); }
+.btn.primary { background: var(--accent); color: var(--surface); border-color: var(--accent); }
+.btn.primary:hover { filter: brightness(1.08); }
+.seg { display: inline-flex; border: 1px solid var(--rule-strong); border-radius: 8px; overflow: hidden; }
+.seg button { font: inherit; font-size: 14.5px; padding: 5px 12px; border: 0; background: var(--surface); color: var(--ink-2); cursor: pointer; }
+.seg button + button { border-inline-start: 1px solid var(--rule-strong); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--surface); }
+input[type="range"] { accent-color: var(--accent); width: 160px; }
+input[type="number"], textarea, select {
+  font: inherit; font-size: 15px; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--rule-strong); border-radius: 6px; padding: 4px 8px;
+}
+input[type="number"] { width: 72px; }
+textarea { width: 100%; min-height: 72px; direction: ltr; text-align: left; font-variant-numeric: tabular-nums; }
+
+.stats {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  gap: 8px; margin-top: 12px;
+}
+.stat {
+  border: 1px solid var(--rule); border-radius: 8px; padding: 6px 10px; background: var(--paper);
+}
+.stat .k { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.stat .v { font-size: 19px; font-weight: 600; font-variant-numeric: tabular-nums; direction: ltr; text-align: right; }
+.stat.ext-stat { border-color: var(--ext-rule); background: var(--ext-bg); }
+.swatch { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+.swatch.mean { background: var(--mean); }
+.swatch.median { background: repeating-linear-gradient(90deg, var(--median) 0 4px, transparent 4px 6px); }
+.swatch.mode { background: repeating-linear-gradient(90deg, var(--mode) 0 2px, transparent 2px 4px); }
+
+.twin { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.twin > div { min-width: 0; }
+.twin .tw-h { font-weight: 600; font-size: 15px; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.twin .tw-h .num { color: var(--ink-2); font-weight: 500; }
+
+.feedback { font-size: 15px; margin-top: 8px; min-height: 1.5em; }
+.feedback.ok { color: var(--good); }
+.feedback.no { color: var(--bad); }
+
+/* classifier */
+.classify { display: grid; gap: 10px; margin-top: 8px; }
+.cl-item { border: 1px solid var(--rule); border-radius: 10px; padding: 10px 12px; background: var(--paper); }
+.cl-item .cl-q { font-weight: 500; margin-bottom: 6px; }
+.cl-opts { display: flex; flex-wrap: wrap; gap: 6px; }
+.cl-opts button {
+  font: inherit; font-size: 14px; padding: 3px 12px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--rule-strong); background: var(--surface); color: var(--ink);
+}
+.cl-opts button.right { background: var(--good-bg); border-color: var(--good); color: var(--good); font-weight: 600; }
+.cl-opts button.wrong { background: var(--bad-bg); border-color: var(--bad); color: var(--bad); }
+.cl-why { font-size: 14.5px; color: var(--ink-2); margin-top: 6px; }
+
+/* quiz */
+.quiz-q { border: 1px solid var(--rule); background: var(--surface); border-radius: 12px; padding: 14px 16px; margin: 12px 0; }
+.quiz-q .qh { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; font-weight: 600; margin-bottom: 8px; }
+.quiz-q .qn { color: var(--muted); font-variant-numeric: tabular-nums; }
+.quiz-opts { display: grid; gap: 6px; }
+.quiz-opts button {
+  font: inherit; text-align: start; padding: 8px 12px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--rule); background: var(--paper); color: var(--ink);
+}
+.quiz-opts button:hover:not(:disabled) { border-color: var(--rule-strong); }
+.quiz-opts button.right { background: var(--good-bg); border-color: var(--good); }
+.quiz-opts button.wrong { background: var(--bad-bg); border-color: var(--bad); }
+.quiz-opts button:disabled { cursor: default; }
+.quiz-exp { margin-top: 10px; font-size: 15.5px; color: var(--ink-2); }
+.score { font-weight: 600; }
+
+/* kibbutz steps */
+.steps { counter-reset: st; }
+.step { border-inline-start: 2px solid var(--rule-strong); padding: 0 16px 6px; margin: 0 0 6px; position: relative; }
+.step-h { font-weight: 600; }
+
+/* tooltips */
+.tip {
+  position: fixed; z-index: 50; pointer-events: none; background: var(--ink); color: var(--paper);
+  font-size: 13.5px; padding: 4px 8px; border-radius: 6px; opacity: 0; transition: opacity .1s;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.tip.on { opacity: 1; }
+
+footer.foot { max-width: 1180px; margin: 0 auto; padding: 24px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--rule); }
+
+/* ---------- responsive ---------- */
+@media (max-width: 920px) {
+  .layout { grid-template-columns: 1fr; gap: 0; padding: 8px 16px 64px; }
+  nav.toc {
+    position: sticky; top: 0; z-index: 20; max-height: none; overflow-x: auto; overflow-y: hidden;
+    background: var(--paper); margin: 0 -16px; padding: 8px 16px; border-bottom: 1px solid var(--rule);
+  }
+  nav.toc .toc-title { display: none; }
+  nav.toc ol { display: flex; gap: 4px; white-space: nowrap; }
+  nav.toc a { display: inline-flex; gap: 6px; padding: 4px 10px; border-inline-start: 0; border-bottom: 2px solid transparent; border-radius: 6px 6px 0 0; }
+  nav.toc a.active { border-bottom-color: var(--accent); }
+  .masthead { padding: 32px 16px 4px; }
+  .hero-lab, .controls-bar { padding: 0 16px; }
+  html { scroll-padding-top: 60px; }
+}
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  .twin { grid-template-columns: 1fr; }
+  figure.lab { padding: 14px 12px 12px; margin-left: -4px; margin-right: -4px; }
+  table.t th, table.t td { padding: 6px 8px; }
+}
+@media print {
+  body { background: #fff; }
+  nav.toc, .controls-bar { display: none; }
+  .layout { display: block; }
+  details.ext { break-inside: avoid; }
+}
+
+figure.lab svg g .ring { opacity: 0; }
+figure.lab svg g:focus .ring { opacity: 1; }
+
+/* range sliders: min on the left, max on the right, like the number line */
+input[type="range"] { direction: ltr; }
+
+/* scales ladder */
+.ladder { display: grid; grid-template-columns: minmax(96px, 1.2fr) repeat(4, minmax(0, 1fr)); gap: 6px; }
+.ld-corner { min-height: 1px; }
+.ld-cap { display: flex; flex-direction: column; align-items: center; justify-content: end; text-align: center; padding: 2px 2px 4px; }
+.ld-sym { font-size: 19px; font-weight: 700; color: var(--ink); letter-spacing: 0.04em; direction: ltr; }
+.ld-capname { font-size: 13px; color: var(--muted); }
+.ld-scale {
+  font: inherit; text-align: start; cursor: pointer; border: 1px solid var(--rule); background: var(--paper);
+  border-radius: 8px; padding: 6px 10px; display: flex; flex-direction: column; line-height: 1.25; color: var(--ink);
+}
+.ld-scale:hover { border-color: var(--rule-strong); }
+.ld-scale.sel { border-color: var(--accent); background: var(--accent-soft); }
+.ld-name { font-weight: 700; font-size: 16px; }
+.ld-en { font-size: 12px; color: var(--muted); direction: ltr; text-align: end; }
+.ld-cell {
+  border-radius: 8px; border: 1px dashed var(--rule); min-height: 46px; position: relative;
+  display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700; direction: ltr;
+  color: var(--accent); transition: background .15s;
+}
+.ld-cell.on { border: 1px solid transparent; background: var(--accent-soft); }
+.ld-cell.on.new { background: var(--accent); color: var(--surface); }
+.ld-cell.sel { box-shadow: 0 0 0 2px var(--accent) inset; }
+.ld-cell.on.new.sel { box-shadow: none; }
+.ld-newtag { position: absolute; top: 2px; inset-inline-end: 6px; font-size: 10px; font-weight: 600; opacity: .85; direction: rtl; }
+.ladder-detail { display: grid; grid-template-columns: 220px 1fr; gap: 16px; align-items: center; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--rule); }
+.ld-art svg { width: 100%; height: auto; }
+.ld-text p { margin: 0 0 8px; }
+.ld-title { font-weight: 700; font-size: 18px; }
+.ld-adds { font-weight: 500; font-size: 14.5px; color: var(--accent); margin-inline-start: 8px; }
+.ld-can strong { color: var(--good); }
+.ld-cant strong { color: var(--bad); }
+@media (max-width: 600px) {
+  .ladder { grid-template-columns: 82px repeat(4, minmax(0, 1fr)); gap: 4px; }
+  .ld-capname { font-size: 11.5px; }
+  .ld-sym { font-size: 16px; }
+  .ld-newtag { display: none; }
+  .ladder-detail { grid-template-columns: 1fr; }
+  .ld-art { max-width: 260px; }
+}
+
+input[type="number"] { direction: ltr; text-align: right; }
+
+
+/* ---------- lecture 2 additions ---------- */
+.stat.stat-hl { border-color: var(--accent); background: var(--accent-soft); }
+.stat .v { overflow-wrap: anywhere; }
+.venn-btns .btn { min-width: 2.6em; }
+.venn-btns .btn .katex { font-size: 1em; }
+.venn-btns .btn.primary .katex { color: var(--surface); }
+.venn-out .venn-tex .katex { font-size: 1.1em; }
+.dice-layout { display: grid; grid-template-columns: minmax(0, 330px) minmax(0, 1fr); gap: 18px; align-items: start; }
+.dice-layout svg { width: 100%; height: auto; }
+.dice-key { font-weight: 700; color: var(--ink); }
+.kx-nw { white-space: nowrap; }
+.cmp { display: grid; gap: 8px; margin-top: 12px; }
+.cmp-row { display: grid; grid-template-columns: 6.5em minmax(0, 1fr) 3em; gap: 8px; align-items: center; font-size: 14px; }
+.cmp-track { height: 14px; background: var(--surface-2); border: 1px solid var(--rule); border-radius: 7px; overflow: hidden; }
+.cmp-fill { height: 100%; background: var(--accent); }
+.ext-ctl { display: inline-flex; align-items: center; gap: 8px; }
+.rv-info { font-size: 15.5px; }
+.norm-steps { margin-top: 10px; font-size: 15.5px; line-height: 1.9; }
+.dist-tex { margin-top: 10px; font-size: 15px; }
+.mosaic-out .num, .norm-steps .num { display: inline-block; }
+select { max-width: 100%; }
+@media (max-width: 600px) {
+  .dice-layout { grid-template-columns: 1fr; }
+  .lab-row label { flex-wrap: wrap; }
+}
+.stat .stat-sub { font-size: 13px; color: var(--muted); text-align: right; }
+
+</style>
+</head>
+<body>
+<header class="masthead">
+  <h1>אקראיות עם חוקים<span class="h1-second">הסתברות, התפלגויות ומשפט הגבול המרכזי</span></h1>
+  <p class="lede">אי אפשר לדעת מה תהיה התוצאה הבאה, אבל אפשר לדעת בדיוק איך יתנהגו אלף תוצאות. המדריך בונה את הכלים לכך צעד אחר צעד, ואפשר לשחק עם כל גרף.</p>
+</header>
+
+<div class="controls-bar">
+  <span class="legend-ext"><span class="ext-badge">הרחבה</span> חומר שמעבר לחומר ההרצאה. מקופל כברירת מחדל.</span>
+  <button class="btn" id="toggle-theme" type="button" aria-pressed="false">מצב כהה</button>
+  <span class="ext-ctl"><span>הרחבות:</span><span class="seg" role="group" aria-label="תצוגת ההרחבות"><button type="button" data-ext="closed" aria-pressed="true">מקופלות</button><button type="button" data-ext="open" aria-pressed="false">פתוחות</button><button type="button" data-ext="hidden" aria-pressed="false">מוסתרות</button></span></span>
+</div>
+
+<div class="layout">
+  <nav class="toc" aria-label="תוכן המדריך">
+    <p class="toc-title">תוכן</p>
+    <ol>
+      <li><a href="#events">מאורעות ומרחב מדגם</a></li>
+      <li><a href="#prob">חישוב הסתברויות</a></li>
+      <li><a href="#cond">תלות והסתברות מותנית</a></li>
+      <li><a href="#rv">מהו משתנה מקרי</a></li>
+      <li><a href="#expect">תוחלת ושונות</a></li>
+      <li><a href="#cov">שונות משותפת ומתאם</a></li>
+      <li><a href="#dists">התפלגויות</a></li>
+      <li><a href="#normal">התפלגות נורמלית</a></li>
+      <li><a href="#clt">משפט הגבול המרכזי</a></li>
+      <li><a href="#practice">תרגילים</a></li>
+      <li><a href="#quiz">בדקו את עצמכם</a></li>
+      <li><a href="#pitfalls">מלכודות נפוצות</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+<!-- ============ 1 ============ -->
+<section class="chapter" id="events">
+  <p class="chapter-num">פרק 1</p>
+  <h2>ניסוי, מרחב מדגם ומאורעות</h2>
+  <p>סטטיסטיקה תיאורית מתארת נתונים שכבר נאספו. כדי להסיק מהם משהו על העולם, צריך שפה שמתארת את מה ש<strong>עוד לא קרה</strong>. זו תורת ההסתברות, והיא מתחילה משלושה מושגים.</p>
+
+  <div class="def">
+    <p><strong>ניסוי מקרי:</strong> ניסוי שהתוצאה שלו לא ידועה מראש. הטלת מטבע, הטלת קובייה, בחירה אקראית של 3 סטודנטים מתוך 4.</p>
+    <p><strong>מרחב המדגם \(\Omega\):</strong> אוסף כל התוצאות האפשריות של הניסוי.</p>
+    <p><strong>מאורע:</strong> אוסף כלשהו של תוצאות מתוך \(\Omega\). כלומר, תת-קבוצה של מרחב המדגם.</p>
+  </div>
+
+  <div class="table-wrap"><table class="t">
+    <tr><th>ניסוי</th><th>מרחב המדגם</th><th>גודל</th></tr>
+    <tr><td>הטלת מטבע</td><td>{עץ, פלי}</td><td class="n">2</td></tr>
+    <tr><td>הטלת קובייה</td><td class="n">\(\{1,2,3,4,5,6\}\)</td><td class="n">6</td></tr>
+    <tr><td>בחירת 3 מתוך הסטודנטים a, b, c, d, בלי חשיבות לסדר</td><td class="n">\(\{abc,\ abd,\ acd,\ bcd\}\)</td><td class="n">4</td></tr>
+  </table></div>
+
+  <h3>סוגי מאורעות</h3>
+  <div class="table-wrap"><table class="t">
+    <tr><th>סוג</th><th>מה הוא מכיל</th><th>דוגמה בהטלת קובייה</th></tr>
+    <tr><td><strong>יסודי</strong></td><td>תוצאה אחת בדיוק</td><td>"יצא 4", כלומר {4}</td></tr>
+    <tr><td><strong>מורכב</strong></td><td>לפחות שתי תוצאות</td><td>"יצא מספר זוגי", כלומר {2, 4, 6}</td></tr>
+    <tr><td><strong>ודאי</strong></td><td>את כל התוצאות, כלומר את \(\Omega\) כולו</td><td>"יצא מספר בין 1 ל-6"</td></tr>
+    <tr><td><strong>ריק</strong> \(\phi\)</td><td>אף תוצאה</td><td>"יצא 7"</td></tr>
+  </table></div>
+
+  <h4>תרגול: שלוש הטלות מטבע</h4>
+  <p>מטילים מטבע הוגן 3 פעמים. מהו מרחב המדגם? ואיזה סוג של מאורע הוא כל אחד מאלה: A, עץ יצא בדיוק פעם אחת. B, עץ יצא 3 פעמים. C, עץ יצא לפחות פעמיים. D, יצא 7 לפחות פעם אחת?</p>
+  <details class="reveal"><summary>הצג פתרון</summary><div class="reveal-body">
+    <p>במרחב המדגם יש \(2^3 = 8\) תוצאות. כל תוצאה היא <strong>רצף</strong> של שלוש הטלות, והסדר חשוב: (ע, ע, פ) ו-(פ, ע, ע) הן שתי תוצאות שונות.</p>
+    <p class="note">(ע,ע,ע), (ע,ע,פ), (ע,פ,ע), (ע,פ,פ), (פ,ע,ע), (פ,ע,פ), (פ,פ,ע), (פ,פ,פ)</p>
+    <ul>
+      <li><strong>A</strong> מורכב: (ע,פ,פ), (פ,ע,פ), (פ,פ,ע).</li>
+      <li><strong>B</strong> יסודי: (ע,ע,ע).</li>
+      <li><strong>C</strong> מורכב: (ע,ע,פ), (ע,פ,ע), (פ,ע,ע), (ע,ע,ע).</li>
+      <li><strong>D</strong> ריק: אין במטבע תוצאה 7.</li>
+    </ul>
+  </div></details>
+
+  <h3>פעולות על מאורעות</h3>
+  <p>מאורעות הם קבוצות, ולכן אפשר לצרף אותם כמו קבוצות. נוח לחשוב עליהם בעזרת <strong>דיאגרמת ון</strong>: המלבן הוא \(\Omega\), וכל עיגול הוא מאורע.</p>
+  <div class="table-wrap"><table class="t">
+    <tr><th>פעולה</th><th>סימון</th><th>במילים</th></tr>
+    <tr><td>משלים</td><td class="n">\(\bar{A}\)</td><td>כל התוצאות שאינן ב-A. "A לא קרה".</td></tr>
+    <tr><td>איחוד</td><td class="n">\(A \cup B\)</td><td>תוצאות שנמצאות ב-A, או ב-B, או בשניהם. "לפחות אחד מהם קרה".</td></tr>
+    <tr><td>חיתוך</td><td class="n">\(A \cap B\)</td><td>תוצאות שנמצאות גם ב-A וגם ב-B. "שניהם קרו".</td></tr>
+    <tr><td>מאורעות זרים</td><td class="n">\(A \cap B = \phi\)</td><td>אין להם תוצאה משותפת. הם לא יכולים לקרות יחד.</td></tr>
+  </table></div>
+
+  <figure class="lab" id="w-venn">
+    <p class="lab-title">דיאגרמת ון: מי לומד איזו שפה</p>
+    <p class="lab-hint">A הם לומדי האנגלית ו-B הם לומדי הצרפתית. בחרו ביטוי כדי לראות איזה אזור הוא מסמן, או לחצו על אזורים בדיאגרמה ובדקו איזה ביטוי בניתם.</p>
+    <div data-w="venn"></div>
+  </figure>
+
+  <h3>חוקי דה מורגן</h3>
+  <div class="math-block">$$\overline{A \cup B} = \bar{A} \cap \bar{B} \qquad\qquad \overline{A \cap B} = \bar{A} \cup \bar{B}$$</div>
+  <p>במילים: "לא נכון שלפחות אחד קרה" זה בדיוק "שניהם לא קרו". ו"לא נכון ששניהם קרו" זה "לפחות אחד מהם לא קרה". בדיאגרמה שלמעלה אפשר לבדוק: \(\overline{A\cup B}\) ו-\(\bar{A}\cap\bar{B}\) מסמנים בדיוק את אותו אזור, האזור שמחוץ לשני העיגולים.</p>
+</section>
+
+<!-- ============ 2 ============ -->
+<section class="chapter" id="prob">
+  <p class="chapter-num">פרק 2</p>
+  <h2>חישוב הסתברויות</h2>
+  <p><strong>פונקציית הסתברות</strong> מתאימה לכל מאורע מספר בין 0 ל-1, שמבטא עד כמה הוא סביר. היא חייבת לקיים שני כללים בסיסיים:</p>
+  <div class="math-block">$$0 \le P(A) \le 1 \qquad\qquad P(\Omega) = 1$$</div>
+  <p>כל השאר נגזר מהם. החשובים שבהם:</p>
+
+  <h3>כלל החיבור</h3>
+  <div class="math-block">$$P(A \cup B) = P(A) + P(B) - P(A \cap B)$$</div>
+  <p><strong>למה מחסירים את החיתוך?</strong> כשמחברים את P(A) ואת P(B), התוצאות שנמצאות בשניהם נספרות פעמיים: פעם בתוך A ופעם בתוך B. מחסירים אותן פעם אחת כדי שייספרו בדיוק פעם אחת. אם המאורעות זרים, אין חיתוך, והכלל מתקצר ל-\(P(A\cup B) = P(A) + P(B)\).</p>
+
+  <h3>כלל המשלים</h3>
+  <div class="math-block">$$P(\bar{A}) = 1 - P(A)$$</div>
+  <p>A ו-\(\bar{A}\) זרים, והאיחוד שלהם הוא \(\Omega\). לכן ההסתברויות שלהם מסתכמות ל-1. זה כלי שימושי מאוד: כשקשה לחשב מאורע ישירות, לרוב קל יותר לחשב את המשלים שלו. "לפחות אחד" הוא כמעט תמיד מועמד למשלים, כי המשלים שלו הוא "אף אחד".</p>
+
+  <h3>מרחב מדגם אחיד</h3>
+  <p>כשלכל התוצאות במרחב יש <strong>אותה הסתברות</strong>, ההסתברות של מאורע היא פשוט ספירה:</p>
+  <div class="math-block">$$P(A) = \frac{\#A}{\#\Omega} = \frac{\text{number of outcomes in } A}{\text{number of outcomes in } \Omega}$$</div>
+  <p>לדוגמה, ההסתברות לתוצאה זוגית בקובייה הוגנת היא \(3/6 = 1/2\).</p>
+  <div class="callout">
+    <p class="callout-h">זהירות: לא כל מרחב הוא אחיד</p>
+    <p>הנוסחה עובדת רק כשהתוצאות שוות בסיכוי. משכורות במשק הן לא מרחב אחיד: משכורת מינימום הרבה יותר שכיחה ממשכורת של 20,000 ₪. מלכודת קלאסית: בהטלת שתי קוביות, "הסכום" יכול להיות 2 עד 12, אבל אלה <strong>לא</strong> 11 תוצאות שוות בסיכוי. המרחב האחיד הוא 36 <strong>הזוגות</strong>, וסכום 7 מתקבל מ-6 זוגות, לעומת סכום 2 שמתקבל מזוג אחד בלבד.</p>
+  </div>
+
+  <figure class="lab" id="w-dice">
+    <p class="lab-title">36 הזוגות של שתי קוביות</p>
+    <p class="lab-hint">כל משבצת היא תוצאה אחת, וכולן שוות בסיכוי: 1/36. בחרו מאורע וספרו משבצות. אפשר גם ללחוץ על משבצות ולבנות מאורע משלכם. בחרו "לפחות קובייה אחת 5" וראו למה מחסירים את החיתוך.</p>
+    <div data-w="dice" data-mode="basic"></div>
+  </figure>
+
+  <h4>תרגול: שתי בחינות</h4>
+  <p>סטודנט ניגש לבחינה במתמטיקה ולבחינה בסטטיסטיקה. ההסתברות שייכשל במתמטיקה היא 0.2, בסטטיסטיקה 0.15, ובשתיהן 0.08. מה ההסתברות שייכשל בלפחות בחינה אחת? ומה ההסתברות שיצליח בלפחות בחינה אחת?</p>
+  <details class="reveal"><summary>הצג פתרון</summary><div class="reveal-body">
+    <p>נגדיר A = נכשל במתמטיקה, B = נכשל בסטטיסטיקה. "נכשל בלפחות אחת" הוא איחוד:</p>
+    <div class="math-block">$$P(A \cup B) = 0.2 + 0.15 - 0.08 = 0.27$$</div>
+    <p>"מצליח בלפחות אחת" הוא המשלים של "נכשל בשתיהן":</p>
+    <div class="math-block">$$1 - P(A \cap B) = 1 - 0.08 = 0.92$$</div>
+    <p class="note">שימו לב: אם המאורעות היו בלתי תלויים, היינו מצפים ל-\(0.2 \cdot 0.15 = 0.03\) בחיתוך. בפועל הוא 0.08, יותר מפי 2. כלומר הכישלונות <strong>תלויים</strong>: מי שנכשל במתמטיקה נוטה להיכשל גם בסטטיסטיקה. זה הנושא של הפרק הבא.</p>
+  </div></details>
+</section>
+
+<!-- ============ 3 ============ -->
+<section class="chapter" id="cond">
+  <p class="chapter-num">פרק 3</p>
+  <h2>תלות והסתברות מותנית</h2>
+
+  <h3>הסתברות מותנית: מה משתנה כשמקבלים מידע</h3>
+  <p>הסתברות מותנית \(P(A \mid B)\) היא ההסתברות ש-A יקרה, <strong>כשכבר ידוע ש-B קרה</strong>. הקו האנכי נקרא "בהינתן".</p>
+  <p>האינטואיציה: הידיעה ש-B קרה <strong>מצמצמת את העולם</strong>. כל התוצאות שמחוץ ל-B כבר לא אפשריות, ולכן B הופך למרחב המדגם החדש. בתוך העולם המצומצם הזה שואלים: איזה חלק ממנו שייך גם ל-A?</p>
+  <div class="math-block">$$P(A \mid B) = \frac{P(A \cap B)}{P(B)}$$</div>
+  <p>המכנה P(B) הוא "גודל העולם החדש", והמונה הוא החלק של A שנשאר בתוכו. לדוגמה: הטלנו שתי קוביות, והסכום יצא 6. מה ההסתברות שבקובייה הראשונה יצא 3? יש 5 זוגות שהסכום שלהם 6, ורק באחד מהם הראשונה היא 3. לכן התשובה 1/5, ולא 1/6 כמו בלי המידע.</p>
+
+  <figure class="lab" id="w-dice-cond">
+    <p class="lab-title">לצמצם את העולם ל-B</p>
+    <p class="lab-hint">המשבצות שמחוץ ל-<span class="cB">B</span> מעומעמות, כי הן כבר לא אפשריות. <span class="num">P(<span class="cA">A</span>|<span class="cB">B</span>)</span> הוא החלק של <span class="cA">A</span> מתוך המשבצות שנשארו. שני הפסים משווים את החלק של <span class="cA">A</span> בלוח כולו לחלק שלו בתוך <span class="cB">B</span>. החליפו בין "סכום 6" ל"סכום 7" ושימו לב מתי הפסים שווים.</p>
+    <div data-w="dice" data-mode="cond"></div>
+  </figure>
+
+  <h3>אי-תלות</h3>
+  <p>לפעמים מידע על מאורע אחד לא אומר שום דבר על מאורע אחר. מטילים שתי קוביות: הידיעה שבקובייה השנייה יצא 5 לא משנה את הסיכוי שבראשונה יצא 3. לעומת זאת, הידיעה שהסכום יצא 6 כן משנה אותו, כמו שנראה מיד. כשמידע על B לא משנה את הסיכוי של A, אומרים שהם בלתי תלויים.</p>
+  <div class="def"><p>שני מאורעות הם <strong>בלתי תלויים</strong> אם הידיעה שאחד מהם קרה <strong>לא משנה</strong> את ההסתברות של השני:</p>
+  <div class="math-block">$$P(A \mid B) = P(A)$$</div></div>
+
+  <h4>דוגמה: הקובייה הראשונה והסכום</h4>
+  <p>נגדיר A = "בקובייה הראשונה יצא 3". בלי שום מידע נוסף \(P(A) = 1/6\). בלוח של 36 הזוגות זו השורה השלישית: 6 משבצות מתוך 36.</p>
+  <p><strong>נניח שידוע שהסכום יצא 7.</strong> כל ערך של הקובייה הראשונה, מ-1 עד 6, משאיר בדיוק אפשרות אחת לשנייה: 1 עם 6, 2 עם 5, וכן הלאה. נשארו 6 זוגות, אחד לכל ערך של הראשונה, ולכן לכל ערך עדיין אותו סיכוי: \(P(A \mid B) = 1/6\). הידיעה לא שינתה כלום, ולכן "הראשונה 3" ו"סכום 7" בלתי תלויים.</p>
+  <p><strong>נניח עכשיו שידוע שהסכום יצא 6.</strong> הפעם הקובייה הראשונה לא יכולה להיות 6, כי אז השנייה הייתה צריכה להראות 0. נשארו רק 5 זוגות, ואחד מהם מתחיל ב-3, ולכן \(P(A \mid B) = 1/5\), יותר מ-1/6. הידיעה שללה אפשרות אחת, וההסתברויות של השאר עלו. לכן "הראשונה 3" ו"סכום 6" תלויים.</p>
+  <p class="note">בווידג'ט שלמעלה רואים את שני המקרים: לחצו על "סכום 7" ועל "סכום 6", והשוו את שני הפסים. כשהחלק של A בתוך B שווה לחלק שלו בלוח כולו, המאורעות בלתי תלויים.</p>
+
+  <p>כשהמאורעות בלתי תלויים, ההסתברות ששניהם יקרו היא פשוט מכפלת ההסתברויות שלהם:</p>
+  <div class="math-block">$$P(A \cap B) = P(A) \cdot P(B)$$</div>
+  <p class="note">כך מחשבים, למשל, הסתברות לשתי הטלות נפרדות, או לשתי יריות מעמדות שונות.</p>
+
+  <details class="ext">
+    <summary><span class="ext-badge">הרחבה</span> מבחן המכפלה: למה הנוסחה הזו שקולה להגדרה</summary>
+    <div class="ext-body">
+      <p>ההגדרה של אי-תלות דורשת לחשב הסתברות מותנית. אבל אם מציבים בתנאי \(P(A \mid B) = P(A)\) את ההגדרה של הסתברות מותנית, וכופלים את שני האגפים ב-\(P(B)\), מקבלים בדיוק את נוסחת המכפלה:</p>
+      <div class="math-block">$$\frac{P(A \cap B)}{P(B)} = P(A) \quad\Longleftrightarrow\quad P(A \cap B) = P(A) \cdot P(B)$$</div>
+      <p>לכן הנוסחה היא לא רק דרך לחשב, אלא גם <strong>מבחן</strong>: כדי לבדוק אם שני מאורעות בלתי תלויים, מחשבים את שני האגפים ומשווים. בסכום 7: \(P(A \cap B) = 1/36\), וגם \(\frac16 \cdot \frac{6}{36} = \frac{1}{36}\), ולכן בלתי תלויים. בסכום 6: \(P(A \cap B) = 1/36\), אבל \(\frac16 \cdot \frac{5}{36} = \frac{5}{216}\), ולכן תלויים.</p>
+      <p class="note">הנוסחה גם סימטרית ב-A וב-B. מכאן שאי-תלות הדדית: אם A לא תלוי ב-B, גם B לא תלוי ב-A.</p>
+    </div>
+  </details>
+  <div class="callout">
+    <p class="callout-h">זרים זה לא בלתי תלויים, וכמעט ההפך</p>
+    <p>אם A ו-B זרים, ושניהם אפשריים, אז הם <strong>תלויים מאוד</strong>: ברגע שידוע ש-A קרה, ברור ש-B לא קרה. ההסתברות של B צנחה ל-0. זרות היא תכונה של הקבוצות, ואי-תלות היא תכונה של ההסתברויות.</p>
+  </div>
+
+  <h3>כלל הכפל: הסתברות לשני מאורעות תלויים</h3>
+  <p>אם הופכים את נוסחת ההסתברות המותנית, מקבלים דרך לחשב חיתוך גם כשהמאורעות תלויים:</p>
+  <div class="math-block">$$P(A \cap B) = P(A) \cdot P(B \mid A)$$</div>
+  <p>ההסתברות ש-A יקרה, כפול ההסתברות ש-B יקרה <strong>אחרי</strong> ש-A כבר קרה. דוגמה: מוציאים שני קלפים מחפיסה של 52 בלי החזרה. ההסתברות ששניהם אסים היא \(\frac{4}{52}\cdot\frac{3}{51} \approx 0.0045\). אחרי שהאס הראשון יצא, נשארו 3 אסים מתוך 51 קלפים.</p>
+  <p class="note">כשהמאורעות בלתי תלויים, \(P(B\mid A) = P(B)\), והכלל מתקצר ל-\(P(A)\cdot P(B)\). זה מקרה פרטי של הכלל הכללי.</p>
+
+  <h4>יותר משני מאורעות: כלל השרשרת</h4>
+  <p>אותו רעיון ממשיך לכל מספר של מאורעות. כל מאורע נוסף מוכפל בהסתברות שלו <strong>בהינתן כל מה שכבר קרה לפניו</strong>:</p>
+  <div class="math-block">$$P(A \cap B \cap C) = P(A) \cdot P(B \mid A) \cdot P(C \mid A \cap B)$$</div>
+  <p>בדוגמת הקלפים, ההסתברות לשלושה אסים ברצף היא \(\frac{4}{52}\cdot\frac{3}{51}\cdot\frac{2}{50}\): בכל שליפה נשארו אס אחד וקלף אחד פחות. כך פותרים גם שאלות שבהן ההסתברות משתנה מניסיון לניסיון, כמו שאלת הטנק בפרק 10.</p>
+
+  <details class="ext">
+    <summary><span class="ext-badge">הרחבה</span> נוסחת ההסתברות השלמה ונוסחת בייס</summary>
+    <div class="ext-body">
+  <h3>נוסחת ההסתברות השלמה</h3>
+  <p>לפעמים לא יודעים את P(B) ישירות, אבל יודעים מה ההסתברות שלו בכל אחד משני מצבים: כש-A קרה וכש-A לא קרה. אז מפרקים את B לשני חלקים זרים, החלק שבתוך A והחלק שמחוצה לו, ומחברים:</p>
+  <div class="math-block">$$P(B) = P(B \mid A)\cdot P(A) + P(B \mid \bar{A})\cdot P(\bar{A})$$</div>
+  <p>זה בעצם ממוצע משוקלל: ההסתברות של B בכל מצב, משוקללת לפי הסיכוי של המצב.</p>
+  <h4>דוגמה: גשם ואיחורים</h4>
+  <p>בימי גשם עובד מאחר לעבודה בהסתברות 0.4, ובימים בלי גשם בהסתברות 0.1. גשם יורד ב-20% מהימים. מה ההסתברות שביום אקראי הוא יאחר?</p>
+  <p>אין לנו ישירות את ההסתברות לאחר. יש לנו אותה בנפרד בכל אחד משני המצבים, גשם ובלי גשם. נגדיר A = "יורד גשם" ו-B = "העובד מאחר":</p>
+  <div class="math-block">$$P(B) = 0.4 \cdot 0.2 + 0.1 \cdot 0.8 = 0.08 + 0.08 = 0.16$$</div>
+  <p>כדאי לחשוב על זה בימים: מתוך 100 ימים, ב-20 יורד גשם, ובכ-8 מהם הוא מאחר. ב-80 הימים האחרים הוא מאחר בכ-8. סך הכל 16 איחורים מתוך 100 ימים. התשובה, 0.16, נמצאת בין 0.1 ל-0.4, וקרובה יותר ל-0.1, כי רוב הימים יבשים.</p>
+
+  <figure class="lab" id="w-mosaic">
+    <p class="lab-title">ההסתברות השלמה בתמונה: דוגמת הגשם</p>
+    <p class="lab-hint">הריבוע מייצג את כל הימים, והשטח שלו 1. קודם מחלקים אותו לשתי עמודות: ימי גשם (רוחב 0.2) וימים בלי גשם (רוחב 0.8). בכל עמודה, החלק הצבוע הוא הימים שבהם העובד מאחר, והגובה שלו הוא ההסתברות לאחר באותו מצב: בעמודת הגשם 0.4, ובעמודה השנייה 0.1. את הגובה קוראים על הציר משמאל, והוא כתוב גם מעל כל חלק צבוע. שטח כל חלק צבוע הוא רוחב כפול גובה, כלומר כלל הכפל, והוא כתוב בתוכו. P(B) הוא סכום שני השטחים, והפס מימין מראה אותו. הזיזו את המחוונים ושימו לב: כשהגבהים בשתי העמודות שווים, הגשם לא משנה את הסיכוי לאחר, והמאורעות בלתי תלויים.</p>
+    <div data-w="mosaic"></div>
+  </figure>
+
+  <h3>נוסחת בייס: להפוך את הכיוון של ההתניה</h3>
+      <p>לפעמים יודעים את \(P(B\mid A)\), אבל שואלים על הכיוון ההפוך, \(P(A \mid B)\). למשל: יודעים כמה פגומים מייצר כל ספק, ושואלים: מצאנו מוצר פגום, מה הסיכוי שהוא הגיע מספק א'? מציבים בהגדרה של הסתברות מותנית את כלל הכפל במונה ואת ההסתברות השלמה במכנה:</p>
+      <div class="math-block">$$P(A \mid B) = \frac{P(B \mid A)\cdot P(A)}{P(B \mid A)\cdot P(A) + P(B \mid \bar{A})\cdot P(\bar{A})}$$</div>
+      <p>בריבוע ההסתברות זה פשוט: מסתכלים רק על השטחים המוצללים, ושואלים איזה חלק מהם נמצא בעמודה של A. במצב "בייס" של הווידג'ט למעלה רואים את זה ישירות: בדוגמה "שני ספקים", מתוך כל השטח הצבוע, איזה חלק שייך לספק א.</p>
+      <p class="note">שימו לב שההגדרה \(P(A\mid B) = P(A\cap B)/P(B)\) לבדה היא <strong>הגדרת ההסתברות המותנית</strong>. נוסחת בייס היא מה שמתקבל כשמציבים בה את כלל הכפל ואת ההסתברות השלמה.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============ 4 ============ -->
+<section class="chapter" id="rv">
+  <p class="chapter-num">פרק 4</p>
+  <h2>מהו משתנה מקרי</h2>
+  <p>"משתנה מקרי" הוא מושג שמשתמשים בו הרבה, אבל לפעמים כבר שכחנו את המשמעות שלו. כדאי לבנות אותו מאפס, כי כל מה שבא אחריו, תוחלת, התפלגויות ומשפט הגבול המרכזי, נשען עליו.</p>
+
+  <h3>הבעיה: התוצאות הן לא מספרים</h3>
+  <p>מטילים מטבע שלוש פעמים, ויוצא (ע, פ, ע). זו התוצאה של הניסוי, אבל היא לא מספר, ולכן אי אפשר לחשב איתה: אי אפשר לחבר אותה, למצע אותה או להשוות אותה לתוצאה אחרת.</p>
+  <p>ובכל זאת, אנחנו רוצים לחשב. ניקח הימור: מטילים מטבע שלוש פעמים, מקבלים 10 ₪ על כל עץ ומשלמים 10 ₪ על כל פלי. האם כדאי לשחק? כדי לענות צריך לדעת כמה מרוויחים בממוצע, ואת רצפים כמו (ע, פ, ע) אי אפשר למצע. צריך קודם לתרגם כל תוצאה לסכום הכסף שהיא שווה, ורק אז אפשר לחשב.</p>
+  <p>אותו תרגום עובד לכל שאלה שאפשר לשאול על התוצאה. שאלה של "כמה", כמו "כמה עצים יצאו?", נותנת מספר באופן טבעי. גם שאלה של "האם", כמו "האם ההטלה הראשונה יצאה עץ?", הופכת למספר: 1 כשהתשובה כן, ו-0 כשהתשובה לא. התרגום הזה, מתוצאה של ניסוי אל מספר, הוא המשתנה המקרי.</p>
+
+  <div class="def">
+    <p><strong>משתנה מקרי</strong> (Random Variable) הוא פונקציה שממפה כל תוצאה אפשרית במרחב המדגם למספר ממשי: \(X : \Omega \to \mathbb{R}\).</p>
+    <p><strong>ובמילים אחרות:</strong> משתנה מקרי הוא כלל שמצמיד לכל תוצאה של הניסוי מספר אחד, והמספר הזה הוא מה שמעניין אותנו בתוצאה. בשלוש הטלות מטבע אפשר, למשל, להצמיד לכל תוצאה את מספר העצים בה: ל-(ע, פ, ע) מוצמד 2, ול-(פ, פ, פ) מוצמד 0.</p>
+  </div>
+
+  <h3>השם מטעה פעמיים</h3>
+  <ul>
+    <li><strong>הוא לא מקרי.</strong> הכלל קבוע וידוע מראש. אם X הוא "מספר העצים", אז לתוצאה (ע, פ, ע) הוא תמיד מצמיד 2. אין כאן שום הגרלה.</li>
+    <li><strong>הוא לא משתנה</strong>, לפחות לא במובן של x במשוואה. הוא פונקציה.</li>
+  </ul>
+  <p>אז מאיפה מגיעה המקריות? <strong>מהניסוי.</strong> לא ידוע מראש איזו תוצאה תצא, ולכן גם לא ידוע איזה מספר הכלל יחזיר. אפשר לחשוב על משתנה מקרי כמו על מד שמחברים לניסוי: הניסוי אקראי, המד עצמו קבוע, והקריאה שלו משתנה מהרצה להרצה.</p>
+  <p class="takeaway">משתנה מקרי = כלל קבוע שמופעל על תוצאה מקרית.</p>
+
+  <figure class="lab" id="w-rv">
+    <p class="lab-title">המכונה: מתוצאות למספרים</p>
+    <p class="lab-hint">למעלה שמונה התוצאות האפשריות של שלוש הטלות מטבע, כל אחת בהסתברות 1/8 (ההטלה הראשונה מימין). החצים הם המשתנה המקרי: הם מראים לאיזה מספר הולכת כל תוצאה. העמודות שמעל הציר הן <strong>ההתפלגות</strong> של המשתנה: הגובה של כל עמודה הוא \(P(X=x)\), סכום ההסתברויות של התוצאות שהחצים שלהן מגיעים לאותו ערך. לחצו על ערך בציר כדי לראות אילו תוצאות מובילות אליו, החליפו משתנה, או הטילו את המטבעות.</p>
+    <div data-w="rv"></div>
+  </figure>
+
+  <h3>אותו ניסוי, הרבה משתנים מקריים</h3>
+  <p>על אותו ניסוי אפשר להגדיר כמה משתנים מקריים שרוצים. כל אחד מהם הוא שאלה אחרת שאפשר לשאול על התוצאה:</p>
+  <div class="table-wrap"><table class="t">
+    <tr><th>משתנה</th><th>הכלל</th><th>ערכים אפשריים</th><th>הערך על (ע, פ, ע)</th></tr>
+    <tr><td class="n">X</td><td>מספר העצים</td><td class="n">0, 1, 2, 3</td><td class="n">2</td></tr>
+    <tr><td class="n">Y</td><td>1 אם ההטלה הראשונה עץ, אחרת 0</td><td class="n">0, 1</td><td class="n">1</td></tr>
+    <tr><td class="n">Z</td><td>רווח בהימור: +10 ₪ על כל עץ, −10 ₪ על כל פלי</td><td class="n">−30, −10, 10, 30</td><td class="n">10</td></tr>
+    <tr><td class="n">W</td><td>אורך הרצף הארוך ביותר של אותה תוצאה</td><td class="n">1, 2, 3</td><td class="n">1</td></tr>
+  </table></div>
+  <p>שימו לב ש-\(Z = 20X - 30\): כל עץ שווה +10 ₪, וכל פלי −10 ₪, ולכן \(Z = 10X - 10(3 - X)\). Z הוא טרנספורמציה לינארית של X, וכל הכללים מהרצאה 1 על \(aX+b\) חלים עליו.</p>
+  <p>משתנה כמו Y, שמקבל רק 0 או 1, נקרא <strong>משתנה ברנולי</strong> (או משתנה מציין). הוא הופך כל שאלת כן/לא למספר, וזה בדיוק מה שמאפשר לספור הצלחות.</p>
+
+  <h3>"X = 2" הוא מאורע</h3>
+  <p>זו הנקודה שמחברת את המשתנה המקרי לכל מה שלמדנו עד עכשיו. כשכותבים \(P(X=2)\), הכוונה היא להסתברות של <strong>מאורע</strong>: אוסף כל התוצאות שהכלל שולח ל-2.</p>
+  <div class="math-block">$$\{X = 2\} = \{\omega \in \Omega : X(\omega) = 2\}$$</div>
+  <p>בשלוש ההטלות זה המאורע שמכיל את (ע,ע,פ), (ע,פ,ע) ו-(פ,ע,ע), ולכן \(P(X=2) = 3/8\). גם \(\{X \le 1\}\) הוא מאורע, וגם \(\{X > 0\}\). מכאן שכל הכלים של פרקים 1–3, משלים, איחוד וכלל החיבור, עובדים גם על משתנים מקריים. למשל \(P(X \ge 1) = 1 - P(X=0) = 1 - 1/8\).</p>
+
+  <h3>ההתפלגות: הסיכום של המשתנה</h3>
+  <p>המשתנה המקרי מצמיד מספר לכל תוצאה. ההתפלגות שלו עונה על שאלה אחרת: <strong>אילו ערכים יכולים לצאת, ומה הסיכוי של כל אחד?</strong></p>
+  <p>כדי לחשב אותה עושים לכל ערך את מה שעשינו למעלה עבור \(X = 2\): אוספים את כל התוצאות שהכלל מצמיד לערך, ומחברים את ההסתברויות שלהן. לערך 0 מוצמדת רק (פ, פ, פ), ולכן הסיכוי שלו 1/8. לערך 1 מוצמדות שלוש תוצאות, ולכן 3/8. וכך הלאה:</p>
+  <div class="table-wrap"><table class="t" style="max-width:420px">
+    <tr><th class="n">\(x\)</th><th class="n">0</th><th class="n">1</th><th class="n">2</th><th class="n">3</th></tr>
+    <tr><td class="n">\(P(X=x)\)</td><td class="n">1/8</td><td class="n">3/8</td><td class="n">3/8</td><td class="n">1/8</td></tr>
+  </table></div>
+  <p>הסכום תמיד 1, כי כל תוצאה מוצמדת לערך אחד בדיוק, ולכן כל תוצאה נספרת פעם אחת.</p>
+
+  <p><strong>ברגע שיש את ההתפלגות, כבר לא צריך לחזור לתוצאות עצמן.</strong> כל שאלה על הערכים של X, למשל מה הסיכוי שיצאו לפחות שני עצים, נענית ישירות מהטבלה. בשלוש הטלות זה לא חוסך הרבה, אבל ב-65 סטודנטים יש \(2^{65}\) תוצאות, ואף אחד לא רוצה לרשום אותן.</p>
+
+  <h3>בדיד ורציף</h3>
+  <ul>
+    <li><strong>משתנה מקרי בדיד</strong> מקבל ערכים נפרדים שאפשר למנות: מספר עצים, מספר לקוחות בשעה, מספר ניסיונות עד הצלחה. לכל ערך יש הסתברות חיובית.</li>
+    <li><strong>משתנה מקרי רציף</strong> מקבל כל ערך בתחום: זמן המתנה, גובה, משקל. כאן מרחב המדגם הוא למשל "כל האנשים", והמשתנה מתאים לכל אדם את הגובה שלו. ההסתברות לערך מדויק אחד, נגיד 170.000… ס"מ בדיוק, היא 0, ולכן מדברים רק על הסתברויות של טווחים. פרק 7 מפרט איך.</li>
+  </ul>
+
+  <h3>למה כל זה שווה את המאמץ</h3>
+  <ol>
+    <li><strong>אפשר לחשב.</strong> עם מספרים אפשר לחשב ממוצע ופיזור של מה שעוד לא קרה. זה הפרק הבא: תוחלת ושונות.</li>
+    <li><strong>ניסויים שונים, אותה התפלגות.</strong> מספר העצים בשלוש הטלות, מספר הפגיעות של טנק בשלוש יריות בלתי תלויות, ומספר הסטודנטים שעברו מתוך שלושה: שלושה ניסויים שונים לגמרי, ואותו מבנה בדיוק, שנקרא התפלגות בינומית. לומדים אותה פעם אחת ומשתמשים בה בכל מקום. זה פרק 7.</li>
+    <li><strong>אפשר לחקור קשרים.</strong> כשמגדירים שני משתנים על אותו ניסוי, אפשר לשאול איך הם מתנהגים יחד. זה פרק 6.</li>
+  </ol>
+
+  <h4>בדיקה עצמית</h4>
+  <p>מוציאים כדור משק שיש בו כדורים אדומים וכחולים. האם "צבע הכדור" הוא משתנה מקרי?</p>
+  <details class="reveal"><summary>הצג תשובה</summary><div class="reveal-body">
+    <p>לא, כי "אדום" הוא לא מספר. אבל קל להפוך אותו לכזה: X = 1 אם הכדור אדום, ו-X = 0 אם כחול. זה משתנה ברנולי, כמו Y בטבלה למעלה. ואם מוציאים 10 כדורים עם החזרה, סכום עשרת משתני הברנולי הוא מספר הכדורים האדומים, משתנה בינומי.</p>
+  </div></details>
+</section>
+
+<!-- ============ 5 ============ -->
+<section class="chapter" id="expect">
+  <p class="chapter-num">פרק 5</p>
+  <h2>תוחלת ושונות של משתנה מקרי</h2>
+  <p>בהרצאה 1 חישבנו ממוצע ושונות של נתונים שכבר נאספו. עכשיו עושים את אותו דבר למשתנה מקרי, כלומר לנתונים שעוד לא נאספו. הרעיונות זהים. ההבדל היחיד הוא שבמקום לשקלל לפי שכיחויות, משקללים לפי הסתברויות.</p>
+
+  <h3>תוחלת: הממוצע לטווח הארוך</h3>
+  <div class="math-block">$$\mu = E(X) = \sum_x x \cdot P(X=x) \qquad\qquad E(X) = \int_{-\infty}^{\infty} x \cdot f(x)\,dx$$</div>
+  <p>השמאלית למשתנה בדיד, הימנית לרציף. זה ממוצע משוקלל של הערכים, כשהמשקל של כל ערך הוא ההסתברות שלו. בקובייה הוגנת:</p>
+  <div class="math-block">$$E(X) = 1\cdot\tfrac{1}{6} + 2\cdot\tfrac{1}{6} + \dots + 6\cdot\tfrac{1}{6} = 3.5$$</div>
+  <p><strong>מה המספר הזה אומר?</strong> אף הטלה לא תיתן 3.5, בדיוק כמו שאין משפחה עם 2.4 ילדים, גם אם זה מספר הילדים הממוצע. התוחלת היא מה שהממוצע של הרבה מאוד הטלות <strong>שואף</strong> אליו. זה חוק המספרים הגדולים, וכך אפשר לראות אותו:</p>
+
+  <figure class="lab" id="w-lln">
+    <p class="lab-title">הממוצע המצטבר של הטלות קובייה</p>
+    <p class="lab-hint">כל נקודה על הקו היא הממוצע של כל ההטלות עד אותו רגע. בהתחלה הוא קופץ, ואחרי מאות הטלות הוא נצמד ל-3.5. הטילו שוב מאפס כדי לראות שהמסלול שונה בכל פעם, והיעד זהה.</p>
+    <div data-w="lln"></div>
+  </figure>
+
+  <h4>תכונות התוחלת</h4>
+  <div class="table-wrap"><table class="t">
+    <tr><th>תכונה</th><th>נוסחה</th><th>במילים</th></tr>
+    <tr><td>קבוע</td><td class="n">\(E(a) = a\)</td><td>משתנה שתמיד שווה ל-a, התוחלת שלו a.</td></tr>
+    <tr><td>לינאריות</td><td class="n">\(E(aX + b) = a\cdot E(X) + b\)</td><td>בדיוק כמו ממוצע בהרצאה 1.</td></tr>
+    <tr><td>סכום</td><td class="n">\(E(X + Y) = E(X) + E(Y)\)</td><td>תמיד, <strong>גם כשהמשתנים תלויים</strong>.</td></tr>
+  </table></div>
+
+  <h3>שונות: כמה המשתנה מתפזר סביב התוחלת</h3>
+  <div class="math-block">$$\sigma^2 = Var(X) = E\left[(X - \mu)^2\right] = E(X^2) - \left[E(X)\right]^2$$</div>
+  <p>ההגדרה השמאלית היא בדיוק הרעיון מהרצאה 1: ממוצע של ריבועי הסטיות מהמרכז, רק משוקלל לפי הסתברויות. הנוסחה הימנית שקולה לה, ונוחה לחישוב: מחשבים \(E(X^2) = \sum x^2 P(X=x)\) ומחסירים את ריבוע התוחלת. בקובייה:</p>
+  <div class="math-block">$$E(X^2) = \frac{1+4+9+16+25+36}{6} = \frac{91}{6} \qquad Var(X) = \frac{91}{6} - 3.5^2 = \frac{35}{12} \approx 2.92 \qquad \sigma \approx 1.71$$</div>
+
+  <h4>תכונות השונות</h4>
+  <div class="table-wrap"><table class="t">
+    <tr><th>תכונה</th><th>נוסחה</th><th>במילים</th></tr>
+    <tr><td>קבוע</td><td class="n">\(Var(a) = 0\)</td><td>קבוע לא מתפזר.</td></tr>
+    <tr><td>טרנספורמציה</td><td class="n">\(Var(aX + b) = a^2 \cdot Var(X)\)</td><td>הזזה לא משנה פיזור, כפל נכנס בריבוע. כמו בהרצאה 1.</td></tr>
+    <tr><td>סכום</td><td class="n">\(Var(X \pm Y) = Var(X) + Var(Y) \pm 2\,Cov(X,Y)\)</td><td>כאן נכנסת השונות המשותפת, הנושא של הפרק הבא.</td></tr>
+    <tr><td>סכום, בלתי תלויים</td><td class="n">\(Var(X \pm Y) = Var(X) + Var(Y)\)</td><td>גם בהפרש מחברים את השונויות.</td></tr>
+  </table></div>
+  <div class="callout">
+    <p class="callout-h">למה בהפרש השונויות מתחברות?</p>
+    <p>שונות מודדת אי-ודאות, ואי-ודאות לא מתקזזת. מטילים שתי קוביות ומחשבים את ההפרש ביניהן: הוא יכול לצאת בין −5 ל-5, טווח רחב יותר מזה של כל קובייה לבד. כל קובייה מוסיפה את "הרעש" שלה, לא משנה אם מחברים אותה או מחסירים.</p>
+  </div>
+
+  <h4>דוגמה: המשתנים מהפרק הקודם</h4>
+  <p>X = מספר העצים בשלוש הטלות. לפי הטבלה בפרק 4:</p>
+  <div class="math-block">$$E(X) = 0\cdot\tfrac18 + 1\cdot\tfrac38 + 2\cdot\tfrac38 + 3\cdot\tfrac18 = 1.5 \qquad E(X^2) = \tfrac{0+3+12+9}{8} = 3 \qquad Var(X) = 3 - 1.5^2 = 0.75$$</div>
+  <p>והרווח \(Z = 20X - 30\)? לא צריך לחשב מאפס: \(E(Z) = 20\cdot1.5 - 30 = 0\), כלומר המשחק הוגן, ו-\(Var(Z) = 20^2 \cdot 0.75 = 300\).</p>
+  <p class="note">הקשר להרצאה 1: \(\bar{x}\) ו-\(s^2\) מחושבים מנתונים שנאספו, והם <strong>אומדים</strong> ל-\(\mu\) ול-\(\sigma^2\), שמתארים את המשתנה המקרי עצמו. על הקשר הזה בנוי כל ההמשך של הקורס.</p>
+</section>
+
+<!-- ============ 6 ============ -->
+<section class="chapter" id="cov">
+  <p class="chapter-num">פרק 6</p>
+  <h2>שונות משותפת ומתאם</h2>
+  <p>עד עכשיו כל מדד תיאר משתנה אחד. אבל הרבה שאלות מעניינות עוסקות ב<strong>קשר</strong> בין שני משתנים: האם אנשים גבוהים נוטים להיות כבדים יותר? האם יותר שעות לימוד הולכות עם ציון גבוה יותר? כדי לענות, צריך מדד שמסתכל על שני המשתנים <strong>יחד</strong>. נבנה אותו מאפס.</p>
+
+  <h3>דוגמה שתלווה אותנו</h3>
+  <p>גובה ומשקל של חמישה אנשים. הגובה הממוצע 170 ס"מ, והמשקל הממוצע 70 ק"ג.</p>
+  <div class="table-wrap"><table class="t">
+    <tr><th>אדם</th><th class="n">גובה</th><th class="n">משקל</th><th class="n">סטייה בגובה</th><th class="n">סטייה במשקל</th><th class="n">מכפלת הסטיות</th></tr>
+    <tr><td>א</td><td class="n">160</td><td class="n">57</td><td class="n">−10</td><td class="n">−13</td><td class="n">130</td></tr>
+    <tr><td>ב</td><td class="n">165</td><td class="n">67</td><td class="n">−5</td><td class="n">−3</td><td class="n">15</td></tr>
+    <tr><td>ג</td><td class="n">170</td><td class="n">70</td><td class="n">0</td><td class="n">0</td><td class="n">0</td></tr>
+    <tr><td>ד</td><td class="n">175</td><td class="n">72</td><td class="n">5</td><td class="n">2</td><td class="n">10</td></tr>
+    <tr><td>ה</td><td class="n">180</td><td class="n">84</td><td class="n">10</td><td class="n">14</td><td class="n">140</td></tr>
+  </table></div>
+
+  <h4>צעד 1: סטייה מהממוצע</h4>
+  <p>כמו בשונות, מתחילים מהשאלה כמה כל אדם חורג מהממוצע, בכל משתנה בנפרד. אדם א נמוך מהממוצע ב-10 ס"מ וקל ממנו ב-13 ק"ג.</p>
+  <h4>צעד 2: כופלים את שתי הסטיות</h4>
+  <p>הכפל עושה בדיוק את מה שצריך, כי <strong>הסימן של המכפלה אומר אם שני המשתנים "מסכימים"</strong>:</p>
+  <ul>
+    <li>שתי הסטיות חיוביות (גבוה <em>וגם</em> כבד): המכפלה חיובית.</li>
+    <li>שתי הסטיות שליליות (נמוך <em>וגם</em> קל): גם כאן המכפלה חיובית, כי מינוס כפול מינוס הוא פלוס.</li>
+    <li>הסטיות בכיוונים הפוכים (גבוה וקל, או נמוך וכבד): המכפלה שלילית.</li>
+  </ul>
+  <p>ובנוסף, ככל ששתי הסטיות גדולות יותר, המכפלה גדולה יותר. אדם שחורג הרבה בשני המשתנים תורם הרבה.</p>
+  <h4>צעד 3: מספר אחד לכולם</h4>
+  <p>מחשבים ממוצע של המכפלות. במדגם מחלקים ב-\(n-1\), כמו בשונות:</p>
+  <div class="math-block">$$Cov = \frac{130 + 15 + 0 + 10 + 140}{4} = \frac{295}{4} = 73.75$$</div>
+  <p><strong>זו השונות המשותפת.</strong> לסיכום, החישוב הוא שלושה צעדים. לכל אדם מחשבים בכמה הגובה שלו חורג מהגובה הממוצע, ובכמה המשקל שלו חורג מהמשקל הממוצע. כופלים את שתי החריגות. ולבסוף ממצעים את המכפלות של כל האנשים.</p>
+  <p><strong>במדגם</strong> זה נכתב כך (באוכלוסייה מחלקים ב-n במקום ב-\(n-1\)):</p>
+  <div class="math-block">$$Cov(X,Y) = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{n-1}$$</div>
+  <p><strong>במשתנים מקריים</strong> הרעיון זהה. במקום ממוצע על אנשים לוקחים תוחלת, כלומר ממוצע שמשוקלל לפי ההסתברויות:</p>
+  <div class="math-block">$$Cov(X,Y) = E\left[(X-\mu_X)(Y-\mu_Y)\right]$$</div>
+  <p>לחישוב בפועל נוחה יותר נוסחת קיצור. מקבלים אותה אם פותחים את הסוגריים שבתוך התוחלת, ומשתמשים בכך שתוחלת של סכום היא סכום התוחלות ושקבוע אפשר להוציא מהתוחלת:</p>
+  <div class="math-block">$$E\left[(X-\mu_X)(Y-\mu_Y)\right] = E(XY) - \mu_X\mu_Y - \mu_X\mu_Y + \mu_X\mu_Y = E(XY) - E(X)\,E(Y)$$</div>
+  <p class="note">זה בדיוק אותו מעבר כמו בשונות, \(Var(X) = E(X^2) - \mu^2\). ושימו לב ש-\(Cov(X,X) = Var(X)\): שונות היא שונות משותפת של משתנה עם עצמו.</p>
+
+  <h3>מה המספר אומר, ומה הוא לא אומר</h3>
+  <p><strong>הסימן הוא הכיוון.</strong> כאן הוא חיובי: גובה ומשקל זזים יחד. אם רוב האנשים היו גבוהים-ורזים או נמוכים-וכבדים, רוב המכפלות היו שליליות. אם אין שום דפוס, החיוביות והשליליות מתקזזות, ויוצא בערך 0.</p>
+  <p><strong>הגודל קשה לפירוש.</strong> היחידות של 73.75 הן ס"מ × ק"ג, שזה לא משהו שאפשר לדמיין. אם נמדוד גובה במטרים, נקבל 0.7375, עבור אותו קשר בדיוק. לכן מהשונות המשותפת לוקחים את הכיוון, ובשביל העוצמה צריך מדד בלי יחידות.</p>
+
+  <figure class="lab" id="w-cov">
+    <p class="lab-title">השונות המשותפת בתמונה</p>
+    <p class="lab-hint">הקווים המקווקווים הם הממוצעים, והם מחלקים את הגרף לארבעה רביעים. נקודה כחולה תורמת מכפלה חיובית, ואדומה מכפלה שלילית. הפעילו את המלבנים: שטח כל מלבן הוא המכפלה של הנקודה. נסו לעבור למטרים, ולבחור קשר מעוקל.</p>
+    <div data-w="cov"></div>
+  </figure>
+
+  <h3>מקדם המתאם: לנקות את היחידות</h3>
+  <p>מחלקים את השונות המשותפת במכפלת סטיות התקן:</p>
+  <div class="math-block">$$r(X,Y) = \frac{Cov(X,Y)}{\sigma_X \cdot \sigma_Y}$$</div>
+  <p>שני דברים קורים בחלוקה הזו:</p>
+  <ol>
+    <li><strong>היחידות מתבטלות.</strong> במונה ס"מ × ק"ג, ובמכנה ס"מ × ק"ג. בדוגמה: סטיית התקן של הגובה 7.91, של המשקל 9.72, ולכן \(r = 73.75 / (7.91\cdot9.72) \approx 0.96\). במטרים השונות המשותפת קטנה פי 100, אבל גם סטיית התקן של הגובה קטנה פי 100. היחס נשאר 0.96.</li>
+    <li><strong>אפשר לראות את זה כחלוקה שנעשית לפני הכפל.</strong> מחלקים כל סטייה בסטיית התקן של המשתנה שלה, כלומר הופכים אותה לציון תקן: במקום "גבוה מהממוצע ב-10 ס"מ", "גבוה מהממוצע ב-1.26 סטיות תקן". עכשיו שני המשתנים מדברים באותה שפה, ו-r הוא פשוט הממוצע של מכפלות ציוני התקן.</li>
+  </ol>
+  <div class="table-wrap"><table class="t">
+    <tr><th>ערך של r</th><th>משמעות</th></tr>
+    <tr><td class="n">1</td><td>קשר לינארי חיובי מושלם: כל הנקודות על קו עולה.</td></tr>
+    <tr><td class="n">−1</td><td>קשר לינארי שלילי מושלם: כל הנקודות על קו יורד.</td></tr>
+    <tr><td class="n">0</td><td>אין קשר <strong>לינארי</strong>.</td></tr>
+    <tr><td>ביניהם</td><td>ככל שקרוב יותר ל-±1, הנקודות מתקבצות קרוב יותר לקו.</td></tr>
+  </table></div>
+
+  <h3>שתי הסתייגויות חשובות</h3>
+  <p><strong>1. רק קשר לינארי.</strong> שונות משותפת ומתאם תופסים רק דפוס מסוג "כש-X עולה, Y נוטה לעלות (או לרדת)". אם הקשר מעוקל, למשל Y גבוה בשני הקצוות של X ונמוך באמצע, המכפלות מימין ומשמאל מתקזזות, ויוצא r ≈ 0 למרות שיש קשר חזק. בווידג'ט: "קשר מעוקל".</p>
+  <p><strong>2. הכיוון של הגרירה.</strong> אי-תלות <strong>גוררת</strong> שונות משותפת 0:</p>
+  <div class="math-block">$$X, Y \text{ independent} \;\Longrightarrow\; Cov(X,Y) = 0$$</div>
+  <p>אבל ההפך <strong>לא נכון</strong>. שונות משותפת 0 לא גוררת אי-תלות:</p>
+  <div class="math-block">$$Cov(X,Y) = 0 \;\mathrel{\Large\nRightarrow}\; X, Y \text{ independent}$$</div>
+  <p>שונות משותפת 0 אומרת רק שאין קשר <strong>לינארי</strong>. דוגמה: X מקבל −1, 0 או 1 בהסתברות שווה, ו-\(Y = X^2\). ערכו של Y נקבע לגמרי על ידי X, ובכל זאת \(Cov(X,Y) = E(X^3) - E(X)E(X^2) = 0 - 0 = 0\).</p>
+  <p class="note">ועוד הערה שכדאי לזכור: מתאם הוא לא סיבתיות. מכירת גלידה ומספר הטובעים בים מתואמים חיובית, כי שניהם עולים בקיץ, לא כי גלידה גורמת לטביעה.</p>
+
+  <h3>הקשר לשונות של סכום</h3>
+  <p>עכשיו אפשר להבין את הנוסחה מהפרק הקודם, \(Var(X+Y) = Var(X) + Var(Y) + 2Cov(X,Y)\). השונות של הסכום מודדת כמה הסכום מתרחק מהממוצע שלו.</p>
+  <ul>
+    <li><strong>אם X ו-Y נוטים לזוז יחד</strong> (Cov חיובית), אז כש-X מעל הממוצע שלו, גם Y נוטה להיות מעל הממוצע שלו. שתי החריגות מצטברות, והסכום מתרחק מהממוצע עוד יותר, למעלה או למטה. לכן הפיזור של הסכום גדל.</li>
+    <li><strong>אם הם נוטים לזוז הפוך</strong> (Cov שלילית), אז כשאחד מעל הממוצע, השני נוטה להיות מתחתיו. החריגות מקזזות זו את זו, והסכום נשאר קרוב לממוצע. לכן הפיזור של הסכום קטן.</li>
+    <li><strong>אם הם בלתי תלויים</strong>, Cov = 0, ונשאר רק \(Var(X) + Var(Y)\).</li>
+  </ul>
+  <p>על הרעיון הזה בנוי פיזור תיק השקעות: מניות שנוטות לזוז הפוך מייצבות את התיק.</p>
+</section>
+
+<!-- ============ 7 ============ -->
+<section class="chapter" id="dists">
+  <p class="chapter-num">פרק 7</p>
+  <h2>התפלגויות</h2>
+  <p>ההתפלגות של משתנה מקרי היא התיאור המלא שלו: אילו ערכים הוא יכול לקבל, ומה הסיכוי של כל אחד. בפרק 4 ראינו איך מחשבים אותה: לכל ערך אוספים את התוצאות שמובילות אליו, ומחברים את ההסתברויות שלהן. עכשיו נראה איך מתארים אותה בפועל, ונכיר את המשפחות המוכרות.</p>
+
+  <h3>בדיד ורציף מתוארים אחרת</h3>
+  <div class="table-wrap"><table class="t">
+    <tr><th></th><th>משתנה בדיד</th><th>משתנה רציף</th></tr>
+    <tr><td><strong>מתואר על ידי</strong></td><td>פונקציית הסתברות \(P(X = x)\)</td><td>פונקציית צפיפות \(f(x)\)</td></tr>
+    <tr><td><strong>מה הגובה אומר</strong></td><td>ההסתברות לערך עצמו</td><td>"צפיפות" ההסתברות סביב הערך. <strong>לא</strong> הסתברות.</td></tr>
+    <tr><td><strong>איך מחשבים הסתברות לטווח</strong></td><td>סוכמים את ההסתברויות של הערכים בטווח</td><td>שטח מתחת לעקומה (אינטגרל)</td></tr>
+    <tr><td><strong>הסתברות לנקודה בודדת</strong></td><td>יכולה להיות חיובית</td><td>תמיד 0</td></tr>
+  </table></div>
+  <p><strong>למה בצפיפות הגובה הוא לא הסתברות?</strong> כמו בהיסטוגרמה מהרצאה 1, השטח הוא מה שמייצג כמות. לנקודה בודדת אין רוחב, ולכן אין לה שטח, ולכן ההסתברות שלה 0. אז מה הגובה כן אומר? הוא אומר כמה הסתברות מרוכזת סביב x, ביחס לאורך: ההסתברות לקטע קצר סביב x היא בערך \(f(x)\) כפול אורך הקטע. זה כמו צפיפות אוכלוסין, שאומרת כמה אנשים יש בכל קמ"ר, ולא כמה אנשים יש בסך הכל. מאותה סיבה \(f(x)\) יכולה להיות גדולה מ-1: צפיפות גבוהה על פני קטע צר מאוד נותנת שטח קטן.</p>
+
+  <h3>הפונקציה המצטברת</h3>
+  <div class="math-block">$$F(x) = P(X \le x) \qquad\qquad P(a < X \le b) = F(b) - F(a)$$</div>
+  <p>היא אומרת מה ההסתברות שהמשתנה <strong>לא יעבור</strong> את x, ומוגדרת באותו אופן לבדיד ולרציף. בבדיד מחשבים אותה כסכום, \(F(x) = \sum_{k \le x} P(X=k)\), והיא נראית כמו מדרגות. ברציף היא השטח שמשמאל ל-x, והיא עולה ברציפות. בשני המקרים היא מתחילה ב-0 ומגיעה ל-1. זה בדיוק השכיחות היחסית המצטברת מהרצאה 1, רק עבור משתנה מקרי.</p>
+
+  <div class="callout">
+    <p class="callout-h">"קטן מ" או "קטן או שווה"?</p>
+    <p><strong>בבדיד זה משנה.</strong> כשהערכים שלמים, \(P(X > 2) = P(X \ge 3)\) ו-\(P(X < 2) = P(X \le 1)\). כדאי תמיד לתרגם קודם לאי-שוויון שכולל שוויון (≤ או ≥), ואז לרשום בדיוק אילו ערכים נכנסים. כשיש הרבה ערכים, מחשבים את הצד הקצר: \(P(X \ge 2) = 1 - P(X=0) - P(X=1)\).</p>
+    <p><strong>ברציף זה לא משנה,</strong> כי ההסתברות לנקודה היא 0: \(P(X < a) = P(X \le a)\).</p>
+  </div>
+
+  <figure class="lab" id="w-dist">
+    <p class="lab-title">סייר ההתפלגויות</p>
+    <p class="lab-hint">בחרו התפלגות, הזיזו את הפרמטרים, ובחרו שאלה. העמודות או השטח שנכללים בשאלה נצבעים. בבינומית, נסו להחליף בין "&lt;" ל-"≤" ושימו לב לעמודה שנכנסת ויוצאת. בנורמלית אותו שינוי לא משנה כלום.</p>
+    <div data-w="dist"></div>
+  </figure>
+
+  <h3>איך מזהים איזו התפלגות זו</h3>
+  <p>בכל שאלה, הדבר הראשון הוא לשאול <strong>מה המשתנה סופר או מודד</strong>. התשובה כמעט תמיד מזהה את ההתפלגות:</p>
+  <div class="table-wrap"><table class="t">
+    <tr><th>מה קורה בשאלה</th><th>התפלגות</th><th>סימון</th></tr>
+    <tr><td>כל הערכים בטווח שווים בסיכוי</td><td>אחידה (בדידה או רציפה)</td><td class="n">\(U[a,b]\)</td></tr>
+    <tr><td>מספר <strong>קבוע</strong> של ניסיונות בלתי תלויים, אותה הסתברות הצלחה בכל אחד, וסופרים הצלחות</td><td>בינומית</td><td class="n">\(B(n,p)\)</td></tr>
+    <tr><td>חוזרים על ניסיון <strong>עד ההצלחה הראשונה</strong>, וסופרים כמה ניסיונות נדרשו</td><td>גיאומטרית</td><td class="n">\(Geo(p)\)</td></tr>
+    <tr><td>סופרים אירועים שקורים באקראי <strong>בפרק זמן</strong> (או בשטח), בקצב ממוצע קבוע</td><td>פואסון</td><td class="n">\(Pois(\lambda)\)</td></tr>
+    <tr><td><strong>זמן ההמתנה</strong> עד האירוע הבא בתהליך כזה</td><td>מעריכית</td><td class="n">\(Exp(\lambda)\)</td></tr>
+    <tr><td>נאמר במפורש שהמשתנה נורמלי, או שמדובר בסכום או בממוצע של הרבה תצפיות</td><td>נורמלית</td><td class="n">\(N(\mu,\sigma^2)\)</td></tr>
+  </table></div>
+
+  <h3>הנוסחאות</h3>
+  <div class="table-wrap"><table class="t">
+    <tr><th>התפלגות</th><th>הסתברות / צפיפות</th><th>תוחלת</th><th>שונות</th></tr>
+    <tr><td>אחידה בדידה</td><td class="n">\(\frac{1}{b-a+1}\)</td><td class="n">\(\frac{a+b}{2}\)</td><td class="n">\(\frac{(b-a+1)^2-1}{12}\)</td></tr>
+    <tr><td>אחידה רציפה</td><td class="n">\(\frac{1}{b-a}\), \(a \le x \le b\)</td><td class="n">\(\frac{a+b}{2}\)</td><td class="n">\(\frac{(b-a)^2}{12}\)</td></tr>
+    <tr><td>בינומית</td><td class="n">\(\binom{n}{k}p^k(1-p)^{n-k}\)</td><td class="n">\(np\)</td><td class="n">\(np(1-p)\)</td></tr>
+    <tr><td>פואסון</td><td class="n">\(\frac{e^{-\lambda}\lambda^k}{k!}\)</td><td class="n">\(\lambda\)</td><td class="n">\(\lambda\)</td></tr>
+    <tr><td>גיאומטרית</td><td class="n">\((1-p)^{k-1}p\), \(k=1,2,\dots\)</td><td class="n">\(\frac{1}{p}\)</td><td class="n">\(\frac{1-p}{p^2}\)</td></tr>
+    <tr><td>מעריכית</td><td class="n">\(\lambda e^{-\lambda x}\), \(x \ge 0\)</td><td class="n">\(\frac{1}{\lambda}\)</td><td class="n">\(\frac{1}{\lambda^2}\)</td></tr>
+    <tr><td>נורמלית</td><td class="n">\(\frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}\)</td><td class="n">\(\mu\)</td><td class="n">\(\sigma^2\)</td></tr>
+  </table></div>
+  <p class="note">שתי נוסחאות מצטברות שימושיות: בגיאומטרית \(P(X > x) = (1-p)^x\), כי "צריך יותר מ-x ניסיונות" פירושו ש-x הראשונים נכשלו. במעריכית \(F(x) = 1 - e^{-\lambda x}\).</p>
+
+  <h3>חוסר זיכרון</h3>
+  <p>הגיאומטרית והמעריכית הן <strong>חסרות זיכרון</strong>: מה שקרה עד עכשיו לא משנה את הסיכויים מכאן והלאה. בקזינו, ההסתברות שהמספר 7 ייצא באחד מחמשת הסיבובים הבאים היא \(1 - (36/37)^5 \approx 0.128\). אם לפני שהגעתם היו 100 סיבובים בלי 7, ההסתברות <strong>עדיין</strong> 0.128. הרולטה לא "חייבת" שבע. כל סיבוב בלתי תלוי בקודמיו, ולכן הספירה מתחילה מחדש בכל רגע.</p>
+
+  <h3>פואסון ומעריכית: שני צדדים של אותו תהליך</h3>
+  <p>אם אירועים מגיעים באקראי בקצב קבוע של λ לשעה, אז <strong>מספר</strong> האירועים בשעה מתפלג \(Pois(\lambda)\), ו<strong>הזמן</strong> בין שני אירועים מתפלג \(Exp(\lambda)\). אותו תהליך, שתי שאלות: "כמה?" ו"מתי?". לכן גם התוחלות מתאימות: אם מגיעות בממוצע 4 שיחות בשעה, הזמן הממוצע בין שיחות הוא רבע שעה.</p>
+
+  <details class="ext">
+    <summary><span class="ext-badge">הרחבה</span> פואסון: איחוד, פיצול והמרת יחידות זמן</summary>
+    <div class="ext-body">
+      <h4>איחוד</h4>
+      <p>אם \(X \sim Pois(\lambda_1)\) ו-\(Y \sim Pois(\lambda_2)\) בלתי תלויים, אז \(X + Y \sim Pois(\lambda_1 + \lambda_2)\). לסניף מגיעים בממוצע 3 לקוחות בשעה מהכניסה הראשית ו-5 מהאחורית, ולכן סך הלקוחות בשעה מתפלג \(Pois(8)\). מי שעומד ליד הקופה רואה פשוט זרם אחד של אירועים אקראיים, בקצב שהוא סכום הקצבים. התנאי הוא אי-תלות.</p>
+      <h4>פיצול</h4>
+      <p>אם \(N \sim Pois(\lambda)\), וכל אירוע, באופן בלתי תלוי, הוא מסוג א בהסתברות p, אז מספר האירועים מסוג א מתפלג \(Pois(\lambda p)\), ומספר האחרים \(Pois(\lambda(1-p))\). מ-8 לקוחות בשעה, כש-25% קונים, מספר הקונים מתפלג \(Pois(2)\).</p>
+      <p><strong>החלק המפתיע: הקונים והלא-קונים בלתי תלויים.</strong> במבט ראשון זה נראה לא סביר. אם הגיעו הרבה קונים, לא אמורים להיות פחות לא-קונים?</p>
+      <p>זה היה נכון אילו מספר המגיעים היה קבוע. נניח שידוע מראש שמגיעים בדיוק 8 לקוחות. אם 6 מהם קנו, ברור שרק 2 לא קנו. במצב כזה הקונים והלא-קונים תלויים לגמרי: אחד קובע את השני.</p>
+      <p>אבל בפואסון מספר המגיעים עצמו אקראי. אם היו הרבה קונים, ייתכן פשוט שבאותה שעה הגיעו יותר אנשים, ואז אין סיבה לצפות לפחות לא-קונים. מתברר שבפואסון שני הצדדים האלה מתאזנים בדיוק: מספר הקונים לא אומר שום דבר על מספר הלא-קונים, ולכן הם בלתי תלויים. זו תכונה מיוחדת של פואסון, והיא נובעת מכך שהסך אקראי.</p>
+      <h4>הכיוון ההפוך: מהסך אל החלקים</h4>
+      <p>באיחוד הלכנו מהחלקים אל השלם: 3 לקוחות בשעה מהכניסה הראשית ועוד 5 מהאחורית נותנים זרם אחד של \(Pois(8)\). עכשיו נלך בכיוון ההפוך. נניח שבשעה מסוימת ספרנו בדיוק 10 לקוחות, ונשאל: כמה מהם הגיעו מהכניסה הראשית?</p>
+      <p>הכניסה הראשית אחראית ל-3 מתוך 8 הלקוחות בממוצע. לכן כל אחד מעשרת הלקוחות הגיע ממנה בהסתברות \(3/8\), באופן בלתי תלוי באחרים. אלה 10 ניסויים בלתי תלויים עם אותה הסתברות הצלחה, כלומר התפלגות בינומית: מספר הלקוחות מהכניסה הראשית מתפלג \(B(10,\ 3/8)\). באופן כללי:</p>
+      <div class="math-block">$$X \mid (X+Y = n) \;\sim\; B\!\left(n,\ \frac{\lambda_1}{\lambda_1+\lambda_2}\right)$$</div>
+      <p class="note">שימו לב לקשר לפיצול: כאן הסך ידוע מראש, 10, ולכן בדיוק כמו בדוגמת 8 הלקוחות, המספרים משתי הכניסות כבר לא בלתי תלויים. אם 4 הגיעו מהראשית, בהכרח 6 הגיעו מהאחורית.</p>
+      <h4>המרת יחידות זמן</h4>
+      <div class="math-block">$$\lambda_{\text{new}} = \lambda_{\text{given}} \cdot \frac{\text{new time length}}{\text{given time length}}$$</div>
+      <p>48 תקלות ביממה הן 2 תקלות בשעה, כי ביממה 24 שעות. לשלושה ימים כופלים ב-3, ולחצי שעה מחלקים ב-48. זה בעצם האיחוד: יממה היא 24 שעות שאינן חופפות, וסכום של 24 משתני פואסון זהים הוא פואסון. <strong>ההנחה הסמויה:</strong> הקצב קבוע לאורך כל התקופה. אם בלילה הקצב נמוך יותר, אי אפשר לחלק באופן שווה.</p>
+    </div>
+  </details>
+
+  <details class="fold">
+    <summary>גיאומטרית עם תקרה: כשהנוסחה של השונות נשברת</summary>
+    <div class="fold-body">
+      <p class="note">המצב הזה מופיע בשאלה 7 בחוברת (תרומת דם), סעיף ד. הפתרון המלא בפרק 10.</p>
+      <p>אחות בודקת תלמידים אחד-אחד עד שהיא מוצאת סוג דם מתאים, אבל בכיתה יש רק 30 תלמידים. X = מספר התלמידים שייבדקו. עד 29 זו גיאומטרית רגילה, אבל הערך 30 <strong>אוסף את כל הזנב</strong>: כל המקרים שבהם גיאומטרית רגילה הייתה ממשיכה ל-31, 50 או 150, נעצרים כאן ב-30.</p>
+      <figure class="lab" id="w-trunc">
+        <p class="lab-title">הזנב שנערם בתקרה</p>
+        <p class="lab-hint">העמודות האפורות הן הזנב של גיאומטרית רגילה, שנחתך. כל השטח שלו עובר לעמודה האחרונה. שנו את התקרה ואת p, והשוו בין התוחלת והשונות האמיתיות לבין הנוסחאות הגיאומטריות.</p>
+        <div data-w="trunc"></div>
+      </figure>
+      <p><strong>בדיקת השפיות שחושפת את הטעות:</strong> עם p = 0.03 הנוסחה \(\frac{1-p}{p^2}\) נותנת סטיית תקן של 32.8. אבל X כלוא בין 1 ל-30, וסטיית תקן של משתנה כזה לא יכולה לעבור את חצי הטווח, 14.5. כשיש תקרה, מחשבים את התוחלת והשונות ישירות מטבלת ההתפלגות.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============ 8 ============ -->
+<section class="chapter" id="normal">
+  <p class="chapter-num">פרק 8</p>
+  <h2>התפלגות נורמלית ותקנון</h2>
+  <p>ההתפלגות הנורמלית היא הפעמון המפורסם, "פעמון גאוס". היא סימטרית לגמרי סביב התוחלת: רוב הערכים מרוכזים סביב המרכז, וככל שמתרחקים יש פחות ופחות. מסמנים \(X \sim N(\mu, \sigma^2)\), ושני הפרמטרים קובעים הכל:</p>
+  <ul>
+    <li><strong>\(\mu\)</strong> קובע איפה מרכז הפעמון.</li>
+    <li><strong>\(\sigma\)</strong> קובע כמה הוא רחב. σ גדולה פירושה פעמון רחב ונמוך. השטח הכולל תמיד 1.</li>
+  </ul>
+  <p class="note">שימו לב לסימון: הפרמטר השני הוא <strong>השונות</strong>. \(N(70, 9)\) פירושו סטיית תקן 3, לא 9.</p>
+
+  <h3>תקנון: אדם מול פיל</h3>
+  <p>משקל אדם מתפלג עם תוחלת 70 ושונות 10, ומשקל פיל עם תוחלת 800 ושונות 50. אדם שוקל 78 ק"ג, ופיל 847 ק"ג. מי מהם חריג יותר ביחס לאוכלוסייה שלו? אי אפשר להשוות ישירות, כי מדובר בסדרי גודל שונים לגמרי.</p>
+  <p>הפתרון: מודדים כל אחד <strong>ביחידות של סטיית התקן של האוכלוסייה שלו</strong>. זה ציון התקן:</p>
+  <div class="math-block">$$Z = \frac{X - \mu}{\sigma} \qquad\qquad Z_{\text{human}} = \frac{78 - 70}{\sqrt{10}} \approx 2.53 \qquad Z_{\text{elephant}} = \frac{847 - 800}{\sqrt{50}} \approx 6.65$$</div>
+  <p>הפיל חריג הרבה יותר: הוא רחוק 6.65 סטיות תקן מהממוצע, לעומת 2.53 של האדם.</p>
+
+  <h4>מה התקנון עושה לפעמון</h4>
+  <p>אפשר לחשוב על התקנון כשני צעדים. <strong>הצעד הראשון, \(X - \mu\),</strong> מזיז את כל הפעמון כך שהמרכז שלו יעבור ל-0. הרוחב לא משתנה. <strong>הצעד השני, החלוקה ב-\(\sigma\),</strong> משנה את קנה המידה: אם σ גדולה מ-1 הפעמון מתכווץ, ואם היא קטנה מ-1 הוא נמתח, עד שסטיית התקן שלו בדיוק 1.</p>
+  <p>אחרי שני הצעדים כל נורמלית הופכת לאותו פעמון, <strong>הנורמלית הסטנדרטית</strong> \(N(0,1)\). והחשוב: כל נקודה זזה יחד עם הפעמון, ולכן השטח שמשמאל לה לא משתנה. זו הסיבה שטבלה אחת, של \(N(0,1)\), מספיקה לכל הנורמליות.</p>
+
+  <figure class="lab" id="w-zstd">
+    <p class="lab-title">תקנון בשני צעדים</p>
+    <p class="lab-hint">עברו בין השלבים וראו מה קורה לפעמון ולנקודה x. הקו המקווקו הוא הפעמון מהשלב הקודם. החץ האופקי מסמן סטיית תקן אחת מהמרכז. שימו לב שהשטח הצבוע, משמאל לנקודה, נשאר זהה בכל השלבים.</p>
+    <div data-w="zstd"></div>
+  </figure>
+
+  <p><strong>אותו דבר בשפה של הרצאה 1.</strong> אפשר לכתוב \(Z = \frac{1}{\sigma}X - \frac{\mu}{\sigma}\). זו טרנספורמציה לינארית \(aX + b\), עם \(a = 1/\sigma\) ו-\(b = -\mu/\sigma\). לפי הכללים של טרנספורמציה לינארית:</p>
+  <div class="math-block">$$E(Z) = \frac{1}{\sigma}\,\mu - \frac{\mu}{\sigma} = 0 \qquad\qquad SD(Z) = \frac{1}{\sigma}\cdot\sigma = 1$$</div>
+
+  <h3>שיטת העבודה</h3>
+  <ol>
+    <li>רושמים את הנתונים ומציירים פעמון. מסמנים עליו את הערך ואת השטח המבוקש.</li>
+    <li>מתקננים: \(z = (x - \mu)/\sigma\).</li>
+    <li>קוראים מהטבלה את \(\Phi(z) = P(Z \le z)\), השטח <strong>משמאל</strong> ל-z.</li>
+    <li>מתאימים לשאלה בעזרת הכללים הבאים.</li>
+  </ol>
+  <div class="table-wrap"><table class="t">
+    <tr><th>מבקשים</th><th>מחשבים</th></tr>
+    <tr><td>שטח משמאל ל-a</td><td class="n">\(\Phi(z_a)\)</td></tr>
+    <tr><td>שטח מימין ל-a</td><td class="n">\(1 - \Phi(z_a)\)</td></tr>
+    <tr><td>שטח בין a ל-b</td><td class="n">\(\Phi(z_b) - \Phi(z_a)\)</td></tr>
+    <tr><td>z שלילי (לא בטבלה)</td><td class="n">\(\Phi(-z) = 1 - \Phi(z)\)</td></tr>
+    <tr><td>אחוזון: הערך ש-q מהאוכלוסייה מתחתיו</td><td class="n">\(x = \mu + z_q\cdot\sigma\)</td></tr>
+    <tr><td>אחוזון מתחת ל-50%</td><td class="n">\(z_q = -z_{1-q}\)</td></tr>
+  </table></div>
+  <p>הסימטריה היא סוד שני הכללים האחרונים: השטח משמאל ל-−z שווה לשטח מימין ל-z.</p>
+  <p><strong>מאיפה מביאים את \(z_q\)?</strong> זו קריאה הפוכה של הטבלה. בדרך כלל נכנסים לטבלה עם z ויוצאים עם שטח. כאן יודעים את השטח, q, ומחפשים את z. מחפשים <strong>בתוך</strong> הטבלה את הערך הקרוב ביותר ל-q, וקוראים את ה-z <strong>בשוליים</strong>: השורה נותנת את הספרה הראשונה, והעמודה את הספרה השנייה אחרי הנקודה. למשל, עבור q = 0.95 הערכים הקרובים בטבלה הם 0.9495 (z = 1.64) ו-0.9505 (z = 1.65), ולכן \(z_{0.95} \approx 1.645\).</p>
+  <p>כש-q קטן מ-0.5, הוא לא מופיע בתוך הטבלה, כי הטבלה מכסה רק ערכי z חיוביים. אז משתמשים בסימטריה: \(z_q = -z_{1-q}\). למשל, \(z_{0.05} = -z_{0.95} \approx -1.645\).</p>
+
+  <figure class="lab" id="w-normal">
+    <p class="lab-title">מחשבון שטחים לנורמלית</p>
+    <p class="lab-hint">מתחת לציר המקורי יש ציר של ציוני תקן: זה אותו פעמון, נמדד בסטיות תקן. בחרו סעיף מהתרגיל שלמטה, או הקלידו ערכים משלכם. החישוב מעגל את z לשתי ספרות, כמו בטבלה.</p>
+    <div data-w="normal"></div>
+  </figure>
+
+  <h3>תרגיל: משקל גבר ישראלי</h3>
+  <p>משקל גבר ישראלי מתפלג נורמלית עם תוחלת 70 ק"ג וסטיית תקן 3 ק"ג.</p>
+  <div class="steps">
+    <div class="step"><p class="step-h">א. איזה אחוז מהגברים שוקלים פחות מ-73 ק"ג?</p>
+      <details class="reveal"><summary>הצג</summary><div class="reveal-body">
+        <p>73 רחוק מהתוחלת בדיוק סטיית תקן אחת: \(z = (73-70)/3 = 1\). מהטבלה \(\Phi(1) = 0.8413\), כלומר 84.13%.</p>
+      </div></details></div>
+    <div class="step"><p class="step-h">ב. פחות מ-75.5 ק"ג?</p>
+      <details class="reveal"><summary>הצג</summary><div class="reveal-body">
+        <p>\(z = 5.5/3 = 1.83\), ו-\(\Phi(1.83) = 0.9664\), כלומר 96.64%.</p>
+      </div></details></div>
+    <div class="step"><p class="step-h">ג. יותר מ-71 ק"ג?</p>
+      <details class="reveal"><summary>הצג</summary><div class="reveal-body">
+        <p>\(z = 1/3 = 0.33\). שטח <strong>מימין</strong>: \(1 - \Phi(0.33) = 1 - 0.6293 = 0.3707\).</p>
+      </div></details></div>
+    <div class="step"><p class="step-h">ד. מהו האחוזון ה-87?</p>
+      <details class="reveal"><summary>הצג</summary><div class="reveal-body">
+        <p>כאן הכיוון הפוך: יודעים את השטח ומחפשים את הערך. מחפשים בתוך הטבלה את הערך הקרוב ביותר ל-0.87 מלמעלה: 0.8708, ב-\(z = 1.13\). מחזירים לסקאלה המקורית: \(x = 70 + 1.13 \cdot 3 = 73.39\).</p>
+      </div></details></div>
+    <div class="step"><p class="step-h">ה. מהו האחוזון ה-25?</p>
+      <details class="reveal"><summary>הצג</summary><div class="reveal-body">
+        <p>בטבלה אין שטחים מתחת ל-0.5, ולכן משתמשים בסימטריה: \(z_{0.25} = -z_{0.75} = -0.67\). לכן \(x = 70 - 0.67\cdot 3 = 67.99\).</p>
+      </div></details></div>
+    <div class="step"><p class="step-h">ו. איזה אחוז שוקלים פחות מ-64 ק"ג?</p>
+      <details class="reveal"><summary>הצג</summary><div class="reveal-body">
+        <p>\(z = -6/3 = -2\). \(\Phi(-2) = 1 - \Phi(2) = 1 - 0.9772 = 0.0228\), כלומר 2.28%.</p>
+      </div></details></div>
+    <div class="step"><p class="step-h">ז. מה ההסתברות שגבר ישקול בין 64 ל-71 ק"ג?</p>
+      <details class="reveal"><summary>הצג</summary><div class="reveal-body">
+        <p>\(\Phi(0.33) - \Phi(-2) = 0.6293 - 0.0228 = 0.6065\).</p>
+      </div></details></div>
+    <div class="step"><p class="step-h">ח. מה ההסתברות שמשקלו בטווח הבין-רבעוני?</p>
+      <details class="reveal"><summary>הצג</summary><div class="reveal-body">
+        <p>הטווח הבין-רבעוני הוא בין האחוזון ה-25 לאחוזון ה-75. את \(Q_1 = 67.99\) כבר מצאנו, ובאותה דרך \(Q_3 = 70 + 0.67\cdot3 = 72.01\). השטח ביניהם: \(\Phi(0.67) - \Phi(-0.67) = 0.7486 - 0.2514 = 0.4972\).</p>
+        <p>התשובה המדויקת היא 50%, <strong>לפי ההגדרה</strong> של רבעונים: בין Q1 ל-Q3 נמצאים 50% מהאוכלוסייה. ההפרש הקטן נובע מעיגול z ל-0.67, כשהערך המדויק הוא 0.6745.</p>
+      </div></details></div>
+  </div>
+  <p class="note">התפלגות נורמלית היא רציפה, ולכן "פחות מ" ו"לכל היותר" נותנים אותה תשובה.</p>
+</section>
+
+<!-- ============ 9 ============ -->
+<section class="chapter" id="clt">
+  <p class="chapter-num">פרק 9</p>
+  <h2>משפט הגבול המרכזי</h2>
+  <p>המשפט הזה הוא הבסיס להרבה מההסקה הסטטיסטית שתבוא בהמשך הקורס. הוא עונה על שאלה פשוטה: אם לוקחים מדגם ומחשבים את הממוצע שלו, איך <strong>הממוצע</strong> מתפלג?</p>
+
+  <h3>הממוצע הוא משתנה מקרי</h3>
+  <p>לפני שמגיעים למשפט, צריך לראות את הנקודה הזו: ממוצע המדגם \(\bar{X}\) הוא משתנה מקרי. הניסוי הוא "בוחרים n אנשים באקראי", והכלל הוא "מחשבים את הממוצע שלהם". מדגם אחר ייתן ממוצע אחר. לכן יש לממוצע תוחלת, שונות והתפלגות משלו. מתכונות התוחלת והשונות, עבור תצפיות בלתי תלויות:</p>
+  <div class="math-block">$$E(\bar{X}) = \mu \qquad\qquad Var(\bar{X}) = \frac{\sigma^2}{n} \qquad\qquad SE = \frac{\sigma}{\sqrt{n}}$$</div>
+  <p>הממוצע מכוון למקום הנכון, ומתפזר <strong>פחות</strong> מתצפית בודדת. ממוצעים מקזזים: תצפית גבוהה במיוחד ותצפית נמוכה במיוחד מבטלות זו את זו. סטיית התקן של הממוצע נקראת <strong>טעות התקן</strong> (SE), והיא תמיד קטנה מסטיית התקן של האוכלוסייה.</p>
+
+  <h3>המשפט</h3>
+  <div class="def"><p><strong>משפט הגבול המרכזי:</strong> אם \(n\) גדול מספיק (כלל אצבע: \(n \ge 30\)), ממוצע של תצפיות בלתי תלויות מתפלג בקירוב נורמלית, <strong>גם כשהתצפיות עצמן לא מתפלגות נורמלית</strong>:</p>
+  <div class="math-block">$$\bar{X} \sim N\!\left(\mu,\ \frac{\sigma^2}{n}\right)$$</div></div>
+  <p>זה החלק המפתיע: לא משנה אם האוכלוסייה מוטה, דו-שיאית או בדידה. הממוצעים שלה תמיד נראים כמו פעמון. כל מה שצריך לדעת על האוכלוסייה הוא \(\mu\) ו-\(\sigma\). אם האוכלוסייה עצמה נורמלית, הממוצע נורמלי בדיוק, לכל n.</p>
+  <p><strong>מה כאן חדש?</strong> את המרכז, \(\mu\), ואת הפיזור, \(\sigma/\sqrt{n}\), כבר קיבלנו למעלה מכללי התוחלת והשונות. המשפט מוסיף את <strong>הצורה</strong>: פעמון. והאינטואיציה לפעמון היא ספירה של צירופים. ממוצע יוצא קיצוני רק אם כמעט כל התצפיות קיצוניות באותו כיוון, ויש מעט מאוד צירופים כאלה. ממוצע באמצע מתקבל מהרבה מאוד צירופים, שבהם תצפיות גבוהות ונמוכות מקזזות זו את זו. למשל, בממוצע של שתי קוביות, ממוצע 1 מתקבל רק מ-(1, 1), כלומר בסיכוי 1/36, וממוצע 3.5 מתקבל מ-6 צירופים שונים. ככל ש-n גדל, ההבדל הזה בין האמצע לקצוות מתחדד, וההסתברות נערמת באמצע בצורת פעמון.</p>
+
+  <figure class="lab" id="w-clt">
+    <p class="lab-title">ממוצעים מכל אוכלוסייה הופכים לפעמון</p>
+    <p class="lab-hint">למעלה האוכלוסייה. למטה ההיסטוגרמה של ממוצעי המדגמים, על אותו ציר. התחילו ב-n = 1, שם הממוצע הוא תצפית בודדת, ולכן ההיסטוגרמה נראית כמו האוכלוסייה. הגדילו את n וראו את הפעמון מופיע ומצטופף. נסו את האוכלוסייה המוטה ואת הדו-שיאית.</p>
+    <div data-w="clt"></div>
+  </figure>
+
+  <h4>דוגמה</h4>
+  <p>תוחלת הציונים בקורס היא 75 וסטיית התקן 3. דוגמים 100 סטודנטים באופן מקרי ובלתי תלוי. מה ההסתברות שממוצע הציונים שלהם נמוך מ-76?</p>
+  <details class="reveal"><summary>הצג פתרון</summary><div class="reveal-body">
+    <p>n = 100 ≥ 30, ולכן לפי המשפט \(\bar{X} \sim N(75,\ 3^2/100)\), כלומר טעות התקן היא \(3/10 = 0.3\). מתקננים <strong>לפי טעות התקן</strong>, לא לפי σ:</p>
+    <div class="math-block">$$P(\bar{X} < 76) = \Phi\!\left(\frac{76 - 75}{0.3}\right) = \Phi(3.33) = 0.9996$$</div>
+    <p><strong>והאם הציון של סטודנט בודד מתפלג נורמלית?</strong> לא. שום דבר בשאלה לא אומר זאת. המשפט מדבר על הממוצע, לא על התצפיות. <strong>והממוצע של 20 סטודנטים?</strong> אי אפשר להניח שהוא נורמלי: 20 קטן מ-30, ואין מידע שהאוכלוסייה נורמלית.</p>
+  </div></details>
+
+  <h3>אותו משפט, לסכום</h3>
+  <p>סכום הוא ממוצע כפול n, ולכן גם הוא מתפלג בקירוב נורמלית:</p>
+  <div class="math-block">$$\sum_{i=1}^{n} X_i \sim N(n\mu,\ n\sigma^2)$$</div>
+  <p class="note">בדוגמה למעלה, הסיכוי שסכום הציונים של 100 הסטודנטים נמוך מ-7,600 הוא \(\Phi\!\left(\frac{7600 - 7500}{\sqrt{900}}\right) = \Phi(3.33)\), אותה תשובה. זה לא מקרי: "סכום מתחת ל-7,600" ו"ממוצע מתחת ל-76" הם אותו מאורע.</p>
+
+  <h3>המקרה הבינומי</h3>
+  <p>משתנה בינומי הוא סכום של n משתני ברנולי, אחד לכל ניסיון. לכן גם הוא מתפלג בקירוב נורמלית כש-n גדול. זה שימושי כשחישוב מדויק דורש לסכום עשרות איברים. התנאים לקירוב:</p>
+  <div class="math-block">$$np \ge 5 \qquad n(1-p) \ge 5 \qquad\Longrightarrow\qquad X \approx N\big(np,\ np(1-p)\big)$$</div>
+
+  <h4>תיקון רציפות</h4>
+  <p>הבינומית בדידה: יש לה עמודות ב-0, 1, 2 וכן הלאה. הנורמלית רציפה. אם מקרבים את העמודות בעקומה, כל עמודה k תופסת את הקטע מ-\(k - 0.5\) עד \(k + 0.5\). לכן צריך להזיז את הגבול בחצי, כך שהעמודות שנכללות במאורע ייכנסו בשלמותן, והעמודות שלא נכללות יישארו בחוץ.</p>
+  <div class="table-wrap"><table class="t">
+    <tr><th>בבינומית</th><th>בנורמלית</th><th>למה</th></tr>
+    <tr><td class="n">\(P(X = k)\)</td><td class="n">\(P(k - 0.5 < X < k + 0.5)\)</td><td>העמודה של k כולה</td></tr>
+    <tr><td class="n">\(P(X \le k)\)</td><td class="n">\(P(X < k + 0.5)\)</td><td>כולל את העמודה של k</td></tr>
+    <tr><td class="n">\(P(X < k)\)</td><td class="n">\(P(X < k - 0.5)\)</td><td>בלי העמודה של k</td></tr>
+    <tr><td class="n">\(P(X \ge k)\)</td><td class="n">\(P(X > k - 0.5)\)</td><td>כולל את העמודה של k</td></tr>
+    <tr><td class="n">\(P(X > k)\)</td><td class="n">\(P(X > k + 0.5)\)</td><td>בלי העמודה של k</td></tr>
+  </table></div>
+  <p class="note">טריק לזכור: שואלים "האם העמודה של k בפנים?". אם כן, הגבול זז החוצה ממנה. אם לא, הוא זז פנימה, אל מעבר לה. בלי התיקון, \(P(X &lt; k)\) ו-\(P(X \le k)\) היו יוצאים זהים, וזה ודאי לא נכון בבדיד.</p>
+
+  <figure class="lab" id="w-binapprox">
+    <p class="lab-title">הבינומית מול העקומה הנורמלית</p>
+    <p class="lab-hint">הדוגמה: שחקן כובש בכל בעיטה בהסתברות 0.2 ובועט 30 פעמים. מה ההסתברות שיכבוש פחות מ-9 שערים? כבו והדליקו את תיקון הרציפות, ושימו לב לחצי העמודה שנכנסת או נשארת בחוץ. שנו את k ואת סוג השאלה.</p>
+    <div data-w="binapprox"></div>
+  </figure>
+
+  <h4>הדוגמה במספרים</h4>
+  <p>\(X \sim B(30, 0.2)\). התנאים מתקיימים: \(np = 6\) ו-\(n(1-p) = 24\). לכן \(X \approx N(6,\ 4.8)\), עם סטיית תקן \(\sqrt{4.8} \approx 2.19\).</p>
+  <ul>
+    <li><strong>בדיוק 10 שערים:</strong> בחישוב מדויק \(\binom{30}{10}0.2^{10}0.8^{20} = 0.0355\). בקירוב: \(\Phi\!\left(\frac{10.5-6}{2.19}\right) - \Phi\!\left(\frac{9.5-6}{2.19}\right) = 0.9798 - 0.9452 = 0.0346\). קרוב מאוד.</li>
+    <li><strong>פחות מ-9 שערים:</strong> "פחות מ-9" לא כולל את 9, ולכן הגבול הוא 8.5: \(\Phi\!\left(\frac{8.5-6}{2.19}\right) = \Phi(1.14) = 0.8729\). בלי תיקון היינו מקבלים \(\Phi(1.37) = 0.9147\), טעות משמעותית. התשובה המדויקת היא 0.8713.</li>
+  </ul>
+
+  <h3>הפרופורציה המדגמית</h3>
+  <p>הפרופורציה המדגמית \(\hat{P}\), אחוז ההצלחות במדגם, היא ממוצע של משתני ברנולי: כל אחד הוא 1 בהצלחה ו-0 בכישלון. לכן, באותם תנאים:</p>
+  <div class="math-block">$$\hat{P} \sim N\!\left(p,\ \frac{p(1-p)}{n}\right)$$</div>
+  <p>זה הבסיס לרווחי סמך ולמבחנים על פרופורציות, בהמשך הקורס.</p>
+
+  <details class="ext">
+    <summary><span class="ext-badge">הרחבה</span> חוק המספרים הגדולים מול משפט הגבול המרכזי</summary>
+    <div class="ext-body">
+      <p>שני המשפטים מדברים על ממוצע של הרבה תצפיות, ולכן קל לבלבל ביניהם. הם עונים על שאלות שונות:</p>
+      <div class="table-wrap"><table class="t">
+        <tr><th></th><th>חוק המספרים הגדולים</th><th>משפט הגבול המרכזי</th></tr>
+        <tr><td><strong>השאלה</strong></td><td><strong>לאן</strong> הממוצע הולך?</td><td>באיזו <strong>צורה</strong> הוא מתפזר בדרך?</td></tr>
+        <tr><td><strong>התשובה</strong></td><td>ל-\(\mu\), כש-n גדל</td><td>כפעמון ברוחב \(\sigma/\sqrt{n}\)</td></tr>
+        <tr><td><strong>ראינו אותו</strong></td><td>בממוצע המצטבר של הקובייה, פרק 5</td><td>בהיסטוגרמת הממוצעים, למעלה</td></tr>
+      </table></div>
+      <p>החוק אומר שהממוצע מתכנס. המשפט אומר משהו חזק יותר: <strong>כמה</strong> הוא צפוי לפספס, ובאיזו הסתברות. זה מה שמאפשר לחשב הסתברויות עם טבלת Z. וכשהתצפיות עצמן כבר נתונות כנורמליות, אין צורך באף אחד מהם כדי לדעת שהממוצע נורמלי: סכום של נורמליות בלתי תלויות הוא נורמלי בדיוק.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============ 10 ============ -->
+<section class="chapter" id="practice">
+  <p class="chapter-num">פרק 10</p>
+  <h2>תרגילים עם פתרון מלא</h2>
+  <p>שש שאלות מחוברת התרגילים (נושא 2) וארבע שאלות נוספות בסגנון מבחן. נסו לפתור לבד לפני שפותחים, כל שלב בנפרד.</p>
+
+  <h3>טנק המרכבה (חוברת, שאלה 3)</h3>
+  <p>טנק מרכבה פוגע במטרה בניסיון ראשון בהסתברות 0.85. אם הוא יורה שוב מאותה עמדה, המערכת מבצעת חישוב מחדש, והוא פוגע בניסיון השני ב-93% מהמקרים. בירי שלישי מאותה עמדה ההסתברות עולה ל-0.97.</p>
+  <p><strong>א.</strong> אם נדרשות 2 פגיעות כדי להשמיד את המטרה, מה ההסתברות שהיא תושמד בשלושה ניסיונות מאותה עמדה? <strong>ב.</strong> העמדה מחזירה אש, ולכן הטנק לא יכול לירות מאותה עמדה יותר מפעם אחת. מה ההסתברות שישמיד אותה בשלושה ניסיונות?</p>
+  <div class="steps">
+    <div class="step"><p class="step-h">סעיף א: היריות תלויות</p>
+      <details class="reveal"><summary>הצג</summary><div class="reveal-body">
+        <p>ההסתברות משתנה מירייה לירייה, ולכן אי אפשר להשתמש בבינומית. מפרקים לרצפים (פ = פגיעה, ח = החטאה). הנחה: ההסתברות בירייה ה-k תלויה רק במספר הירייה. אחרי שתי פגיעות הטנק מפסיק, ולכן אין רצף פ-פ-פ.</p>
+        <div class="table-wrap"><table class="t" style="max-width:460px">
+          <tr><th>רצף</th><th class="n">חישוב</th><th class="n">הסתברות</th></tr>
+          <tr><td>פ-פ</td><td class="n">\(0.85\cdot0.93\)</td><td class="n">0.7905</td></tr>
+          <tr><td>פ-ח-פ</td><td class="n">\(0.85\cdot0.07\cdot0.97\)</td><td class="n">0.0577</td></tr>
+          <tr><td>ח-פ-פ</td><td class="n">\(0.15\cdot0.93\cdot0.97\)</td><td class="n">0.1353</td></tr>
+          <tr><td><strong>סה"כ</strong></td><td></td><td class="n"><strong>0.9835</strong></td></tr>
+        </table></div>
+        <p class="note">בדיקה דרך המשלים: פחות מ-2 פגיעות (ח-ח-ח, פ-ח-ח, ח-פ-ח, ח-ח-פ) יוצא 0.01647, ו-\(1 - 0.01647 = 0.98353\) ✓</p>
+      </div></details></div>
+    <div class="step"><p class="step-h">סעיף ב: היריות בלתי תלויות</p>
+      <details class="reveal"><summary>הצג</summary><div class="reveal-body">
+        <p>כל ירייה היא "ירייה ראשונה": הסתברות 0.85, בלי תלות. מספר הפגיעות \(X \sim B(3,\ 0.85)\):</p>
+        <div class="math-block">$$P(X \ge 2) = \binom{3}{2}0.85^2\cdot0.15 + 0.85^3 = 0.3251 + 0.6141 = 0.939$$</div>
+        <p>ההבדל בין 0.984 ל-0.939 הוא בדיוק המחיר של אובדן השיפור במערכת הכיוון: יריות תלויות לעומת בלתי תלויות.</p>
+      </div></details></div>
+  </div>
+
+  <h3>כישלון בקורס (חוברת, שאלה 4)</h3>
+  <p>ההסתברות שסטודנט ייכשל בקורס היא 0.12. <strong>א.</strong> נלקחו באקראי 6 סטודנטים. מה ההסתברות: (1) שכולם נכשלו, (2) שלכל היותר 2 נכשלו, (3) שלפחות 2 נכשלו, (4) שלפחות אחד נכשל ולפחות אחד עבר? <strong>ב.</strong> נלקחו 65 סטודנטים. מה הסיכוי שלפחות 35 עברו?</p>
+  <div class="steps">
+    <div class="step"><p class="step-h">סעיף א</p>
+      <details class="reveal"><summary>הצג</summary><div class="reveal-body">
+        <p>X = מספר הנכשלים מתוך 6, כלומר \(X \sim B(6,\ 0.12)\). מחשבים את שלושת הערכים הראשונים:</p>
+        <p class="note">\(P(X=0) = 0.4644\), \(P(X=1) = 0.3800\), \(P(X=2) = 0.1295\)</p>
+        <ol>
+          <li>\(P(X=6) = 0.12^6 \approx 0.000003\).</li>
+          <li>\(P(X \le 2) = 0.4644 + 0.3800 + 0.1295 = 0.9739\).</li>
+          <li>דרך המשלים, הצד הקצר: \(P(X \ge 2) = 1 - 0.4644 - 0.3800 = 0.1556\).</li>
+          <li>הכל חוץ מ"כולם נכשלו" ו"כולם עברו": \(1 - 0.12^6 - 0.88^6 = 0.5356\).</li>
+        </ol>
+        <p class="note">\(P(X\le2)\) ו-\(P(X\ge2)\) מסתכמים ליותר מ-1, כי שניהם כוללים את \(X=2\).</p>
+      </div></details></div>
+    <div class="step"><p class="step-h">סעיף ב: קירוב נורמלי</p>
+      <details class="reveal"><summary>הצג</summary><div class="reveal-body">
+        <p><strong>שימו לב להגדרת המשתנה:</strong> השאלה שואלת על <strong>עוברים</strong>. Y = מספר העוברים מתוך 65, ו-\(Y \sim B(65,\ 0.88)\). התנאים: \(np = 57.2\) ו-\(n(1-p) = 7.8\), שניהם מעל 5. לכן \(Y \approx N(57.2,\ 6.864)\), עם סטיית תקן 2.62.</p>
+        <p>"לפחות 35" כולל את העמודה של 35, ולכן מתחילים מ-34.5:</p>
+        <div class="math-block">$$P(Y \ge 35) \approx P\!\left(Z > \frac{34.5 - 57.2}{2.62}\right) = P(Z > -8.66) \approx 1$$</div>
+        <p><strong>בדיקת שפיות:</strong> בממוצע עוברים 57 מתוך 65, ו-35 רחוק כמעט 9 סטיות תקן מתחת. מי שקיבל כאן תשובה קרובה ל-0, כנראה השתמש ב-0.12 כהסתברות לעבור. כדאי תמיד להשוות את הערך לתוחלת לפני שמחשבים.</p>
+      </div></details></div>
+  </div>
+
+  <h3>תרומת דם (חוברת, שאלה 7)</h3>
+  <p>דודי זקוק לתרומת דם מסוג O−. בישראל 3% מהאנשים הם בעלי סוג דם זה. בכיתה של דודי 30 תלמידים, וכולם מוכנים להיבדק. האחות בודקת אותם אחד-אחד, והתוצאה מיידית. ברגע שנמצא תלמיד מתאים, מפסיקים לבדוק. מה ההסתברות: <strong>א.</strong> שהראשון מתאים? <strong>ב.</strong> שהתשיעי מתאים? <strong>ג.</strong> שאף תלמיד לא מתאים? <strong>ד.</strong> מה השונות של מספר התלמידים שייבדקו?</p>
+  <div class="steps">
+    <div class="step"><p class="step-h">סעיפים א–ג</p>
+      <details class="reveal"><summary>הצג</summary><div class="reveal-body">
+        <ul>
+          <li>א. 0.03.</li>
+          <li>ב. שמונת הראשונים לא מתאימים והתשיעי כן: \(0.97^8\cdot0.03 \approx 0.0235\).</li>
+          <li>ג. אף אחד מ-30: \(0.97^{30} \approx 0.401\).</li>
+        </ul>
+      </div></details></div>
+    <div class="step"><p class="step-h">סעיף ד: גיאומטרית עם תקרה</p>
+      <details class="reveal"><summary>הצג</summary><div class="reveal-body">
+        <p>X = מספר התלמידים שייבדקו. זו <strong>לא</strong> גיאומטרית רגילה, כי אין תלמיד 31. הערכים 1 עד 29 מתפלגים כמו בגיאומטרית, והערך 30 מקבל את כל השאר: את התלמיד ה-30 בודקים אם 29 הראשונים לא התאימו, בלי קשר לשאלה אם הוא עצמו מתאים.</p>
+        <div class="math-block">$$P(X=k) = 0.97^{k-1}\cdot 0.03 \quad (k = 1,\dots,29) \qquad P(X=30) = 0.97^{29} \approx 0.413$$</div>
+        <p>\(P(X=30) = 0.413\) גדול מ-0.401 של סעיף ג, כי הוא כולל גם את המקרה שהתלמיד ה-30 הוא המתאים הראשון.</p>
+        <p>מחשבים מהטבלה \(E(X) = \sum k\,P(X=k) \approx 19.97\) ו-\(E(X^2) = \sum k^2 P(X=k)\), ומקבלים:</p>
+        <div class="math-block">$$Var(X) = E(X^2) - [E(X)]^2 \approx 110.5 \qquad \sigma \approx 10.5$$</div>
+        <p><strong>המלכודת:</strong> הנוסחה הגיאומטרית \(\frac{1-p}{p^2}\) נותנת 1,078, כלומר סטיית תקן של 32.8. זה בלתי אפשרי, כי X כלוא בין 1 ל-30. הגרף האינטראקטיבי בהרחבה של פרק 7 מראה למה: כל הזנב של הגיאומטרית נערם על העמודה של 30.</p>
+      </div></details></div>
+  </div>
+
+  <h3>גביע קוטג' (חוברת, שאלה 16)</h3>
+  <p>משקל גביע קוטג' \(X \sim N(250,\ 12^2)\). מה ההסתברות שמשקלו: <strong>א.</strong> מתחת ל-256 גרם, <strong>ב.</strong> לפחות 268, <strong>ג.</strong> לכל היותר 246, <strong>ד.</strong> לפחות 240, <strong>ה.</strong> בין 240 ל-260? <strong>ו.</strong> גביע שמנת מתפלג נורמלית עם תוחלת 200 ושונות 144. מה ההסתברות שהוא שוקל יותר מ-206 גרם? ובין 190 ל-210? ענו בלי חישוב, בעזרת סעיפים א ו-ה.</p>
+  <div class="steps">
+    <div class="step"><p class="step-h">סעיפים א–ה</p>
+      <details class="reveal"><summary>הצג</summary><div class="reveal-body">
+        <p>מתקננים: \(Z = (X - 250)/12\).</p>
+        <div class="table-wrap"><table class="t">
+          <tr><th>סעיף</th><th class="n">מבקשים</th><th class="n">תקנון</th><th class="n">תשובה</th></tr>
+          <tr><td>א</td><td class="n">\(P(X<256)\)</td><td class="n">\(\Phi(0.5)\)</td><td class="n">0.6915</td></tr>
+          <tr><td>ב</td><td class="n">\(P(X\ge268)\)</td><td class="n">\(1-\Phi(1.5)\)</td><td class="n">0.0668</td></tr>
+          <tr><td>ג</td><td class="n">\(P(X\le246)\)</td><td class="n">\(\Phi(-0.33)\)</td><td class="n">0.3707</td></tr>
+          <tr><td>ד</td><td class="n">\(P(X\ge240)\)</td><td class="n">\(1-\Phi(-0.83)=\Phi(0.83)\)</td><td class="n">0.7967</td></tr>
+          <tr><td>ה</td><td class="n">\(P(240\le X\le260)\)</td><td class="n">\(\Phi(0.83)-\Phi(-0.83)\)</td><td class="n">0.5934</td></tr>
+        </table></div>
+      </div></details></div>
+    <div class="step"><p class="step-h">סעיף ו: גביע שמנת</p>
+      <details class="reveal"><summary>הצג</summary><div class="reveal-body">
+        <p>שונות 144 היא סטיית תקן 12: אותו פיזור כמו הקוטג', רק מוזז ב-50 גרם.</p>
+        <ul>
+          <li>יותר מ-206: \(z = 0.5\), בדיוק כמו 256 בסעיף א. לכן \(1 - 0.6915 = 0.3085\).</li>
+          <li>בין 190 ל-210: \(z = \pm0.83\), בדיוק כמו בסעיף ה. לכן 0.5934.</li>
+        </ul>
+        <p><strong>מה למדנו:</strong> ההסתברות בנורמלית תלויה רק במרחק מהתוחלת ביחידות של סטיית תקן. שתי נורמליות עם אותה σ הן אותו פעמון במקום אחר.</p>
+      </div></details></div>
+  </div>
+
+  <h3>ימי הריון (חוברת, שאלה 17)</h3>
+  <p>מספר ימי ההריון מתפלג בקירוב נורמלית עם תוחלת 274 וסטיית תקן 10. <strong>א.</strong> תינוק נחשב פג אם נולד לפני היום ה-259. מה ההסתברות ללידת פג? <strong>ב.</strong> מה ההסתברות ללדת אחרי 290 ימים? <strong>ג.</strong> מהו מספר הימים ש-70% מההריונות קצרים ממנו? <strong>ד.</strong> נדגמו 100 נשים אחרי לידה. איך מתפלג ממוצע ימי ההריון שלהן? <strong>ה.</strong> מה הסיכוי שהממוצע הזה גדול מ-290? הסבירו את ההבדל מסעיף ב.</p>
+  <div class="steps">
+    <div class="step"><p class="step-h">סעיפים א–ג</p>
+      <details class="reveal"><summary>הצג</summary><div class="reveal-body">
+        <ul>
+          <li>א. \(P(Z < -1.5) = 0.0668\).</li>
+          <li>ב. \(P(Z > 1.6) = 1 - 0.9452 = 0.0548\).</li>
+          <li>ג. \(z_{0.70} \approx 0.52\), ולכן \(x = 274 + 0.52\cdot10 \approx 279.2\) ימים.</li>
+        </ul>
+      </div></details></div>
+    <div class="step"><p class="step-h">סעיפים ד–ה</p>
+      <details class="reveal"><summary>הצג</summary><div class="reveal-body">
+        <div class="math-block">$$\bar{X} \sim N\!\left(274,\ \frac{10^2}{100}\right) = N(274,\ 1) \qquad P(\bar{X} > 290) = P(Z > 16) \approx 0$$</div>
+        <p>כאן ימי ההריון עצמם נורמליים, ולכן הממוצע נורמלי בדיוק. אישה אחת שיולדת אחרי 290 יום רחוקה 1.6 סטיות תקן מהתוחלת, וזה קורה ב-5.5% מהמקרים. כדי שה<strong>ממוצע</strong> של 100 נשים יעבור את 290, רובן צריכות לחרוג באותו כיוון, ובפועל הריונות ארוכים וקצרים מקזזים זה את זה. טעות התקן קטנה פי 10, ולכן 290 נמצא עכשיו 16 טעויות תקן מעל התוחלת.</p>
+      </div></details></div>
+  </div>
+
+  <h3>ציוני פסיכומטרי (חוברת, שאלה 18)</h3>
+  <p>ציוני פסיכומטרי מתפלגים בקירוב נורמלית. 83% מהנבחנים מקבלים פחות מ-650, ו-94% מקבלים פחות מ-700. מצאו את התוחלת ואת השונות.</p>
+  <div class="steps">
+    <div class="step"><p class="step-h">פתרון: שתי משוואות, שני נעלמים</p>
+      <details class="reveal"><summary>הצג</summary><div class="reveal-body">
+        <p>זו שאלת אחוזון הפוכה: יודעים ערכים ושטחים, ומחפשים את μ ו-σ. כל אחוזון נותן משוואה אחת. מהטבלה \(z_{0.83} \approx 0.95\) ו-\(z_{0.94} \approx 1.55\). מכל אחוזון \(x = \mu + z\sigma\):</p>
+        <div class="math-block">$$650 = \mu + 0.95\sigma \qquad 700 = \mu + 1.55\sigma$$</div>
+        <p>מחסירים את המשוואות: \(50 = 0.6\sigma\), ולכן \(\sigma \approx 83.3\). מציבים: \(\mu = 650 - 0.95\cdot83.3 \approx 570.8\). השונות: \(\sigma^2 \approx 6944\).</p>
+        <p class="note">עם ערכי z מדויקים (0.954 ו-1.555) מתקבל \(\mu \approx 570.6\). ההבדל נובע מעיגול הטבלה.</p>
+      </div></details></div>
+  </div>
+
+  <h3>שאלה נוספת 1: שונות של צירוף</h3>
+  <p>ל-X שונות 4 ול-Y שונות 9, והשונות המשותפת שלהם 2. חשבו את \(Var(2X - Y)\). מה הייתה התשובה אם X ו-Y היו בלתי תלויים?</p>
+  <div class="steps">
+    <div class="step"><p class="step-h">פתרון</p>
+      <details class="reveal"><summary>הצג</summary><div class="reveal-body">
+        <p>נגדיר \(U = 2X\). אז \(Var(U) = 4\cdot4 = 16\) ו-\(Cov(U, Y) = 2\cdot Cov(X,Y) = 4\). לפי נוסחת ההפרש:</p>
+        <div class="math-block">$$Var(2X - Y) = 16 + 9 - 2\cdot4 = 17$$</div>
+        <p>אם היו בלתי תלויים, השונות המשותפת 0, והתשובה \(16 + 9 = 25\). הקשר החיובי מקטין את השונות של ההפרש, כי X ו-Y זזים יחד ומקזזים זה את זה.</p>
+      </div></details></div>
+  </div>
+
+  <h3>שאלה נוספת 2: מוקד שירות</h3>
+  <p>למוקד מגיעות בממוצע 48 שיחות ביממה, באופן אקראי ובקצב קבוע. מה ההסתברות שבשעה מסוימת תגיע לפחות שיחה אחת?</p>
+  <div class="steps">
+    <div class="step"><p class="step-h">פתרון</p>
+      <details class="reveal"><summary>הצג</summary><div class="reveal-body">
+        <p>סופרים אירועים בפרק זמן, בקצב קבוע: פואסון. בשעה הקצב הוא \(48/24 = 2\), ולכן \(X \sim Pois(2)\). "לפחות אחת" דרך המשלים:</p>
+        <div class="math-block">$$P(X \ge 1) = 1 - P(X=0) = 1 - e^{-2} \approx 0.865$$</div>
+      </div></details></div>
+  </div>
+
+  <h3>שאלה נוספת 3: מעלית</h3>
+  <p>משקל אדם מתפלג עם תוחלת 75 ק"ג וסטיית תקן 12 ק"ג. ההתפלגות עצמה לא ידועה. במעלית תעשייתית עולים 36 עובדים, והעומס המרבי 2,800 ק"ג. מה ההסתברות לחריגה?</p>
+  <div class="steps">
+    <div class="step"><p class="step-h">פתרון</p>
+      <details class="reveal"><summary>הצג</summary><div class="reveal-body">
+        <p>ההתפלגות של כל אדם לא ידועה, אבל n = 36 ≥ 30, ולכן לפי משפט הגבול המרכזי הסכום מתפלג בקירוב \(N(36\cdot75,\ 36\cdot144) = N(2700,\ 5184)\), עם סטיית תקן \(\sqrt{5184} = 72\):</p>
+        <div class="math-block">$$P\Big(\sum X_i > 2800\Big) = 1 - \Phi\!\left(\frac{2800 - 2700}{72}\right) = 1 - \Phi(1.39) = 1 - 0.9177 = 0.0823$$</div>
+        <p>כ-8% מהנסיעות יחרגו. אם היו עולים רק 10 עובדים, לא היה אפשר לחשב בלי לדעת שהמשקלים נורמליים.</p>
+      </div></details></div>
+  </div>
+</section>
+
+<!-- ============ 11 ============ -->
+<section class="chapter" id="quiz">
+  <p class="chapter-num">פרק 11</p>
+  <h2>בדקו את עצמכם</h2>
+  <p>לחצו על תשובה כדי לקבל משוב והסבר. שאלות שמסומנות "הרחבה" עוסקות בחומר המורחב.</p>
+  <div data-w="quiz"></div>
+</section>
+
+<!-- ============ 12 ============ -->
+<section class="chapter" id="pitfalls">
+  <p class="chapter-num">פרק 12</p>
+  <h2>מלכודות נפוצות</h2>
+  <ul>
+    <li><strong>לבלבל בין זרים לבלתי תלויים.</strong> מאורעות זרים עם הסתברות חיובית הם תמיד תלויים.</li>
+    <li><strong>לכפול הסתברויות בלי לבדוק אי-תלות.</strong> \(P(A\cap B) = P(A)P(B)\) רק כשהמאורעות בלתי תלויים. אחרת: \(P(A)\cdot P(B\mid A)\).</li>
+    <li><strong>להשתמש ב-\(\#A/\#\Omega\) במרחב שאינו אחיד</strong>, למשל לחשוב שכל הסכומים של שתי קוביות שווים בסיכוי.</li>
+    <li><strong>להגדיר את המשתנה הלא נכון.</strong> עוברים או נכשלים? הצלחות או כישלונות? כתבו את הגדרת המשתנה במילים לפני כל חישוב.</li>
+    <li><strong>לא להבחין בין &lt; ל-≤ בבדיד.</strong> \(P(X>2) = P(X\ge3)\), לא \(P(X\ge2)\).</li>
+    <li><strong>לחסר שונויות בהפרש.</strong> \(Var(X - Y) = Var(X) + Var(Y)\) למשתנים בלתי תלויים.</li>
+    <li><strong>להסיק אי-תלות משונות משותפת 0.</strong> היא אומרת רק שאין קשר לינארי.</li>
+    <li><strong>לבלבל שונות וסטיית תקן ב-\(N(\mu,\sigma^2)\).</strong> \(N(70,9)\) פירושו σ = 3.</li>
+    <li><strong>לתקנן ממוצע לפי σ במקום לפי \(\sigma/\sqrt{n}\).</strong></li>
+    <li><strong>להפעיל את משפט הגבול המרכזי על תצפית בודדת</strong>, או על ממוצע של פחות מ-30 תצפיות מאוכלוסייה שלא ידוע שהיא נורמלית.</li>
+    <li><strong>לשכוח את תיקון הרציפות</strong> בקירוב הנורמלי לבינומית, או להזיז את הגבול לכיוון הלא נכון.</li>
+    <li><strong>להשתמש בנוסחה של התפלגות מוכרת כשיש תקרה או שינוי</strong>, כמו בשאלת האחות. בדקו שהתוצאה סבירה ביחס לטווח האפשרי.</li>
+    <li><strong>להמיר קצב פואסון לא נכון.</strong> ביממה 24 שעות, ובשעה 60 דקות.</li>
+  </ul>
+</section>
+
+  </main>
+</div>
+
+<footer class="foot">
+  מדריך למידה לקורס סטטיסטיקה 4221010, אוניברסיטת אריאל. חומר שמסומן "הרחבה" הוא מעבר לחומר ההרצאה.
+</footer>
+<div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+<script>
+window.addEventListener("DOMContentLoaded", function () {
+(function () {
+  "use strict";
+
+  /* ================= utilities (shared with lecture 1) ================= */
+  const NS = "http://www.w3.org/2000/svg";
+  function svgEl(tag, attrs, parent) {
+    const e = document.createElementNS(NS, tag);
+    if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function h(tag, attrs, parent, html) {
+    const e = document.createElement(tag);
+    if (attrs) for (const k in attrs) {
+      if (k === "class") e.className = attrs[k];
+      else if (k === "text") e.textContent = attrs[k];
+      else e.setAttribute(k, attrs[k]);
+    }
+    if (html !== undefined) e.innerHTML = html;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function svgText(parent, x, y, str, attrs) {
+    const t = svgEl("text", Object.assign({ x: x, y: y }, attrs || {}), parent);
+    str = String(str);
+    t.textContent = /[֐-׿]/.test(str) ? "⁧" + str.replace(/[−-]?\d[\d.,/]*%?/g, m => "⁦" + m + "⁩") + "⁩" : "\u2066" + str + "\u2069";
+    return t;
+  }
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const vbW = el => clamp(Math.round((el && el.clientWidth) || 640), 340, 640);
+
+  function fmt(x, d) {
+    if (x === null || x === undefined || Number.isNaN(x)) return "—";
+    if (!Number.isFinite(x)) return "∞";
+    if (d === undefined) d = 2;
+    const r = Number(x.toFixed(d));
+    return (Object.is(r, -0) ? 0 : r).toString();
+  }
+  function fmtP(p) {
+    if (!Number.isFinite(p)) return "—";
+    if (p > 0 && p < 0.0001) return "< 0.0001";
+    if (p < 1 && p > 0.9999) return "> 0.9999";
+    return p.toFixed(4);
+  }
+  const L = s => `<span class="num">${s}</span>`;
+  function gcd(a, b) { return b ? gcd(b, a % b) : a; }
+  function frac(a, b) { if (!b) return "—"; const g = gcd(a, b) || 1; return b / g === 1 ? String(a / g) : `${a / g}/${b / g}`; }
+
+  function niceStep(span, target) {
+    const raw = span / (target || 8);
+    const p = Math.pow(10, Math.floor(Math.log10(raw)));
+    const f = raw / p;
+    return (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * p;
+  }
+
+  const tip = document.getElementById("tip");
+  function showTip(text, ev) {
+    if (!tip) return;
+    tip.textContent = text;
+    tip.classList.add("on");
+    const r = tip.getBoundingClientRect();
+    tip.style.left = clamp(ev.clientX - r.width / 2, 8, window.innerWidth - r.width - 8) + "px";
+    tip.style.top = Math.max(8, ev.clientY - r.height - 14) + "px";
+  }
+  function hideTip() { if (tip) tip.classList.remove("on"); }
+
+  function svgPoint(svg, ev) {
+    const pt = svg.createSVGPoint();
+    pt.x = ev.clientX; pt.y = ev.clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
+  }
+
+  function statTile(parent, key, value, opts) {
+    opts = opts || {};
+    const d = h("div", { class: "stat" + (opts.ext ? " ext-stat ext-only" : "") + (opts.hl ? " stat-hl" : "") }, parent);
+    const k = h("div", { class: "k" }, d);
+    if (opts.swatch) h("span", { class: "swatch " + opts.swatch }, k);
+    h("span", { text: key }, k);
+    h("div", { class: "v", text: value }, d);
+    return d;
+  }
+
+  function seg(parent, options, value, onChange) {
+    const wrap = h("div", { class: "seg", role: "group" }, parent);
+    const btns = options.map(o => {
+      const b = h("button", { type: "button", "aria-pressed": String(o.value === value), text: o.label }, wrap);
+      b.addEventListener("click", () => {
+        btns.forEach(x => x.setAttribute("aria-pressed", "false"));
+        b.setAttribute("aria-pressed", "true");
+        onChange(o.value);
+      });
+      return b;
+    });
+    wrap.set = v => btns.forEach((b, i) => b.setAttribute("aria-pressed", String(options[i].value === v)));
+    return wrap;
+  }
+
+  function slider(parent, label, min, max, step, value, onInput, fmtV) {
+    const lab = h("label", null, parent);
+    h("span", null, lab, label);
+    const inp = h("input", { type: "range", min, max, step, value, "aria-label": label.replace(/<[^>]+>/g, "") }, lab);
+    const out = h("strong", { class: "num", style: "min-width:2.8em" }, lab);
+    const show = () => { out.textContent = fmtV ? fmtV(parseFloat(inp.value)) : inp.value; };
+    inp.addEventListener("input", () => { show(); onInput(parseFloat(inp.value)); });
+    show();
+    return { inp, set(v) { inp.value = v; show(); } };
+  }
+
+  function texInto(el, tex) {
+    if (window.katex) { try { window.katex.render(tex, el, { throwOnError: false }); return; } catch (e) { /* fall through */ } }
+    el.textContent = tex;
+  }
+
+  /* ---------- math ---------- */
+  function erf(x) {
+    // W. J. Cody style rational approximation via erfc; max error ~1e-7 is plenty here
+    const t = 1 / (1 + 0.5 * Math.abs(x));
+    const y = 1 - t * Math.exp(-x * x - 1.26551223 + t * (1.00002368 + t * (0.37409196 + t * (0.09678418 +
+      t * (-0.18628806 + t * (0.27886807 + t * (-1.13520398 + t * (1.48851587 + t * (-0.82215223 + t * 0.17087277)))))))));
+    return x >= 0 ? y : -y;
+  }
+  const Phi = z => 0.5 * (1 + erf(z / Math.SQRT2));
+  const phi = z => Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI);
+  function PhiInv(p) {
+    // Acklam
+    const a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02, 1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
+    const b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02, 6.680131188771972e+01, -1.328068155288572e+01];
+    const c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00, -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00];
+    const d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 3.754408661907416e+00];
+    const pl = 0.02425;
+    if (p <= 0) return -Infinity; if (p >= 1) return Infinity;
+    if (p < pl) { const q = Math.sqrt(-2 * Math.log(p)); return (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+    if (p > 1 - pl) { const q = Math.sqrt(-2 * Math.log(1 - p)); return -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+    const q = p - 0.5, r = q * q;
+    return (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1);
+  }
+  function lgamma(x) {
+    const g = 7, cf = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+    if (x < 0.5) return Math.log(Math.PI / Math.abs(Math.sin(Math.PI * x))) - lgamma(1 - x);
+    x -= 1; let a = cf[0]; const t = x + g + 0.5;
+    for (let i = 1; i < 9; i++) a += cf[i] / (x + i);
+    return 0.5 * Math.log(2 * Math.PI) + (x + 0.5) * Math.log(t) - t + Math.log(a);
+  }
+  function binomPmf(k, n, p) {
+    if (k < 0 || k > n) return 0;
+    if (p <= 0) return k === 0 ? 1 : 0;
+    if (p >= 1) return k === n ? 1 : 0;
+    return Math.exp(lgamma(n + 1) - lgamma(k + 1) - lgamma(n - k + 1) + k * Math.log(p) + (n - k) * Math.log(1 - p));
+  }
+  function poisPmf(k, l) { return k < 0 ? 0 : Math.exp(k * Math.log(l) - l - lgamma(k + 1)); }
+
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      let t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function randn(rng) {
+    const r = rng || Math.random;
+    let u = 0; while (u === 0) u = r();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * r());
+  }
+
+  function axisX(svg, xS, lo, hi, y, step, fmtT, opts) {
+    opts = opts || {};
+    svgEl("line", { x1: xS(lo), x2: xS(hi), y1: y, y2: y, stroke: "var(--rule-strong)" }, svg);
+    for (let t = Math.ceil(lo / step - 1e-9) * step; t <= hi + 1e-9; t += step) {
+      const x = xS(t);
+      svgEl("line", { x1: x, x2: x, y1: y, y2: y + 5, stroke: "var(--rule-strong)" }, svg);
+      svgText(svg, x, y + 18, fmtT ? fmtT(t) : fmt(t), { "text-anchor": "middle", "font-size": opts.fs || 11.5, fill: "var(--muted)" });
+    }
+  }
+
+  /* ================= widgets ================= */
+  const W = {};
+
+  /* ---------- 1. Venn diagram ---------- */
+  W.venn = function (root) {
+    // atoms: bit0 only A, bit1 both, bit2 only B, bit3 outside
+    const names = {
+      0: ["\\phi"], 1: ["A \\cap \\bar{B}"], 2: ["A \\cap B"], 3: ["A"], 4: ["\\bar{A} \\cap B"],
+      5: ["(A \\cap \\bar{B}) \\cup (\\bar{A} \\cap B)"], 6: ["B"], 7: ["A \\cup B"],
+      8: ["\\overline{A \\cup B}", "\\bar{A} \\cap \\bar{B}"], 9: ["\\bar{B}"], 10: ["(A \\cap B) \\cup (\\bar{A} \\cap \\bar{B})"],
+      11: ["A \\cup \\bar{B}"], 12: ["\\bar{A}"], 13: ["\\overline{A \\cap B}", "\\bar{A} \\cup \\bar{B}"], 14: ["\\bar{A} \\cup B"], 15: ["\\Omega"]
+    };
+    const words = {
+      0: "אף אחד (מאורע ריק)", 1: "לומדים אנגלית בלבד", 2: "לומדים גם אנגלית וגם צרפתית", 3: "לומדים אנגלית",
+      4: "לומדים צרפתית בלבד", 5: "לומדים בדיוק שפה אחת", 6: "לומדים צרפתית", 7: "לומדים לפחות שפה אחת",
+      8: "לא לומדים אף שפה", 9: "לא לומדים צרפתית", 10: "לומדים את שתיהן או אף אחת", 11: "לומדים אנגלית, או לא לומדים צרפתית",
+      12: "לא לומדים אנגלית", 13: "לא לומדים את שתי השפות יחד (לכל היותר אחת)", 14: "לומדים צרפתית, או לא לומדים אנגלית", 15: "כולם (המאורע הוודאי)"
+    };
+    const presets = [["A", 3], ["B", 6], ["\\bar{A}", 12], ["A \\cup B", 7], ["A \\cap B", 2], ["A \\cap \\bar{B}", 1], ["\\overline{A \\cup B}", 8], ["\\bar{A} \\cap \\bar{B}", 8], ["\\overline{A \\cap B}", 13], ["\\bar{A} \\cup \\bar{B}", 13]];
+    let mask = 7;
+    const row = h("div", { class: "lab-row venn-btns", style: "margin:0 0 10px" }, root);
+    const btns = presets.map(([tex, m]) => {
+      const b = h("button", { class: "btn", type: "button" }, row);
+      texInto(b, tex);
+      b.addEventListener("click", () => { mask = m; activeTex = tex; render(); });
+      return { b, m, tex };
+    });
+    let activeTex = "A \\cup B";
+    const holder = h("div", { class: "venn-wrap" }, root);
+    const out = h("div", { class: "venn-out" }, root);
+    const W0 = 420, H0 = 250, cxA = 160, cxB = 260, cy = 130, R = 82;
+    const svg = svgEl("svg", { viewBox: `0 0 ${W0} ${H0}`, style: "direction:ltr;max-width:520px;margin:0 auto;cursor:pointer", role: "img", "aria-label": "דיאגרמת ון של שני מאורעות" }, holder);
+    const defs = svgEl("defs", null, svg);
+    const uid = "v" + Math.random().toString(36).slice(2, 7);
+    const cA = svgEl("clipPath", { id: uid + "cA" }, defs); svgEl("circle", { cx: cxA, cy, r: R }, cA);
+    const mNotB = svgEl("mask", { id: uid + "nB" }, defs);
+    svgEl("rect", { x: 0, y: 0, width: W0, height: H0, fill: "#fff" }, mNotB); svgEl("circle", { cx: cxB, cy, r: R, fill: "#000" }, mNotB);
+    const mNotA = svgEl("mask", { id: uid + "nA" }, defs);
+    svgEl("rect", { x: 0, y: 0, width: W0, height: H0, fill: "#fff" }, mNotA); svgEl("circle", { cx: cxA, cy, r: R, fill: "#000" }, mNotA);
+    const mNone = svgEl("mask", { id: uid + "nn" }, defs);
+    svgEl("rect", { x: 0, y: 0, width: W0, height: H0, fill: "#fff" }, mNone);
+    svgEl("circle", { cx: cxA, cy, r: R, fill: "#000" }, mNone); svgEl("circle", { cx: cxB, cy, r: R, fill: "#000" }, mNone);
+    const rect = { x: 10, y: 10, width: W0 - 20, height: H0 - 20 };
+    const regs = [
+      svgEl("circle", { cx: cxA, cy, r: R, mask: `url(#${uid}nB)` }, svg),
+      svgEl("circle", { cx: cxB, cy, r: R, "clip-path": `url(#${uid}cA)` }, svg),
+      svgEl("circle", { cx: cxB, cy, r: R, mask: `url(#${uid}nA)` }, svg),
+      svgEl("rect", Object.assign({ mask: `url(#${uid}nn)`, rx: 10 }, rect), svg)
+    ];
+    svgEl("rect", Object.assign({ fill: "none", stroke: "var(--ink-2)", "stroke-width": 1.5, rx: 10 }, rect), svg);
+    svgEl("circle", { cx: cxA, cy, r: R, fill: "none", stroke: "var(--mean)", "stroke-width": 2.5 }, svg);
+    svgEl("circle", { cx: cxB, cy, r: R, fill: "none", stroke: "var(--median)", "stroke-width": 2.5 }, svg);
+    svgText(svg, cxA - 52, cy - R + 18, "A", { "font-size": 20, "font-weight": 700, fill: "var(--mean)" });
+    svgText(svg, cxB + 40, cy - R + 18, "B", { "font-size": 20, "font-weight": 700, fill: "var(--median)" });
+    svgText(svg, 24, 34, "Ω", { "font-size": 18, "font-weight": 700, fill: "var(--ink-2)" });
+    svgText(svg, cxA - 30, cy + R - 22, "אנגלית", { "text-anchor": "middle", "font-size": 12, fill: "var(--muted)" });
+    svgText(svg, cxB + 30, cy + R - 22, "צרפתית", { "text-anchor": "middle", "font-size": 12, fill: "var(--muted)" });
+    svg.addEventListener("click", ev => {
+      const p = svgPoint(svg, ev);
+      const inA = Math.hypot(p.x - cxA, p.y - cy) <= R, inB = Math.hypot(p.x - cxB, p.y - cy) <= R;
+      const bit = inA && inB ? 1 : inA ? 0 : inB ? 2 : 3;
+      mask ^= (1 << bit); activeTex = null; render();
+    });
+    function render() {
+      regs.forEach((r, i) => {
+        const on = mask & (1 << i);
+        r.setAttribute("fill", on ? "var(--accent)" : "transparent");
+        r.setAttribute("fill-opacity", on ? 0.42 : 0);
+      });
+      btns.forEach(o => { const on = activeTex === o.tex; o.b.classList.toggle("primary", on); o.b.setAttribute("aria-pressed", String(on)); });
+      out.innerHTML = "";
+      const line = h("p", { style: "margin:10px 0 0" }, out);
+      const nm = names[mask];
+      h("strong", { text: words[mask] + ": " }, line);
+      const texs = h("span", { class: "venn-tex", style: "direction:ltr;unicode-bidi:isolate;display:inline-block" }, line);
+      texInto(texs, nm.join(" = "));
+      if (nm.length > 1) h("p", { class: "note", style: "margin:6px 0 0" }, out, "שני הביטויים מסמנים את אותו אזור בדיוק: זה חוק דה מורגן.");
+    }
+    render();
+  };
+
+  /* ---------- 2/3. two dice grid ---------- */
+  const DICE_EVENTS = [
+    ["none", "ללא", () => false],
+    ["sum6", "סכום 6", (i, j) => i + j === 6],
+    ["sum7", "סכום 7", (i, j) => i + j === 7],
+    ["five", "לפחות קובייה אחת 5", (i, j) => i === 5 || j === 5],
+    ["first3", "הקובייה הראשונה 3", (i) => i === 3],
+    ["firstEven", "הקובייה הראשונה זוגית", (i) => i % 2 === 0],
+    ["double", "דאבל (שתי הקוביות שוות)", (i, j) => i === j],
+    ["sumEven", "סכום זוגי", (i, j) => (i + j) % 2 === 0],
+    ["gt", "הראשונה גדולה מהשנייה", (i, j) => i > j],
+    ["sum10", "סכום 10 ומעלה", (i, j) => i + j >= 10],
+    ["custom", "מותאם אישית (לחיצה על משבצות)", null]
+  ];
+  W.dice = function (root) {
+    const cond = root.dataset.mode === "cond";
+    let A = cond ? "first3" : "five", B = cond ? "sum6" : "none";
+    const custom = new Set();
+    const ctl = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    function mkSel(label, val, onCh, allowNone) {
+      const lab = h("label", null, ctl);
+      h("span", { class: "dice-key", text: label }, lab);
+      const s = h("select", { "aria-label": `מאורע ${label}` }, lab);
+      DICE_EVENTS.forEach(([k, l]) => { if (k === "none" && !allowNone) return; if (k === "custom" && label === "B") return; h("option", { value: k, text: l }, s); });
+      s.value = val;
+      s.addEventListener("change", () => onCh(s.value));
+      return s;
+    }
+    const sA = mkSel("A", A, v => { A = v; if (v === "custom" && !custom.size) seedCustom(); syncQuick(); render(); }, false);
+    const sB = mkSel("B", B, v => { B = v; syncQuick(); render(); }, !cond);
+    const quick = [];
+    if (cond) {
+      const qr = h("div", { class: "lab-row", style: "margin:-2px 0 10px" }, root);
+      h("span", { text: "השוואה מהירה, כש-A הוא הקובייה הראשונה 3:" }, qr);
+      [["sum6", "סכום 6"], ["sum7", "סכום 7"]].forEach(([k, l]) => {
+        const b = h("button", { class: "btn", type: "button", text: l }, qr);
+        b.addEventListener("click", () => { A = "first3"; B = k; sA.value = A; sB.value = B; syncQuick(); render(); });
+        quick.push([k, b]);
+      });
+    }
+    function syncQuick() { quick.forEach(([k, b]) => b.classList.toggle("primary", A === "first3" && B === k)); }
+    function seedCustom() { const f = DICE_EVENTS.find(e => e[0] === "five")[2]; for (let i = 1; i <= 6; i++) for (let j = 1; j <= 6; j++) if (f(i, j)) custom.add(i * 10 + j); }
+    const twin = h("div", { class: "dice-layout" }, root);
+    const gridHolder = h("div", null, twin);
+    const side = h("div", null, twin);
+    const stats = h("div", { class: "stats", style: "margin-top:0" }, side);
+    const cmp = cond ? h("div", { class: "cmp" }, side) : null;
+    const note = h("p", { class: "note", style: "margin:10px 0 0" }, side);
+    const inA = (i, j) => A === "custom" ? custom.has(i * 10 + j) : DICE_EVENTS.find(e => e[0] === A)[2](i, j);
+    const inB = (i, j) => DICE_EVENTS.find(e => e[0] === B)[2](i, j);
+    function render() {
+      gridHolder.innerHTML = "";
+      const cs = 40, pad = 34, size = pad + 6 * cs + 6;
+      const svg = svgEl("svg", { viewBox: `0 0 ${size} ${size}`, style: "direction:ltr;max-width:330px", role: "group", "aria-label": "36 התוצאות של שתי קוביות" }, gridHolder);
+      svgText(svg, pad + 3 * cs, 12, "קובייה 2", { "text-anchor": "middle", "font-size": 12, fill: "var(--muted)" });
+      const vt = svgText(svg, 10, pad + 3 * cs, "קובייה 1", { "text-anchor": "middle", "font-size": 12, fill: "var(--muted)" });
+      vt.setAttribute("transform", `rotate(-90 10 ${pad + 3 * cs})`);
+      for (let k = 1; k <= 6; k++) {
+        svgText(svg, pad + (k - 0.5) * cs, pad - 6, k, { "text-anchor": "middle", "font-size": 12, fill: "var(--ink-2)", "font-weight": 600 });
+        svgText(svg, pad - 10, pad + (k - 0.5) * cs + 4, k, { "text-anchor": "middle", "font-size": 12, fill: "var(--ink-2)", "font-weight": 600 });
+      }
+      const hasB = B !== "none";
+      for (let i = 1; i <= 6; i++) for (let j = 1; j <= 6; j++) {
+        const a = inA(i, j), b = hasB && inB(i, j);
+        const x = pad + (j - 1) * cs, y = pad + (i - 1) * cs;
+        const dim = cond && hasB && !b;
+        const g = svgEl("g", { tabindex: 0, role: "button", "aria-pressed": String(a), "aria-label": `(${i}, ${j})`, style: "cursor:pointer;outline:none" }, svg);
+        svgEl("rect", { x: x + 2, y: y + 2, width: cs - 4, height: cs - 4, rx: 5,
+          fill: a ? "var(--accent)" : "var(--surface-2)", "fill-opacity": dim ? 0.18 : (a ? 0.85 : 1),
+          stroke: b ? "var(--median)" : "var(--rule)", "stroke-width": b ? 3 : 1 }, g);
+        svgText(svg === null ? g : g, x + cs / 2, y + cs / 2 + 4, `${i}+${j}`, { "text-anchor": "middle", "font-size": 10.5,
+          fill: a ? "var(--surface)" : "var(--muted)", opacity: dim ? 0.35 : 1, "pointer-events": "none" });
+        const toggle = () => {
+          if (A !== "custom") { custom.clear(); for (let p = 1; p <= 6; p++) for (let q = 1; q <= 6; q++) if (inA(p, q)) custom.add(p * 10 + q); A = "custom"; sA.value = "custom"; }
+          const key = i * 10 + j; custom.has(key) ? custom.delete(key) : custom.add(key); syncQuick(); render();
+        };
+        g.addEventListener("click", toggle);
+        g.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); toggle(); } });
+      }
+      let nA = 0, nB = 0, nAB = 0;
+      for (let i = 1; i <= 6; i++) for (let j = 1; j <= 6; j++) { const a = inA(i, j), b = hasB && inB(i, j); nA += a; nB += b; nAB += a && b; }
+      stats.innerHTML = "";
+      const tile = (k, num, den, hl) => { const d = statTile(stats, k, `${num}/${den}`, { hl }); h("div", { class: "stat-sub num", text: `≈ ${fmt(num / den, 3)}` }, d); };
+      tile("P(A)", nA, 36);
+      if (hasB) {
+        tile("P(B)", nB, 36);
+        tile("P(A∩B)", nAB, 36);
+        if (!cond) tile("P(A∪B)", nA + nB - nAB, 36);
+        if (cond && nB) tile("P(A|B)", nAB, nB, true);
+      }
+      if (cmp) {
+        cmp.innerHTML = "";
+        if (hasB && nB) {
+          const bar = (label, num, den) => {
+            const r = h("div", { class: "cmp-row" }, cmp);
+            h("span", { text: label }, r);
+            const t = h("div", { class: "cmp-track" }, r);
+            h("div", { class: "cmp-fill", style: `width:${(num / den * 100).toFixed(2)}%` }, t);
+            h("span", { class: "num", text: frac(num, den) }, r);
+          };
+          bar("A בכל הלוח", nA, 36);
+          bar("A בתוך B", nAB, nB);
+        }
+      }
+      let txt = "";
+      if (!hasB) {
+        if (A === "five") txt = `6 משבצות בשורה של 5 ועוד 6 בעמודה של 5 הן 12, אבל המשבצת ${L("(5, 5)")} נספרה פעמיים. לכן 11/36, וזה בדיוק כלל החיבור: ${L("1/6 + 1/6 − 1/36")}.`;
+        else txt = `המאורע כולל ${nA} משבצות מתוך 36, וכולן שוות בסיכוי, ולכן ${L(`P(A) = ${frac(nA, 36)}`)}.`;
+      } else if (cond) {
+        if (!nB) txt = "B ריק, ולכן אין משמעות להתניה בו.";
+        else {
+          const indep = Math.abs(nAB / 36 - (nA / 36) * (nB / 36)) < 1e-12;
+          const howMany = nAB === 0 ? "אף אחת מהן לא שייכת" : nAB === 1 ? "רק אחת מהן שייכת" : `${nAB} מהן שייכות`;
+          txt = `מתוך ${nB} המשבצות של B, ${howMany} גם ל-A. ` + (indep
+            ? `${L(`P(A|B) = ${frac(nAB, nB)}`)} שווה ל-${L(`P(A) = ${frac(nA, 36)}`)}: הידיעה ש-B קרה לא שינתה כלום, ולכן A ו-B בלתי תלויים.`
+            : `${L(`P(A|B) = ${frac(nAB, nB)}`)}, ואילו ${L(`P(A) = ${frac(nA, 36)}`)}: הידיעה ש-B קרה שינתה את הסיכוי, ולכן A ו-B תלויים.`);
+        }
+      } else {
+        txt = `כלל החיבור: ${L(`${nA}/36 + ${nB}/36 − ${nAB}/36 = ${frac(nA + nB - nAB, 36)}`)}. המשבצות שבחיתוך נספרו פעמיים, ולכן מחסירים אותן פעם אחת.`;
+      }
+      note.innerHTML = txt;
+      if (cond) colourAB(root);
+    }
+    function colourAB(el) {
+      const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, { acceptNode: n => n.parentElement.closest("svg, select, option, .cA, .cB") ? NodeFilter.FILTER_REJECT : (/(^|[^A-Za-z])[AB]([^A-Za-z]|$)/.test(n.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP) });
+      const nodes = []; let n; while ((n = w.nextNode())) nodes.push(n);
+      nodes.forEach(t => {
+        const frag = document.createDocumentFragment();
+        t.nodeValue.split(/((?<![A-Za-z])[AB](?![A-Za-z]))/).forEach(part => {
+          if (part === "A" || part === "B") { const sp = document.createElement("span"); sp.className = part === "A" ? "cA" : "cB"; sp.textContent = part; frag.appendChild(sp); }
+          else if (part) frag.appendChild(document.createTextNode(part));
+        });
+        t.parentNode.replaceChild(frag, t);
+      });
+    }
+    syncQuick();
+    render();
+  };
+
+  /* ---------- 3. probability square (total probability / Bayes) ---------- */
+  W.mosaic = function (root) {
+    const presets = [
+      { label: "גשם ואיחורים", A: "יורד גשם", B: "העובד מאחר", pa: 0.2, ba: 0.4, bna: 0.1 },
+      { label: "שני ספקים", A: "מספק א", B: "פגום", pa: 0.6, ba: 0.1, bna: 0.25 },
+      { label: "בלתי תלויים", A: "A", B: "B", pa: 0.5, ba: 0.3, bna: 0.3 }
+    ];
+    const st = Object.assign({}, presets[0]);
+    let mode = "total";
+    const prow = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    h("span", { text: "דוגמה:" }, prow);
+    const pbtns = presets.map(pr => {
+      const b = h("button", { class: "btn", type: "button", text: pr.label }, prow);
+      b.addEventListener("click", () => { Object.assign(st, pr); sl.forEach(s => s.set(st[s.key])); render(); });
+      return b;
+    });
+    const ctl = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    const sl = [
+      Object.assign(slider(ctl, "P(A)", 0.05, 0.95, 0.01, st.pa, v => { st.pa = v; render(); }, v => fmt(v, 2)), { key: "pa" }),
+      Object.assign(slider(ctl, "P(B|A)", 0, 1, 0.0025, st.ba, v => { st.ba = v; render(); }, v => fmt(v, 3)), { key: "ba" }),
+      Object.assign(slider(ctl, "P(B|Ā)", 0, 1, 0.0025, st.bna, v => { st.bna = v; render(); }, v => fmt(v, 3)), { key: "bna" })
+    ];
+    const mrow = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    seg(mrow, [{ label: "הסתברות שלמה", value: "total" }, { label: "בייס: בהינתן B", value: "bayes" }], mode, v => { mode = v; render(); });
+    const holder = h("div", null, root);
+    const out = h("div", { class: "note mosaic-out", style: "margin-top:10px;line-height:1.9" }, root);
+    function render() {
+      pbtns.forEach((b, i) => { const p = presets[i]; b.classList.toggle("primary", p.pa === st.pa && p.ba === st.ba && p.bna === st.bna && p.label === st.label); });
+      holder.innerHTML = "";
+      const Wd = vbW(holder), S0 = Math.min(Wd - 160, 300), x0 = 70, y0 = 22;
+      const svg = svgEl("svg", { viewBox: `0 0 ${Wd} ${S0 + 54}`, style: "direction:ltr", role: "img", "aria-label": "ריבוע ההסתברות" }, holder);
+      const wA = S0 * st.pa, wN = S0 - wA;
+      const cols = [{ x: x0, w: wA, pb: st.ba, name: "A", p: st.pa }, { x: x0 + wA, w: wN, pb: st.bna, name: "Ā", p: 1 - st.pa }];
+      const bayes = mode === "bayes";
+      cols.forEach((c, ci) => {
+        const hb = S0 * c.pb;
+        svgEl("rect", { x: c.x, y: y0, width: c.w, height: S0 - hb, fill: "var(--surface-2)", stroke: "var(--surface)", "stroke-width": 2, opacity: bayes ? 0.3 : 1 }, svg);
+        svgEl("rect", { x: c.x, y: y0 + S0 - hb, width: c.w, height: hb, fill: ci === 0 ? "var(--mean)" : "var(--median)", "fill-opacity": 0.75, stroke: "var(--surface)", "stroke-width": 2 }, svg);
+        svgText(svg, c.x + c.w / 2, y0 - 7, `${c.name}: ${fmt(c.p, 2)}`, { "text-anchor": "middle", "font-size": 12, "font-weight": 600, fill: "var(--ink)" });
+        const area = c.p * c.pb;
+        if (hb > 16 && c.w > 34) svgText(svg, c.x + c.w / 2, y0 + S0 - hb / 2 + 4, fmt(area, 4), { "text-anchor": "middle", "font-size": 11.5, fill: "#fff", "font-weight": 600 });
+        // height of the coloured part = P(B | column)
+        if (c.w > 22) {
+          const topY = y0 + S0 - hb;
+          svgEl("line", { x1: c.x + 3, x2: c.x + c.w - 3, y1: topY, y2: topY, stroke: "var(--ink)", "stroke-width": 1.6 }, svg);
+          const lbl = fmt(c.pb, 3);
+          const ly = S0 - hb > 18 ? topY - 5 : topY + 14;
+          svgText(svg, c.x + c.w / 2, ly, lbl, { "text-anchor": "middle", "font-size": 11.5, "font-weight": 700, fill: S0 - hb > 18 ? "var(--ink)" : "#fff" });
+        }
+      });
+      // left axis: height scale 0..1
+      [0, 0.25, 0.5, 0.75, 1].forEach(t => {
+        const ty = y0 + S0 - S0 * t;
+        svgEl("line", { x1: x0 - 5, x2: x0, y1: ty, y2: ty, stroke: "var(--ink-2)", "stroke-width": 1 }, svg);
+        svgText(svg, x0 - 8, ty + 4, fmt(t, 2), { "text-anchor": "end", "font-size": 10.5, fill: "var(--muted)" });
+      });
+      svgEl("rect", { x: x0, y: y0, width: S0, height: S0, fill: "none", stroke: "var(--ink-2)", "stroke-width": 1.2 }, svg);
+      svgText(svg, x0 - 40, y0 + S0 - S0 * 0.12, "B", { "text-anchor": "end", "font-size": 13, "font-weight": 700, fill: "var(--ink)" });
+      svgText(svg, x0 - 40, y0 + S0 * 0.12 + 4, "B̄", { "text-anchor": "end", "font-size": 13, "font-weight": 700, fill: "var(--muted)" });
+      svgText(svg, x0 + S0 / 2, y0 + S0 + 20, `A = ${st.A}, B = ${st.B}`, { "text-anchor": "middle", "font-size": 12, fill: "var(--muted)" });
+      // side bar: total P(B)
+      const pB = st.pa * st.ba + (1 - st.pa) * st.bna;
+      const bx = x0 + S0 + 30, bw = 34;
+      svgEl("rect", { x: bx, y: y0, width: bw, height: S0, fill: "var(--surface-2)" }, svg);
+      const h1 = S0 * st.pa * st.ba, h2 = S0 * (1 - st.pa) * st.bna;
+      svgEl("rect", { x: bx, y: y0 + S0 - h1 - h2, width: bw, height: h2, fill: "var(--median)", "fill-opacity": 0.75 }, svg);
+      svgEl("rect", { x: bx, y: y0 + S0 - h1, width: bw, height: h1, fill: "var(--mean)", "fill-opacity": 0.75 }, svg);
+      svgText(svg, bx + bw / 2, y0 - 7, "P(B)", { "text-anchor": "middle", "font-size": 12, "font-weight": 600, fill: "var(--ink)" });
+      svgText(svg, bx + bw + 6, y0 + S0 - h1 - h2 + 4, fmt(pB, 4), { "font-size": 12, "font-weight": 600, fill: "var(--ink)" });
+      const indep = Math.abs(st.ba - st.bna) < 0.003;
+      const pAB = st.pa * st.ba;
+      out.innerHTML =
+        `<div>כלל הכפל: <span class="num">P(A∩B) = P(A)·P(B|A) = ${fmt(st.pa, 2)}·${fmt(st.ba, 4)} = <strong>${fmt(pAB, 4)}</strong></span></div>` +
+        `<div>הסתברות שלמה: <span class="num">P(B) = ${fmt(st.ba, 4)}·${fmt(st.pa, 2)} + ${fmt(st.bna, 4)}·${fmt(1 - st.pa, 2)} = <strong>${fmt(pB, 4)}</strong></span></div>` +
+        (bayes ? `<div>בייס: <span class="num">P(A|B) = P(A∩B) / P(B) = ${fmt(pAB, 4)} / ${fmt(pB, 4)} = <strong>${pB > 0 ? fmt(pAB / pB, 4) : "—"}</strong></span>. מתוך כל השטח הצבוע, זה החלק הכחול.</div>` : "") +
+        `<div>${indep ? "<strong>בלתי תלויים:</strong> הגובה של B זהה בשתי העמודות, ולכן הידיעה אם A קרה לא משנה את הסיכוי ל-B." : "<strong>תלויים:</strong> הגובה של B שונה בשתי העמודות, ולכן הידיעה אם A קרה משנה את הסיכוי ל-B."}</div>`;
+    }
+    render();
+    const det = root.closest("details");
+    if (det) det.addEventListener("toggle", () => { if (det.open) render(); });
+  };
+
+  /* ---------- 4. random variable machine ---------- */
+  W.rv = function (root) {
+    const OUT = [];
+    for (let a = 1; a >= 0; a--) for (let b = 1; b >= 0; b--) for (let c = 1; c >= 0; c--) OUT.push([a, b, c]);
+    const run = o => { let best = 1, cur = 1; for (let i = 1; i < 3; i++) { cur = o[i] === o[i - 1] ? cur + 1 : 1; best = Math.max(best, cur); } return best; };
+    const RVS = {
+      X: { label: "X: מספר העצים", f: o => o[0] + o[1] + o[2] },
+      Y: { label: "Y: 1 אם ההטלה הראשונה עץ, אחרת 0", f: o => o[0] },
+      Z: { label: "Z: רווח בהימור (+10 על עץ, −10 על פלי)", f: o => 20 * (o[0] + o[1] + o[2]) - 30 },
+      Wr: { label: "W: הרצף הארוך ביותר", f: run }
+    };
+    let rv = "X", selVal = null, hoverOut = -1, lastOut = -1, arrows = [], boxes = [];
+    let sims = 0; const counts = new Map();
+    const ctl = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    const lab = h("label", null, ctl); h("span", { text: "המשתנה:" }, lab);
+    const sel = h("select", { "aria-label": "בחירת משתנה מקרי" }, lab);
+    Object.keys(RVS).forEach(k => h("option", { value: k, text: RVS[k].label }, sel));
+    sel.addEventListener("change", () => { rv = sel.value; selVal = null; counts.clear(); sims = 0; lastOut = -1; render(); });
+    const holder = h("div", null, root);
+    const info = h("p", { class: "rv-info", style: "margin:8px 0 0;min-height:3.2em" }, root);
+    const row2 = h("div", { class: "lab-row" }, root);
+    const b1 = h("button", { class: "btn primary", type: "button", text: "הטל שלושה מטבעות" }, row2);
+    const b2 = h("button", { class: "btn", type: "button", text: "הטל 1,000 פעמים" }, row2);
+    const b3 = h("button", { class: "btn", type: "button", text: "איפוס" }, row2);
+    const stats = h("div", { class: "stats" }, root);
+    const draw = () => Math.floor(Math.random() * 8);
+    const record = i => { const v = RVS[rv].f(OUT[i]); counts.set(v, (counts.get(v) || 0) + 1); sims++; };
+    b1.addEventListener("click", () => { const i = draw(); record(i); lastOut = i; selVal = null; render(); });
+    b2.addEventListener("click", () => { let i = 0; for (let k = 0; k < 1000; k++) { i = draw(); record(i); } lastOut = i; selVal = null; render(); });
+    b3.addEventListener("click", () => { counts.clear(); sims = 0; lastOut = -1; selVal = null; render(); });
+    const coinStr = o => "(" + o.map(t => t ? "ע" : "פ").join(", ") + ")";
+    function dist() {
+      const m = new Map();
+      OUT.forEach(o => { const v = RVS[rv].f(o); m.set(v, (m.get(v) || 0) + 1); });
+      return Array.from(m.entries()).sort((a, b) => a[0] - b[0]);
+    }
+    function paint() {
+      const f = RVS[rv].f, name = rv === "Wr" ? "W" : rv;
+      const anyHi = selVal !== null || hoverOut >= 0 || lastOut >= 0;
+      OUT.forEach((o, i) => {
+        const on = (selVal !== null && f(o) === selVal) || i === hoverOut || i === lastOut;
+        const a = arrows[i];
+        a.path.setAttribute("stroke", on ? "var(--accent)" : "var(--rule-strong)");
+        a.path.setAttribute("stroke-width", on ? 2.6 : 1.3);
+        a.path.setAttribute("opacity", anyHi && !on ? 0.3 : 1);
+        a.dot.setAttribute("fill", on ? "var(--accent)" : "var(--rule-strong)");
+        boxes[i].setAttribute("fill", on ? "var(--accent-soft)" : "var(--surface)");
+        boxes[i].setAttribute("stroke", on ? "var(--accent)" : "var(--rule)");
+        boxes[i].setAttribute("stroke-width", on ? 2 : 1);
+      });
+      if (selVal !== null) {
+        const pre = OUT.filter(o => f(o) === selVal);
+        info.innerHTML = `המאורע <strong class="num">{${name} = ${selVal}}</strong> = {${pre.map(coinStr).join(", ")}}. יש בו ${pre.length} תוצאות, ולכן <strong class="num">P(${name} = ${selVal}) = ${frac(pre.length, 8)}</strong>.`;
+      } else if (hoverOut >= 0) {
+        info.innerHTML = `התוצאה ${coinStr(OUT[hoverOut])} ← <strong class="num">${name} = ${f(OUT[hoverOut])}</strong>. הכלל קבוע: התוצאה הזו תמיד תוביל לאותו ערך.`;
+      } else if (lastOut >= 0) {
+        info.innerHTML = `יצא ${coinStr(OUT[lastOut])}, ולכן <strong class="num">${name} = ${f(OUT[lastOut])}</strong>. המקריות הייתה בהטלה, המספר נקבע לפי הכלל.` + (sims >= 20 ? ` הקווים הכתומים מראים את השכיחות היחסית אחרי ${sims.toLocaleString("he-IL")} הטלות.` : "");
+      } else {
+        info.innerHTML = "לחצו על ערך בציר, או רחפו מעל תוצאה.";
+      }
+    }
+    function render() {
+      const f = RVS[rv].f, D = dist();
+      const vals = D.map(d => d[0]);
+      const lo = Math.min(...vals), hi = Math.max(...vals);
+      holder.innerHTML = "";
+      const Wd = vbW(holder), H = 300, pad = 14;
+      const svg = svgEl("svg", { viewBox: `0 0 ${Wd} ${H}`, style: "direction:ltr", role: "group", "aria-label": "תוצאות, חצים וערכי המשתנה" }, holder);
+      const bw = (Wd - 2 * pad) / 8;
+      // RTL visual: outcome 0 (ע,ע,ע) on the right, like reading order
+      const boxX = i => Wd - pad - (i + 1) * bw;
+      const axisY = 250, span = (hi - lo) || 1;
+      const vx = v => vals.length === 1 ? Wd / 2 : pad + 40 + (v - lo) / span * (Wd - 2 * pad - 80);
+      // bars for P(X=x)
+      const maxP = Math.max(...D.map(d => d[1] / 8));
+      D.forEach(([v, c]) => {
+        const hgt = c / 8 / Math.max(maxP, 0.5) * 70;
+        const on = selVal === v;
+        const r = svgEl("rect", { x: vx(v) - 18, y: axisY - hgt, width: 36, height: hgt, rx: 3, fill: "var(--accent)", "fill-opacity": on ? 0.55 : 0.2, style: "cursor:pointer" }, svg);
+        r.addEventListener("click", () => { selVal = selVal === v ? null : v; lastOut = -1; render(); });
+        svgText(svg, vx(v), axisY - hgt - 6, `${frac(c, 8)}`, { "text-anchor": "middle", "font-size": 12, "font-weight": 600, fill: "var(--ink)" });
+        if (sims >= 20) {
+          const fr = (counts.get(v) || 0) / sims;
+          const fy = axisY - fr / Math.max(maxP, 0.5) * 70;
+          svgEl("line", { x1: vx(v) - 22, x2: vx(v) + 22, y1: fy, y2: fy, stroke: "var(--median)", "stroke-width": 3 }, svg);
+        }
+      });
+      // arrows (styled in paint)
+      arrows = OUT.map((o, i) => {
+        const v = f(o), sx = boxX(i) + bw / 2, sy = 76, ex = vx(v), ey = axisY - 2;
+        const path = svgEl("path", { d: `M${sx},${sy} C${sx},${sy + 70} ${ex},${ey - 90} ${ex},${ey}`, fill: "none" }, svg);
+        const dot = svgEl("circle", { cx: ex, cy: ey, r: 3 }, svg);
+        return { path, dot };
+      });
+      // axis
+      svgEl("line", { x1: pad, x2: Wd - pad, y1: axisY, y2: axisY, stroke: "var(--ink-2)", "stroke-width": 1.5 }, svg);
+      D.forEach(([v]) => {
+        const g = svgEl("g", { tabindex: 0, role: "button", "aria-label": `ערך ${v}`, style: "cursor:pointer;outline:none" }, svg);
+        svgEl("circle", { cx: vx(v), cy: axisY + 22, r: 16, fill: selVal === v ? "var(--accent)" : "var(--surface)", stroke: "var(--accent)", "stroke-width": 1.5 }, g);
+        svgText(g, vx(v), axisY + 26.5, v, { "text-anchor": "middle", "font-size": 13, "font-weight": 700, fill: selVal === v ? "var(--surface)" : "var(--ink)" });
+        const act = () => { selVal = selVal === v ? null : v; lastOut = -1; render(); };
+        g.addEventListener("click", act);
+        g.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); act(); } });
+      });
+      svgText(svg, pad, axisY + 26, rv === "Wr" ? "W" : rv, { "font-size": 14, "font-weight": 700, fill: "var(--accent)" });
+      // outcome boxes (styled in paint)
+      boxes = OUT.map((o, i) => {
+        const x = boxX(i);
+        const g = svgEl("g", { style: "cursor:default" }, svg);
+        const rect = svgEl("rect", { x: x + 3, y: 14, width: bw - 6, height: 60, rx: 8 }, g);
+        const r = Math.min(9.5, (bw - 16) / 7);
+        o.forEach((t, k) => {
+          const cx = x + bw - 6 - (k + 0.5) * (bw - 12) / 3, cy = 36;
+          svgEl("circle", { cx, cy, r, fill: t ? "var(--mean)" : "var(--surface)", stroke: "var(--mean)", "stroke-width": 1.5 }, g);
+          svgText(g, cx, cy + 4, t ? "ע" : "פ", { "text-anchor": "middle", "font-size": r * 1.15, "font-weight": 700, fill: t ? "#fff" : "var(--mean)" });
+        });
+        svgText(g, x + bw / 2, 66, "1/8", { "text-anchor": "middle", "font-size": 10.5, fill: "var(--muted)" });
+        g.addEventListener("pointerenter", () => { hoverOut = i; paint(); });
+        g.addEventListener("pointerleave", () => { hoverOut = -1; paint(); });
+        return rect;
+      });
+      svgText(svg, Wd - pad, 10, "מרחב המדגם Ω", { "text-anchor": "end", "font-size": 11, fill: "var(--muted)" });
+      paint();
+      const name = rv === "Wr" ? "W" : rv;
+      stats.innerHTML = "";
+      const E = D.reduce((s, [v, c]) => s + v * c / 8, 0);
+      const V = D.reduce((s, [v, c]) => s + (v - E) * (v - E) * c / 8, 0);
+      statTile(stats, `E(${name})`, fmt(E, 3));
+      statTile(stats, `Var(${name})`, fmt(V, 3));
+      if (sims) statTile(stats, "ממוצע ההטלות", fmt(Array.from(counts.entries()).reduce((s, [v, c]) => s + v * c, 0) / sims, 3));
+      if (sims) statTile(stats, "מספר הטלות", sims.toLocaleString("he-IL"));
+    }
+    render();
+  };
+
+  /* ---------- 5. law of large numbers: running mean of a die ---------- */
+  W.lln = function (root) {
+    let rolls = [];
+    const row = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    [["+10 הטלות", 10], ["+100", 100], ["+1,000", 1000]].forEach(([l, k], i) => {
+      const b = h("button", { class: "btn" + (i === 0 ? " primary" : ""), type: "button", text: l }, row);
+      b.addEventListener("click", () => { for (let j = 0; j < k && rolls.length < 20000; j++) rolls.push(1 + Math.floor(Math.random() * 6)); render(); });
+    });
+    const rb = h("button", { class: "btn", type: "button", text: "התחל מחדש" }, row);
+    rb.addEventListener("click", () => { rolls = []; render(); });
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    function render() {
+      holder.innerHTML = "";
+      const Wd = vbW(holder), Hd = 220, pl = 34, pr = 14, pt = 12, pb = 28;
+      const svg = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "ממוצע מצטבר של הטלות קובייה" }, holder);
+      const N = rolls.length, xmax = Math.max(N, 10);
+      const xS = i => pl + (i / xmax) * (Wd - pl - pr), yS = v => pt + (6 - v) / 5 * (Hd - pt - pb);
+      for (let v = 1; v <= 6; v++) {
+        svgEl("line", { x1: pl, x2: Wd - pr, y1: yS(v), y2: yS(v), stroke: "var(--rule)" }, svg);
+        svgText(svg, pl - 8, yS(v) + 4, v, { "text-anchor": "end", "font-size": 11, fill: "var(--muted)" });
+      }
+      svgEl("line", { x1: pl, x2: Wd - pr, y1: yS(3.5), y2: yS(3.5), stroke: "var(--ink)", "stroke-dasharray": "6 4", "stroke-width": 1.5 }, svg);
+      svgText(svg, Wd - pr, yS(3.5) - 6, "E(X) = 3.5", { "text-anchor": "end", "font-size": 12, "font-weight": 600, fill: "var(--ink)" });
+      if (N) {
+        let s = 0, d = "";
+        const step = Math.max(1, Math.floor(N / 500));
+        for (let i = 0; i < N; i++) { s += rolls[i]; if (i % step === 0 || i === N - 1) d += `${d ? "L" : "M"}${xS(i + 1)},${yS(s / (i + 1))}`; }
+        svgEl("path", { d, fill: "none", stroke: "var(--mean)", "stroke-width": 2 }, svg);
+      } else svgText(svg, (Wd + pl) / 2, Hd / 2 + 30, "לחצו כדי להתחיל להטיל", { "text-anchor": "middle", "font-size": 13, fill: "var(--muted)" });
+      svgText(svg, Wd - pr, Hd - 6, `${xmax.toLocaleString("he-IL")} הטלות`, { "text-anchor": "end", "font-size": 11, fill: "var(--muted)" });
+      svgText(svg, pl, Hd - 6, "0", { "font-size": 11, fill: "var(--muted)" });
+      stats.innerHTML = "";
+      const mean = N ? rolls.reduce((a, b) => a + b, 0) / N : NaN;
+      statTile(stats, "מספר הטלות", N.toLocaleString("he-IL"));
+      statTile(stats, "ממוצע עד עכשיו", fmt(mean, 3), { swatch: "mean" });
+      statTile(stats, "מרחק מ-3.5", N ? fmt(Math.abs(mean - 3.5), 3) : "—");
+      if (N) statTile(stats, "הטלה אחרונה", String(rolls[N - 1]));
+    }
+    render();
+  };
+
+  /* ---------- 6. covariance scatter ---------- */
+  W.cov = function (root) {
+    const n = 40, rng = mulberry32(20261026);
+    const z1 = [], z2 = [];
+    for (let i = 0; i < n; i++) { z1.push(randn(rng)); z2.push(randn(rng)); }
+    // standardise the base noise so the slider value is close to the realised r
+    const stdz = a => { const m = a.reduce((s, v) => s + v, 0) / n; const sd = Math.sqrt(a.reduce((s, v) => s + (v - m) ** 2, 0) / (n - 1)); return a.map(v => (v - m) / sd); };
+    let Z1 = stdz(z1), Z2 = stdz(z2);
+    { const c = Z1.reduce((s, v, i) => s + v * Z2[i], 0) / (n - 1); Z2 = stdz(Z2.map((v, i) => v - c * Z1[i])); }
+    let r = 0.7, shape = "lin", shuffled = false, units = "cm", rects = false;
+    let perm = Array.from({ length: n }, (_, i) => i);
+    const ctl = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+    const rs = slider(ctl, "כיוון ועוצמת הקשר", -1, 1, 0.05, r, v => { r = v; render(); }, v => fmt(v, 2));
+    const ctl2 = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    seg(ctl2, [{ label: "קשר לינארי", value: "lin" }, { label: "קשר מעוקל", value: "curve" }], shape, v => { shape = v; render(); });
+    seg(ctl2, [{ label: "ס\"מ", value: "cm" }, { label: "מטרים", value: "m" }], units, v => { units = v; render(); });
+    const lr = h("label", null, ctl2);
+    const cb = h("input", { type: "checkbox" }, lr); h("span", { text: "הצג מלבנים" }, lr);
+    cb.addEventListener("change", () => { rects = cb.checked; render(); });
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    const note = h("p", { class: "note", style: "margin:10px 0 0" }, root);
+    const S = a => { const m = a.reduce((s, v) => s + v, 0) / a.length; return { m, sd: Math.sqrt(a.reduce((s, v) => s + (v - m) ** 2, 0) / (a.length - 1)) }; };
+    function render() {
+      rs.inp.disabled = shape === "curve";
+      const xcm = Z1.map(z => 170 + 8 * z);
+      let y0 = shape === "lin" ? Z1.map((z, i) => 70 + 10 * (r * z + Math.sqrt(Math.max(0, 1 - r * r)) * Z2[i]))
+        : Z1.map((z, i) => 70 + 6 * (z * z - 1) + 1.5 * Z2[i]);
+      const y = perm.map(j => y0[j]);
+      const x = units === "cm" ? xcm : xcm.map(v => v / 100);
+      const sx = S(x), sy = S(y);
+      const prods = x.map((v, i) => (v - sx.m) * (y[i] - sy.m));
+      const cov = prods.reduce((s, v) => s + v, 0) / (n - 1);
+      const rr = cov / (sx.sd * sy.sd);
+      holder.innerHTML = "";
+      const Wd = vbW(holder), Hd = 330, pl = 50, pr = 14, pt = 14, pb = 40;
+      const svg = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "דיאגרמת פיזור של גובה ומשקל" }, holder);
+      const xlo = units === "cm" ? 145 : 1.45, xhi = units === "cm" ? 195 : 1.95, ylo = 35, yhi = 105;
+      const xS = v => pl + (v - xlo) / (xhi - xlo) * (Wd - pl - pr), yS = v => pt + (yhi - v) / (yhi - ylo) * (Hd - pt - pb);
+      // quadrant tints
+      const mx = xS(sx.m), my = yS(sy.m);
+      [[mx, pt, Wd - pr - mx, my - pt, "pos"], [pl, my, mx - pl, Hd - pb - my, "pos"], [pl, pt, mx - pl, my - pt, "neg"], [mx, my, Wd - pr - mx, Hd - pb - my, "neg"]].forEach(q => {
+        svgEl("rect", { x: q[0], y: q[1], width: Math.max(0, q[2]), height: Math.max(0, q[3]), fill: `var(--${q[4]})`, opacity: 0.05 }, svg);
+      });
+      svgText(svg, Wd - pr - 6, pt + 14, "(+)·(+) = +", { "text-anchor": "end", "font-size": 11.5, fill: "var(--pos)", "font-weight": 600 });
+      svgText(svg, pl + 6, Hd - pb - 8, "(−)·(−) = +", { "font-size": 11.5, fill: "var(--pos)", "font-weight": 600 });
+      svgText(svg, pl + 6, pt + 14, "(−)·(+) = −", { "font-size": 11.5, fill: "var(--neg)", "font-weight": 600 });
+      svgText(svg, Wd - pr - 6, Hd - pb - 8, "(+)·(−) = −", { "text-anchor": "end", "font-size": 11.5, fill: "var(--neg)", "font-weight": 600 });
+      // axes
+      const xs = units === "cm" ? 10 : 0.1;
+      axisX(svg, xS, xlo, xhi, Hd - pb, xs, t => units === "cm" ? fmt(t, 0) : fmt(t, 2));
+      for (let t = 40; t <= 100; t += 10) {
+        svgEl("line", { x1: pl, x2: Wd - pr, y1: yS(t), y2: yS(t), stroke: "var(--rule)", opacity: 0.6 }, svg);
+        svgText(svg, pl - 6, yS(t) + 4, t, { "text-anchor": "end", "font-size": 11, fill: "var(--muted)" });
+      }
+      svgText(svg, (Wd + pl) / 2, Hd - 4, units === "cm" ? "גובה (ס\"מ)" : "גובה (מטרים)", { "text-anchor": "middle", "font-size": 12, fill: "var(--muted)" });
+      svgText(svg, 6, pt + 4, "ק\"ג", { "font-size": 11, fill: "var(--muted)" });
+      if (rects) x.forEach((v, i) => {
+        const px = xS(v), py = yS(y[i]), pos = prods[i] > 0;
+        svgEl("rect", { x: Math.min(px, mx), y: Math.min(py, my), width: Math.abs(px - mx), height: Math.abs(py - my), fill: pos ? "var(--pos)" : "var(--neg)", "fill-opacity": 0.08, stroke: pos ? "var(--pos)" : "var(--neg)", "stroke-opacity": 0.35 }, svg);
+      });
+      svgEl("line", { x1: mx, x2: mx, y1: pt, y2: Hd - pb, stroke: "var(--ink-2)", "stroke-dasharray": "5 4" }, svg);
+      svgEl("line", { x1: pl, x2: Wd - pr, y1: my, y2: my, stroke: "var(--ink-2)", "stroke-dasharray": "5 4" }, svg);
+      x.forEach((v, i) => {
+        const c = svgEl("circle", { cx: xS(v), cy: yS(y[i]), r: 5, fill: prods[i] > 0 ? "var(--pos)" : "var(--neg)", stroke: "var(--surface)", "stroke-width": 1.5 }, svg);
+        c.addEventListener("pointermove", ev => showTip(`גובה ${units === "cm" ? fmt(v, 1) : fmt(v, 3)}, משקל ${fmt(y[i], 1)}, מכפלה ${fmt(prods[i], units === "cm" ? 1 : 3)}`, ev));
+        c.addEventListener("pointerleave", hideTip);
+      });
+      stats.innerHTML = "";
+      const u = units === "cm" ? "ס\"מ·ק\"ג" : "מ'·ק\"ג";
+      statTile(stats, `שונות משותפת (${u})`, fmt(cov, units === "cm" ? 1 : 3), { hl: true });
+      statTile(stats, "מקדם מתאם r", fmt(rr, 2), { hl: true });
+      statTile(stats, "סטיית תקן גובה", fmt(sx.sd, units === "cm" ? 2 : 4));
+      statTile(stats, "סטיית תקן משקל", fmt(sy.sd, 2));
+      statTile(stats, "מכפלות חיוביות", String(prods.filter(p => p > 0).length));
+      statTile(stats, "מכפלות שליליות", String(prods.filter(p => p < 0).length));
+      let t;
+      if (shuffled) t = "סטיות התקן של הגובה ושל המשקל לא זזו, כי כל ערך נשאר בדיוק אותו ערך. רק הזיווג השתנה, והקשר כמעט נעלם: המכפלות החיוביות והשליליות מקזזות זו את זו.";
+      else if (shape === "curve") t = "יש כאן קשר ברור: המשקל גבוה בשני הקצוות של הגובה. אבל המכפלות מימין ומשמאל מתקזזות, ו-r קרוב ל-0. שונות משותפת ומתאם רואים רק קשר לינארי.";
+      else if (units === "m") t = "במטרים השונות המשותפת קטנה פי 100, כי כל סטייה בגובה קטנה פי 100. אבל גם סטיית התקן של הגובה קטנה פי 100, ולכן r לא זז.";
+      else t = "הזיזו את המחוון: ככל שהקשר חזק יותר, רוב הנקודות נמצאות ברביעים של אותו צבע, והמכפלות מצטברות ולא מתקזזות.";
+      note.textContent = t;
+    }
+    render();
+  };
+
+  /* ---------- 7. distribution explorer ---------- */
+  function makeDist(kind, p) {
+    if (kind === "unifD") {
+      const a = p.a, b = Math.max(p.b, p.a + 1);
+      return { d: true, lo: a, hi: b, pmf: k => (k >= a && k <= b) ? 1 / (b - a + 1) : 0, mean: (a + b) / 2, varr: ((b - a + 1) ** 2 - 1) / 12,
+        tex: `P(X=k)=\\frac{1}{b-a+1}=\\frac{1}{${b - a + 1}},\\quad E=\\frac{a+b}{2},\\quad Var=\\frac{(b-a+1)^2-1}{12}`, name: `U[${a}, ${b}]`, xlo: a - 1, xhi: b + 1 };
+    }
+    if (kind === "binom") {
+      const n = p.n, q = p.p;
+      return { d: true, lo: 0, hi: n, pmf: k => binomPmf(k, n, q), mean: n * q, varr: n * q * (1 - q),
+        tex: "P(X=k)=\\binom{n}{k}p^k(1-p)^{n-k},\\quad E=np,\\quad Var=np(1-p)", name: `B(${n}, ${fmt(q, 2)})`, xlo: -0.5, xhi: n + 0.5 };
+    }
+    if (kind === "pois") {
+      const l = p.l, hi = Math.max(10, Math.ceil(l + 4.5 * Math.sqrt(l) + 2));
+      return { d: true, lo: 0, hi, pmf: k => poisPmf(k, l), mean: l, varr: l, tex: "P(X=k)=\\frac{e^{-\\lambda}\\lambda^k}{k!},\\quad E=Var=\\lambda", name: `Pois(${fmt(l, 1)})`, xlo: -0.5, xhi: hi + 0.5, open: true };
+    }
+    if (kind === "geo") {
+      const q = p.p; let hi = 1; while (1 - Math.pow(1 - q, hi) < 0.995 && hi < 80) hi++;
+      return { d: true, lo: 1, hi, pmf: k => k >= 1 ? Math.pow(1 - q, k - 1) * q : 0, mean: 1 / q, varr: (1 - q) / (q * q),
+        tex: "P(X=k)=(1-p)^{k-1}p,\\quad E=\\frac{1}{p},\\quad Var=\\frac{1-p}{p^2}", name: `Geo(${fmt(q, 2)})`, xlo: 0.5, xhi: hi + 0.5, open: true };
+    }
+    if (kind === "unifC") {
+      const a = p.a, b = Math.max(p.b, p.a + 0.5);
+      return { d: false, pdf: x => (x >= a && x <= b) ? 1 / (b - a) : 0, cdf: x => clamp((x - a) / (b - a), 0, 1), mean: (a + b) / 2, varr: (b - a) ** 2 / 12,
+        tex: "f(x)=\\frac{1}{b-a},\\quad E=\\frac{a+b}{2},\\quad Var=\\frac{(b-a)^2}{12}", name: `U(${fmt(a, 1)}, ${fmt(b, 1)})`, xlo: a - (b - a) * 0.25, xhi: b + (b - a) * 0.25 };
+    }
+    if (kind === "exp") {
+      const l = p.l;
+      return { d: false, pdf: x => x >= 0 ? l * Math.exp(-l * x) : 0, cdf: x => x >= 0 ? 1 - Math.exp(-l * x) : 0, mean: 1 / l, varr: 1 / (l * l),
+        tex: "f(x)=\\lambda e^{-\\lambda x},\\quad F(x)=1-e^{-\\lambda x},\\quad E=\\frac{1}{\\lambda},\\quad Var=\\frac{1}{\\lambda^2}", name: `Exp(${fmt(l, 1)})`, xlo: 0, xhi: 5.5 / l };
+    }
+    const m = p.m, s = p.s;
+    return { d: false, pdf: x => phi((x - m) / s) / s, cdf: x => Phi((x - m) / s), mean: m, varr: s * s,
+      tex: "f(x)=\\frac{1}{\\sigma\\sqrt{2\\pi}}e^{-\\frac{(x-\\mu)^2}{2\\sigma^2}},\\quad E=\\mu,\\quad Var=\\sigma^2", name: `N(${fmt(m, 1)}, ${fmt(s * s, 2)})`, xlo: m - 4 * s, xhi: m + 4 * s };
+  }
+
+  W.dist = function (root) {
+    const FAM = [
+      { k: "binom", label: "בינומית", params: [["n", "n", 1, 60, 1, 10], ["p", "p", 0.01, 0.99, 0.01, 0.3]], q: "le", a: 3, b: 5 },
+      { k: "pois", label: "פואסון", params: [["l", "λ", 0.5, 20, 0.5, 4]], q: "ge", a: 6, b: 8 },
+      { k: "geo", label: "גיאומטרית", params: [["p", "p", 0.05, 0.9, 0.01, 0.2]], q: "gt", a: 5, b: 8 },
+      { k: "unifD", label: "אחידה בדידה", params: [["a", "a", 0, 10, 1, 1], ["b", "b", 1, 20, 1, 6]], q: "between", a: 2, b: 4 },
+      { k: "unifC", label: "אחידה רציפה", params: [["a", "a", -5, 10, 0.5, 0], ["b", "b", -4, 20, 0.5, 10]], q: "between", a: 2, b: 5 },
+      { k: "exp", label: "מעריכית", params: [["l", "λ", 0.1, 3, 0.1, 0.5]], q: "le", a: 2, b: 4 },
+      { k: "norm", label: "נורמלית", params: [["m", "μ", 0, 100, 1, 70], ["s", "σ", 0.5, 20, 0.5, 3]], q: "lt", a: 73, b: 76 }
+    ];
+    let fam = FAM[0], P = {}, q = fam.q, a = fam.a, b = fam.b, view = "pmf";
+    const top = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+    const lf = h("label", null, top); h("span", { text: "התפלגות:" }, lf);
+    const sf = h("select", { "aria-label": "התפלגות" }, lf);
+    FAM.forEach((f, i) => h("option", { value: i, text: f.label }, sf));
+    const pr = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+    const qr = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+    const lq = h("label", null, qr); h("span", { text: "השאלה:" }, lq);
+    const sq = h("select", { "aria-label": "סוג השאלה" }, lq);
+    [["eq", "P(X = a)"], ["lt", "P(X < a)"], ["le", "P(X ≤ a)"], ["gt", "P(X > a)"], ["ge", "P(X ≥ a)"], ["between", "P(a ≤ X ≤ b)"]].forEach(([v, t]) => h("option", { value: v, text: t }, sq));
+    const la = h("label", null, qr); h("span", { text: "a =" }, la);
+    const ia = h("input", { type: "number", step: "any", "aria-label": "a" }, la);
+    const lb = h("label", null, qr); h("span", { text: "b =" }, lb);
+    const ib = h("input", { type: "number", step: "any", "aria-label": "b" }, lb);
+    const vr = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+    seg(vr, [{ label: "הסתברות / צפיפות", value: "pmf" }, { label: "פונקציה מצטברת F(x)", value: "cdf" }], view, v => { view = v; render(); });
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    const expl = h("p", { class: "note", style: "margin:10px 0 0" }, root);
+    const texEl = h("div", { class: "math-block dist-tex" }, root);
+    function buildParams() {
+      pr.innerHTML = ""; P = {};
+      fam.params.forEach(([key, lab, mn, mx, st, def]) => {
+        P[key] = def;
+        slider(pr, lab, mn, mx, st, def, v => { P[key] = v; render(); }, v => fmt(v, st < 1 ? 2 : 0));
+      });
+      q = fam.q; a = fam.a; b = fam.b; sq.value = q; ia.value = a; ib.value = b;
+    }
+    sf.addEventListener("change", () => { fam = FAM[+sf.value]; buildParams(); render(); });
+    sq.addEventListener("change", () => { q = sq.value; render(); });
+    ia.addEventListener("input", () => { const v = parseFloat(ia.value); if (Number.isFinite(v)) { a = v; render(); } });
+    ib.addEventListener("input", () => { const v = parseFloat(ib.value); if (Number.isFinite(v)) { b = v; render(); } });
+    function inEvent(x) {
+      if (q === "eq") return x === a; if (q === "lt") return x < a; if (q === "le") return x <= a;
+      if (q === "gt") return x > a; if (q === "ge") return x >= a; return x >= a && x <= b;
+    }
+    function render() {
+      lb.style.display = q === "between" ? "" : "none";
+      const D = makeDist(fam.k, P);
+      holder.innerHTML = "";
+      const Wd = vbW(holder), Hd = 250, pl = 46, pr2 = 14, pt = 14, pb = 32;
+      const svg = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "גרף ההתפלגות" }, holder);
+      const xS = x => pl + (x - D.xlo) / (D.xhi - D.xlo) * (Wd - pl - pr2);
+      let prob, explTxt;
+      if (D.d) {
+        const ks = []; for (let k = D.lo; k <= D.hi; k++) ks.push(k);
+        const inc = ks.filter(inEvent);
+        prob = inc.reduce((s, k) => s + D.pmf(k), 0);
+        // tail beyond plot for open distributions
+        if (D.open && (q === "gt" || q === "ge")) { const bound = q === "gt" ? Math.floor(a) + 1 : Math.ceil(a); let s = 0; for (let k = D.lo; k < bound; k++) s += D.pmf(k); prob = 1 - s; }
+        const vals = view === "pmf" ? ks.map(D.pmf) : (() => { let c = 0; return ks.map(k => (c += D.pmf(k))); })();
+        const ymax = view === "pmf" ? Math.max(...vals) * 1.15 : 1.05;
+        const yS = v => Hd - pb - v / ymax * (Hd - pt - pb);
+        const yst = niceStep(ymax, 4);
+        for (let t = 0; t <= ymax + 1e-9; t += yst) { svgEl("line", { x1: pl, x2: Wd - pr2, y1: yS(t), y2: yS(t), stroke: "var(--rule)" }, svg); svgText(svg, pl - 6, yS(t) + 4, fmt(t, 2), { "text-anchor": "end", "font-size": 11, fill: "var(--muted)" }); }
+        const bw = Math.max(2, (xS(1) - xS(0)) * (view === "pmf" ? 0.7 : 1));
+        ks.forEach((k, i) => {
+          const on = inEvent(k);
+          if (view === "pmf") {
+            const r = svgEl("rect", { x: xS(k) - bw / 2, y: yS(vals[i]), width: bw, height: Hd - pb - yS(vals[i]), rx: Math.min(3, bw / 4), fill: on ? "var(--accent)" : "var(--rule-strong)", "fill-opacity": on ? 0.9 : 0.55 }, svg);
+            r.addEventListener("pointermove", ev => showTip(`P(X = ${k}) = ${fmtP(vals[i])}`, ev)); r.addEventListener("pointerleave", hideTip);
+          } else {
+            svgEl("line", { x1: xS(k), x2: xS(k + 1), y1: yS(vals[i]), y2: yS(vals[i]), stroke: on ? "var(--accent)" : "var(--ink-2)", "stroke-width": 2.5 }, svg);
+            svgEl("circle", { cx: xS(k), cy: yS(vals[i]), r: 3.2, fill: on ? "var(--accent)" : "var(--ink-2)" }, svg);
+          }
+        });
+        const step = Math.max(1, Math.round(niceStep(D.hi - D.lo + 1, 10)));
+        axisX(svg, xS, Math.ceil(D.xlo), Math.floor(D.xhi), Hd - pb, step);
+        explTxt = inc.length
+          ? (inc.length <= 8 ? `סוכמים את העמודות של ${L(inc.join(", "))}.` : `סוכמים ${inc.length} עמודות, מ-${inc[0]} עד ${inc[inc.length - 1]}${D.open && (q === "gt" || q === "ge") ? " ומעלה (המשך הזנב לא מצויר)" : ""}.`)
+          : "אף ערך אפשרי לא מקיים את התנאי, ולכן ההסתברות 0.";
+        if (Number.isInteger(a) && (q === "lt" || q === "gt")) explTxt += ` שימו לב: ${a} עצמו לא נכלל, ולכן ${L(q === "lt" ? `P(X < ${a}) = P(X ≤ ${a - 1})` : `P(X > ${a}) = P(X ≥ ${a + 1})`)}.`;
+      } else {
+        const N = 300, xs = []; for (let i = 0; i <= N; i++) xs.push(D.xlo + (D.xhi - D.xlo) * i / N);
+        const lo = q === "between" ? a : (q === "gt" || q === "ge") ? a : -Infinity;
+        const hi = q === "between" ? b : (q === "lt" || q === "le") ? a : Infinity;
+        prob = q === "eq" ? 0 : Math.max(0, D.cdf(hi) - D.cdf(lo));
+        if (view === "pmf") {
+          const ys = xs.map(D.pdf), ymax = Math.max(...ys) * 1.15 || 1;
+          const yS = v => Hd - pb - v / ymax * (Hd - pt - pb);
+          const yst = niceStep(ymax, 4);
+          for (let t = 0; t <= ymax + 1e-9; t += yst) { svgEl("line", { x1: pl, x2: Wd - pr2, y1: yS(t), y2: yS(t), stroke: "var(--rule)" }, svg); svgText(svg, pl - 6, yS(t) + 4, fmt(t, 3), { "text-anchor": "end", "font-size": 11, fill: "var(--muted)" }); }
+          if (q !== "eq") {
+            const sl = Math.max(lo, D.xlo), sh = Math.min(hi, D.xhi);
+            if (sh > sl) {
+              let d = `M${xS(sl)},${yS(0)}`;
+              for (let i = 0; i <= 120; i++) { const x = sl + (sh - sl) * i / 120; d += `L${xS(x)},${yS(D.pdf(x))}`; }
+              d += `L${xS(sh)},${yS(0)}Z`;
+              svgEl("path", { d, fill: "var(--accent)", "fill-opacity": 0.4 }, svg);
+            }
+          }
+          svgEl("path", { d: xs.map((x, i) => `${i ? "L" : "M"}${xS(x)},${yS(ys[i])}`).join(""), fill: "none", stroke: "var(--ink)", "stroke-width": 2.2 }, svg);
+          if (q === "eq") svgEl("line", { x1: xS(a), x2: xS(a), y1: pt, y2: Hd - pb, stroke: "var(--accent)", "stroke-width": 2, "stroke-dasharray": "4 3" }, svg);
+        } else {
+          const yS = v => Hd - pb - v / 1.05 * (Hd - pt - pb);
+          for (let t = 0; t <= 1; t += 0.25) { svgEl("line", { x1: pl, x2: Wd - pr2, y1: yS(t), y2: yS(t), stroke: "var(--rule)" }, svg); svgText(svg, pl - 6, yS(t) + 4, fmt(t, 2), { "text-anchor": "end", "font-size": 11, fill: "var(--muted)" }); }
+          svgEl("path", { d: xs.map((x, i) => `${i ? "L" : "M"}${xS(x)},${yS(D.cdf(x))}`).join(""), fill: "none", stroke: "var(--ink)", "stroke-width": 2.2 }, svg);
+          [a].concat(q === "between" ? [b] : []).forEach(v => {
+            if (v < D.xlo || v > D.xhi) return;
+            svgEl("line", { x1: xS(v), x2: xS(v), y1: yS(0), y2: yS(D.cdf(v)), stroke: "var(--accent)", "stroke-dasharray": "4 3", "stroke-width": 1.5 }, svg);
+            svgEl("line", { x1: pl, x2: xS(v), y1: yS(D.cdf(v)), y2: yS(D.cdf(v)), stroke: "var(--accent)", "stroke-dasharray": "4 3", "stroke-width": 1.5 }, svg);
+            svgEl("circle", { cx: xS(v), cy: yS(D.cdf(v)), r: 4, fill: "var(--accent)" }, svg);
+            svgText(svg, pl + 4, yS(D.cdf(v)) - 5, `F(${fmt(v, 2)}) = ${fmt(D.cdf(v), 4)}`, { "font-size": 11.5, fill: "var(--accent)", "font-weight": 600 });
+          });
+        }
+        axisX(svg, xS, D.xlo, D.xhi, Hd - pb, niceStep(D.xhi - D.xlo, 8));
+        explTxt = q === "eq" ? "במשתנה רציף ההסתברות לנקודה בודדת היא 0: לקו אין רוחב, ולכן אין לו שטח."
+          : "השטח הצבוע הוא ההסתברות. במשתנה רציף אין הבדל בין < ל-≤, כי לנקודת הגבול אין שטח.";
+      }
+      stats.innerHTML = "";
+      const qtxt = { eq: `P(X = ${fmt(a, 2)})`, lt: `P(X < ${fmt(a, 2)})`, le: `P(X ≤ ${fmt(a, 2)})`, gt: `P(X > ${fmt(a, 2)})`, ge: `P(X ≥ ${fmt(a, 2)})`, between: `P(${fmt(a, 2)} ≤ X ≤ ${fmt(b, 2)})` }[q];
+      statTile(stats, qtxt, fmtP(prob), { hl: true });
+      statTile(stats, "תוחלת", fmt(D.mean, 3));
+      statTile(stats, "שונות", fmt(D.varr, 3));
+      statTile(stats, "סטיית תקן", fmt(Math.sqrt(D.varr), 3));
+      statTile(stats, "סימון", D.name);
+      expl.innerHTML = explTxt;
+      texInto(texEl, D.tex);
+    }
+    buildParams();
+    render();
+  };
+
+  /* ---------- 7 ext. truncated geometric ---------- */
+  W.trunc = function (root) {
+    let p = 0.03, N = 30;
+    const ctl = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    slider(ctl, "p", 0.01, 0.2, 0.01, p, v => { p = v; render(); }, v => fmt(v, 2));
+    slider(ctl, "תקרה", 5, 60, 1, N, v => { N = v; render(); }, v => String(v));
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    const note = h("p", { class: "note", style: "margin:10px 0 0" }, root);
+    function render() {
+      const q = 1 - p, ks = [];
+      for (let k = 1; k <= N; k++) ks.push(k);
+      const pk = k => k < N ? Math.pow(q, k - 1) * p : Math.pow(q, N - 1);
+      const E = ks.reduce((s, k) => s + k * pk(k), 0), E2 = ks.reduce((s, k) => s + k * k * pk(k), 0), V = E2 - E * E;
+      const ghostTo = Math.min(N + 40, 200);
+      holder.innerHTML = "";
+      const Wd = vbW(holder), Hd = 240, pl = 40, pr = 12, pt = 26, pb = 30;
+      const svg = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "גיאומטרית עם תקרה" }, holder);
+      const xS = k => pl + (k - 0.5) / ghostTo * (Wd - pl - pr);
+      const ymax = Math.max(pk(N), p) * 1.12;
+      const yS = v => Hd - pb - v / ymax * (Hd - pt - pb);
+      const yst = niceStep(ymax, 4);
+      for (let t = 0; t <= ymax + 1e-9; t += yst) { svgEl("line", { x1: pl, x2: Wd - pr, y1: yS(t), y2: yS(t), stroke: "var(--rule)" }, svg); svgText(svg, pl - 6, yS(t) + 4, fmt(t, 2), { "text-anchor": "end", "font-size": 11, fill: "var(--muted)" }); }
+      const bw = Math.max(1.5, (xS(2) - xS(1)) * 0.8);
+      for (let k = N + 1; k <= ghostTo; k++) svgEl("rect", { x: xS(k) - bw / 2, y: yS(Math.pow(q, k - 1) * p), width: bw, height: Hd - pb - yS(Math.pow(q, k - 1) * p), fill: "var(--rule-strong)", "fill-opacity": 0.6 }, svg);
+      ks.forEach(k => {
+        if (k < N) svgEl("rect", { x: xS(k) - bw / 2, y: yS(pk(k)), width: bw, height: Hd - pb - yS(pk(k)), fill: "var(--mean)" }, svg);
+      });
+      const first = Math.pow(q, N - 1) * p, none = Math.pow(q, N);
+      const wbar = Math.max(bw, 6);
+      svgEl("rect", { x: xS(N) - wbar / 2, y: yS(first), width: wbar, height: Hd - pb - yS(first), fill: "var(--mean)" }, svg);
+      svgEl("rect", { x: xS(N) - wbar / 2, y: yS(first + none), width: wbar, height: yS(first) - yS(first + none), fill: "var(--median)" }, svg);
+      svgText(svg, Math.min(xS(N) + 8, Wd - 150), yS(first + none) + 4, `P(X = ${N}) = ${fmt(first + none, 3)}`, { "font-size": 12, "font-weight": 600, fill: "var(--ink)" });
+      svgText(svg, Math.min(xS(N) + 8, Wd - 150), yS(first + none) + 19, "הכתום: אף אחד לא התאים", { "font-size": 11, fill: "var(--median)" });
+      svgEl("line", { x1: xS(N + 0.5), x2: xS(N + 0.5), y1: pt - 10, y2: Hd - pb, stroke: "var(--ink-2)", "stroke-dasharray": "4 3" }, svg);
+      svgText(svg, xS(N + 0.5) + 4, pt - 12, "תקרה", { "font-size": 11, fill: "var(--ink-2)" });
+      axisX(svg, xS, 1, ghostTo, Hd - pb, niceStep(ghostTo, 8) || 10);
+      stats.innerHTML = "";
+      statTile(stats, "תוחלת אמיתית", fmt(E, 2), { hl: true });
+      statTile(stats, "סטיית תקן אמיתית", fmt(Math.sqrt(V), 2), { hl: true });
+      statTile(stats, "תוחלת לפי הנוסחה", fmt(1 / p, 2));
+      statTile(stats, "סטיית תקן לפי הנוסחה", fmt(Math.sqrt(q) / p, 2));
+      statTile(stats, "חצי הטווח", fmt((N - 1) / 2, 1));
+      const bad = Math.sqrt(q) / p > (N - 1) / 2;
+      note.textContent = bad
+        ? `הנוסחה הגיאומטרית נותנת סטיית תקן ${fmt(Math.sqrt(q) / p, 1)}, יותר מחצי הטווח (${fmt((N - 1) / 2, 1)}). זה בלתי אפשרי למשתנה שכלוא בין 1 ל-${N}, ולכן ברור שהיא לא מתאימה כאן.`
+        : "כאן הזנב שנחתך קטן, ולכן הנוסחאות הגיאומטריות קרובות לערכים האמיתיים. ככל שהזנב שמעבר לתקרה גדל, הפער גדל.";
+    }
+    render();
+    const det = root.closest("details");
+    if (det) det.addEventListener("toggle", () => { if (det.open) render(); });
+  };
+
+  /* ---------- 8. normal area calculator ---------- */
+  W.normal = function (root) {
+    const st = { m: 70, s: 3, mode: "lt", a: 73, b: 76, q: 0.87 };
+    const presets = [
+      ["א", { mode: "lt", a: 73 }], ["ב", { mode: "lt", a: 75.5 }], ["ג", { mode: "gt", a: 71 }], ["ד", { mode: "inv", q: 0.87 }],
+      ["ה", { mode: "inv", q: 0.25 }], ["ו", { mode: "lt", a: 64 }], ["ז", { mode: "between", a: 64, b: 71 }], ["ח", { mode: "between", a: 67.99, b: 72.01 }]
+    ];
+    const prow = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+    h("span", { text: "סעיף בתרגיל:" }, prow);
+    const pbtns = presets.map(([l, p]) => {
+      const bt = h("button", { class: "btn", type: "button", text: l, style: "min-width:2.4em" }, prow);
+      bt.addEventListener("click", () => { Object.assign(st, { m: 70, s: 3 }, p); sync(); render(); pbtns.forEach(x => x.classList.remove("primary")); bt.classList.add("primary"); });
+      return bt;
+    });
+    const r1 = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+    const num = (label, key, step) => { const l = h("label", null, r1); h("span", { text: label }, l); const i = h("input", { type: "number", step, "aria-label": label }, l); i.addEventListener("input", () => { const v = parseFloat(i.value); if (Number.isFinite(v) && (key !== "s" || v > 0) && (key !== "q" || (v > 0 && v < 1))) { st[key] = v; pbtns.forEach(x => x.classList.remove("primary")); render(); } }); return { l, i }; };
+    const iM = num("μ =", "m", "any"), iS = num("σ =", "s", "any");
+    const lm = h("label", null, r1); h("span", { text: "שאלה:" }, lm);
+    const sm = h("select", { "aria-label": "סוג השאלה" }, lm);
+    [["lt", "P(X < a)"], ["gt", "P(X > a)"], ["between", "P(a < X < b)"], ["inv", "אחוזון: x ש-q מתחתיו"]].forEach(([v, t]) => h("option", { value: v, text: t }, sm));
+    sm.addEventListener("change", () => { st.mode = sm.value; pbtns.forEach(x => x.classList.remove("primary")); sync(); render(); });
+    const r2 = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+    const num2 = (label, key, step) => { const l = h("label", null, r2); h("span", { text: label }, l); const i = h("input", { type: "number", step, "aria-label": label }, l); i.addEventListener("input", () => { const v = parseFloat(i.value); if (Number.isFinite(v) && (key !== "q" || (v > 0 && v < 1))) { st[key] = v; pbtns.forEach(x => x.classList.remove("primary")); render(); } }); return { l, i }; };
+    const iA = num2("a =", "a", "any"), iB = num2("b =", "b", "any"), iQ = num2("q =", "q", "0.01");
+    const holder = h("div", null, root);
+    const steps = h("div", { class: "norm-steps" }, root);
+    function sync() {
+      iM.i.value = st.m; iS.i.value = st.s; sm.value = st.mode; iA.i.value = st.a; iB.i.value = st.b; iQ.i.value = st.q;
+      iA.l.style.display = st.mode === "inv" ? "none" : ""; iB.l.style.display = st.mode === "between" ? "" : "none"; iQ.l.style.display = st.mode === "inv" ? "" : "none";
+    }
+    const r2d = v => Math.round(v * 100) / 100;
+    const fm = (v, d) => fmt(v, d).replace("-", "−");
+    const PhiT = z => Math.round(Phi(r2d(z)) * 1e4) / 1e4; // table-style: z to two decimals, Φ to four
+    function phiStr(z) {
+      const zr = r2d(z);
+      if (zr < 0) return `Φ(${fm(zr)}) = 1 − Φ(${fm(-zr)}) = 1 − ${PhiT(-zr).toFixed(4)} = ${PhiT(zr).toFixed(4)}`;
+      return `Φ(${fm(zr)}) = ${PhiT(zr).toFixed(4)}`;
+    }
+    function render() {
+      const { m, s } = st;
+      const lo = m - 4 * s, hi = m + 4 * s;
+      holder.innerHTML = "";
+      const Wd = vbW(holder), Hd = 250, pl = 16, pr = 16, pt = 14, pb = 56;
+      const svg = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "עקומה נורמלית עם שטח מסומן" }, holder);
+      const xS = x => pl + (x - lo) / (hi - lo) * (Wd - pl - pr);
+      const ymax = phi(0) / s * 1.1, yS = v => Hd - pb - v / ymax * (Hd - pt - pb);
+      let a = st.a, b = st.b, sl = -Infinity, sh = Infinity, html = "", prob;
+      if (st.mode === "inv") {
+        const zq = PhiInv(st.q), zt = r2d(zq), x = m + zt * s;
+        sh = x; prob = st.q;
+        html = (st.q < 0.5
+          ? `<div>בטבלה אין שטחים מתחת ל-0.5, ולכן משתמשים בסימטריה: <span class="num">z<sub>${fmt(st.q, 2)}</sub> = −z<sub>${fmt(1 - st.q, 2)}</sub> = ${fm(zt)}</span></div>`
+          : `<div>מחפשים בתוך הטבלה את ${fmt(st.q, 2)}: <span class="num">z<sub>${fmt(st.q, 2)}</sub> ≈ ${fm(zt)}</span></div>`) +
+          `<div>מחזירים לסקאלה המקורית: <span class="num">x = μ + z·σ = ${fm(m)} + (${fm(zt)})·${fm(s)} = <strong>${fmt(x, 2)}</strong></span></div>`;
+        a = x;
+      } else {
+        const za = (a - m) / s;
+        if (st.mode === "lt") { sh = a; prob = PhiT(za); html = `<div>תקנון: <span class="num">z = (${fm(a)} − ${fm(m)}) / ${fm(s)} = ${fm(r2d(za))}</span></div><div>שטח משמאל: <span class="num">${phiStr(za)}</span></div>`; }
+        else if (st.mode === "gt") { sl = a; prob = Math.round((1 - PhiT(za)) * 1e4) / 1e4; html = `<div>תקנון: <span class="num">z = (${fm(a)} − ${fm(m)}) / ${fm(s)} = ${fm(r2d(za))}</span></div><div>שטח מימין: <span class="num">1 − Φ(${fm(r2d(za))}) = 1 − ${PhiT(za).toFixed(4)} = <strong>${prob.toFixed(4)}</strong></span></div>`; }
+        else {
+          if (b < a) { const t = a; a = b; b = t; }
+          const zb = (b - m) / s; sl = a; sh = b; prob = Math.round((PhiT(zb) - PhiT(za)) * 1e4) / 1e4;
+          html = `<div>תקנון: <span class="num">z<sub>a</sub> = ${fm(r2d(za))}, z<sub>b</sub> = ${fm(r2d(zb))}</span></div><div>שטח ביניהם: <span class="num">Φ(${fm(r2d(zb))}) − Φ(${fm(r2d(za))}) = ${PhiT(zb).toFixed(4)} − ${PhiT(za).toFixed(4)} = <strong>${prob.toFixed(4)}</strong></span></div>`;
+        }
+      }
+      // shaded area
+      const s0 = Math.max(sl, lo), s1 = Math.min(sh, hi);
+      if (s1 > s0) {
+        let d = `M${xS(s0)},${yS(0)}`;
+        for (let i = 0; i <= 140; i++) { const x = s0 + (s1 - s0) * i / 140; d += `L${xS(x)},${yS(phi((x - m) / s) / s)}`; }
+        d += `L${xS(s1)},${yS(0)}Z`;
+        svgEl("path", { d, fill: "var(--accent)", "fill-opacity": 0.38 }, svg);
+      }
+      let dc = ""; for (let i = 0; i <= 240; i++) { const x = lo + (hi - lo) * i / 240; dc += `${i ? "L" : "M"}${xS(x)},${yS(phi((x - m) / s) / s)}`; }
+      svgEl("path", { d: dc, fill: "none", stroke: "var(--ink)", "stroke-width": 2.2 }, svg);
+      const base = Hd - pb;
+      svgEl("line", { x1: pl, x2: Wd - pr, y1: base, y2: base, stroke: "var(--rule-strong)" }, svg);
+      for (let k = -3; k <= 3; k++) {
+        const x = xS(m + k * s);
+        svgEl("line", { x1: x, x2: x, y1: base, y2: base + 5, stroke: "var(--rule-strong)" }, svg);
+        svgText(svg, x, base + 18, fmt(m + k * s, 2), { "text-anchor": "middle", "font-size": 11.5, fill: "var(--ink-2)" });
+        svgText(svg, x, base + 38, k < 0 ? `−${-k}` : String(k), { "text-anchor": "middle", "font-size": 11.5, fill: "var(--accent)", "font-weight": 600 });
+      }
+      svgText(svg, pl, base + 18, "x", { "font-size": 11, fill: "var(--muted)", "font-weight": 600 });
+      svgText(svg, pl, base + 38, "z", { "font-size": 11.5, fill: "var(--accent)", "font-weight": 700 });
+      [a].concat(st.mode === "between" ? [b] : []).forEach(v => {
+        if (v < lo || v > hi) return;
+        svgEl("line", { x1: xS(v), x2: xS(v), y1: pt, y2: base, stroke: "var(--accent)", "stroke-width": 2 }, svg);
+        svgText(svg, xS(v), pt + 2, fmt(v, 2), { "text-anchor": "middle", "font-size": 12, "font-weight": 700, fill: "var(--accent)" });
+      });
+      steps.innerHTML = html + (st.mode !== "inv" ? `<div class="note" style="margin-top:4px">הסתברות: <strong class="num">${prob.toFixed(4)}</strong>, כלומר ${fmt(prob * 100, 2)}%.</div>` : "");
+    }
+    sync(); render();
+  };
+
+  /* ---------- 8b. standardisation in two steps ---------- */
+  W.zstd = function (root) {
+    const st = { m: 10, s: 2, x: 13, step: 0 };
+    const LO = -10, HI = 22;
+    const ctl = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+    const sm = slider(ctl, "μ", 2, 12, 0.5, st.m, v => { st.m = v; fixX(); render(); }, v => fmt(v, 1));
+    const ss = slider(ctl, "σ", 0.5, 3, 0.1, st.s, v => { st.s = v; fixX(); render(); }, v => fmt(v, 1));
+    const sx = slider(ctl, "x", 0, 20, 0.1, st.x, v => { st.x = v; render(); }, v => fmt(v, 1));
+    function fixX() {
+      const a = st.m - 3 * st.s, b = st.m + 3 * st.s;
+      sx.inp.min = a; sx.inp.max = b;
+      st.x = clamp(st.x, a, b); sx.set(st.x);
+    }
+    const r2 = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    const sg = seg(r2, [{ label: "1. הפעמון המקורי", value: 0 }, { label: "2. מזיזים: \u2066X\u00a0−\u00a0μ\u2069", value: 1 }, { label: "3. מכווצים: \u2066÷\u00a0σ\u2069", value: 2 }], st.step, v => { st.step = v; render(); });
+    const nb = h("button", { class: "btn primary", type: "button", text: "לשלב הבא" }, r2);
+    nb.addEventListener("click", () => { st.step = (st.step + 1) % 3; sg.set(st.step); render(); });
+    const holder = h("div", null, root);
+    const out = h("div", { class: "note mosaic-out", style: "margin-top:10px;line-height:1.9" }, root);
+    function render() {
+      const { m, s, x, step } = st;
+      nb.textContent = step === 2 ? "להתחלה" : "לשלב הבא";
+      const stages = [{ c: m, w: s, p: x }, { c: 0, w: s, p: x - m }, { c: 0, w: 1, p: (x - m) / s }];
+      const cur = stages[step], prev = step ? stages[step - 1] : null;
+      holder.innerHTML = "";
+      const Wd = vbW(holder), Hd = 250, pl = 14, pr = 14, pt = 22, pb = 40;
+      const svg = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "שלבי התקנון של פעמון נורמלי" }, holder);
+      const xS = v => pl + (v - LO) / (HI - LO) * (Wd - pl - pr);
+      const ymax = Math.max(phi(0) / cur.w, prev ? phi(0) / prev.w : 0) * 1.15;
+      const base = Hd - pb, yS = v => base - v / ymax * (base - pt);
+      const dens = (v, c, w) => phi((v - c) / w) / w;
+      const path = (c, w) => { let d = ""; for (let i = 0; i <= 320; i++) { const v = LO + (HI - LO) * i / 320; d += `${i ? "L" : "M"}${xS(v).toFixed(1)},${yS(dens(v, c, w)).toFixed(1)}`; } return d; };
+      // shaded area left of the point
+      const p1 = clamp(cur.p, LO, HI);
+      let ds = `M${xS(LO)},${base}`;
+      for (let i = 0; i <= 200; i++) { const v = LO + (p1 - LO) * i / 200; ds += `L${xS(v).toFixed(1)},${yS(dens(v, cur.c, cur.w)).toFixed(1)}`; }
+      ds += `L${xS(p1)},${base}Z`;
+      svgEl("path", { d: ds, fill: "var(--accent)", "fill-opacity": 0.3 }, svg);
+      if (prev) svgEl("path", { d: path(prev.c, prev.w), fill: "none", stroke: "var(--muted)", "stroke-width": 1.6, "stroke-dasharray": "5 4" }, svg);
+      svgEl("path", { d: path(cur.c, cur.w), fill: "none", stroke: "var(--ink)", "stroke-width": 2.4 }, svg);
+      // axis
+      svgEl("line", { x1: pl, x2: Wd - pr, y1: base, y2: base, stroke: "var(--rule-strong)" }, svg);
+      for (let t = -10; t <= 20; t += 5) {
+        svgEl("line", { x1: xS(t), x2: xS(t), y1: base, y2: base + 5, stroke: "var(--rule-strong)" }, svg);
+        svgText(svg, xS(t), base + 19, t < 0 ? `−${-t}` : String(t), { "text-anchor": "middle", "font-size": 11.5, fill: t === 0 ? "var(--ink)" : "var(--muted)", "font-weight": t === 0 ? 700 : 400 });
+      }
+      // centre line
+      svgEl("line", { x1: xS(cur.c), x2: xS(cur.c), y1: yS(dens(cur.c, cur.c, cur.w)), y2: base, stroke: "var(--ink-2)", "stroke-dasharray": "3 3" }, svg);
+      // one-SD arrow
+      const ya = yS(dens(cur.c + cur.w, cur.c, cur.w));
+      svgEl("line", { x1: xS(cur.c), x2: xS(cur.c + cur.w), y1: ya, y2: ya, stroke: "var(--median)", "stroke-width": 2.2 }, svg);
+      svgEl("path", { d: `M${xS(cur.c + cur.w)},${ya} l-6,-4 v8 z`, fill: "var(--median)" }, svg);
+      svgText(svg, xS(cur.c + cur.w) + 6, ya + 4, `σ = ${fmt(cur.w, 2)}`, { "font-size": 12, "font-weight": 700, fill: "var(--median)" });
+      // the tracked point
+      if (prev && Math.abs(prev.p - cur.p) > 0.05) {
+        const yy = base - 8;
+        svgEl("line", { x1: xS(prev.p), x2: xS(cur.p), y1: yy, y2: yy, stroke: "var(--accent)", "stroke-width": 1.4, "stroke-dasharray": "3 3" }, svg);
+        svgEl("circle", { cx: xS(prev.p), cy: yy, r: 3, fill: "var(--muted)" }, svg);
+      }
+      if (cur.p >= LO && cur.p <= HI) {
+        svgEl("line", { x1: xS(cur.p), x2: xS(cur.p), y1: pt - 4, y2: base, stroke: "var(--accent)", "stroke-width": 2 }, svg);
+        svgText(svg, xS(cur.p), pt - 8, `${["x", "x − μ", "z"][step]} = ${fmt(cur.p, 2)}`, { "text-anchor": "middle", "font-size": 12.5, "font-weight": 700, fill: "var(--accent)" });
+      }
+      const z = (x - m) / s, area = Phi(z);
+      const how = s > 1.0001 ? "מתכווץ" : s < 0.9999 ? "נמתח" : "לא משתנה";
+      const msg = [
+        `פעמון עם מרכז ${L("μ = " + fmt(m, 2))} ורוחב ${L("σ = " + fmt(s, 2))}. הנקודה ${L("x = " + fmt(x, 2))} נמצאת ${L(fmt(Math.abs(x - m), 2))} יחידות ${x >= m ? "מימין" : "משמאל"} למרכז.`,
+        `מחסירים ${L("μ = " + fmt(m, 2))} מכל ערך. כל הפעמון זז שמאלה ב-${L(fmt(m, 2))}, והמרכז שלו עכשיו ב-0. הרוחב לא השתנה: σ עדיין ${L(fmt(s, 2))}. הנקודה עברה ל-${L("x − μ = " + fmt(x - m, 2))}, והיא עדיין באותו מרחק מהמרכז.`,
+        `מחלקים כל ערך ב-${L("σ = " + fmt(s, 2))}. הפעמון ${how} עד שסטיית התקן שלו 1. הנקודה עברה ל-${L("z = " + fmt(x - m, 2) + " / " + fmt(s, 2) + " = " + fmt(z, 2))}: היא רחוקה ${L(fmt(Math.abs(z), 2))} סטיות תקן מהמרכז. זו הנורמלית הסטנדרטית ${L("N(0,1)")}.`
+      ][step];
+      out.innerHTML = `<div>${msg}</div><div>השטח משמאל לנקודה: <strong>${L(fmt(area, 4))}</strong>, אותו שטח בכל שלב.</div>`;
+    }
+    fixX(); render();
+  };
+
+  /* ---------- 9. central limit theorem simulator ---------- */
+  W.clt = function (root) {
+    const POPS = {
+      exp: { label: "מוטה ימינה (מעריכית)", lo: 0, hi: 5, mu: 1, sd: 1, draw: () => -Math.log(1 - Math.random()), pdf: x => x >= 0 ? Math.exp(-x) : 0 },
+      unif: { label: "אחידה", lo: -0.25, hi: 1.25, mu: 0.5, sd: Math.sqrt(1 / 12), draw: () => Math.random(), pdf: x => x >= 0 && x <= 1 ? 1 : 0 },
+      bi: { label: "דו-שיאית", lo: 0, hi: 8, mu: 4, sd: Math.sqrt(0.36 + 4), draw: () => (Math.random() < 0.5 ? 2 : 6) + 0.6 * randn(), pdf: x => 0.5 * phi((x - 2) / 0.6) / 0.6 + 0.5 * phi((x - 6) / 0.6) / 0.6 },
+      die: { label: "קובייה (בדידה)", lo: 0.5, hi: 6.5, mu: 3.5, sd: Math.sqrt(35 / 12), draw: () => 1 + Math.floor(Math.random() * 6), disc: [1, 2, 3, 4, 5, 6].map(k => [k, 1 / 6]) },
+      bern: { label: "ברנולי, p = 0.2", lo: -0.25, hi: 1.25, mu: 0.2, sd: 0.4, draw: () => (Math.random() < 0.2 ? 1 : 0), disc: [[0, 0.8], [1, 0.2]] }
+    };
+    let pk = "exp", n = 1, means = [], last = [];
+    const ctl = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+    const lp = h("label", null, ctl); h("span", { text: "אוכלוסייה:" }, lp);
+    const sp = h("select", { "aria-label": "אוכלוסייה" }, lp);
+    Object.keys(POPS).forEach(k => h("option", { value: k, text: POPS[k].label }, sp));
+    sp.addEventListener("change", () => { pk = sp.value; means = []; last = []; render(); });
+    const ns = slider(ctl, "גודל מדגם n", 1, 50, 1, n, v => { n = v; means = []; last = []; render(); }, v => String(v));
+    const ctl2 = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    const sample = k => { const P = POPS[pk]; for (let j = 0; j < k; j++) { const s = []; for (let i = 0; i < n; i++) s.push(P.draw()); means.push(s.reduce((a, b) => a + b, 0) / n); last = s; } render(); };
+    h("button", { class: "btn", type: "button", text: "מדגם אחד" }, ctl2).addEventListener("click", () => sample(1));
+    h("button", { class: "btn primary", type: "button", text: "1,000 מדגמים" }, ctl2).addEventListener("click", () => sample(1000));
+    h("button", { class: "btn", type: "button", text: "איפוס" }, ctl2).addEventListener("click", () => { means = []; last = []; render(); });
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    void ns;
+    function render() {
+      const P = POPS[pk];
+      holder.innerHTML = "";
+      const Wd = vbW(holder), H1 = 120, H2 = 210, gap = 26, pl = 14, pr = 14, Hd = H1 + gap + H2 + 26;
+      const svg = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "התפלגות האוכלוסייה והתפלגות ממוצעי המדגמים" }, holder);
+      const xS = x => pl + (x - P.lo) / (P.hi - P.lo) * (Wd - pl - pr);
+      // population
+      const b1 = H1;
+      svgText(svg, Wd - pr, 12, "האוכלוסייה", { "text-anchor": "end", "font-size": 12, "font-weight": 600, fill: "var(--ink-2)" });
+      if (P.disc) {
+        const mx = Math.max(...P.disc.map(d => d[1])) * 1.15;
+        P.disc.forEach(([k, pr0]) => { const y = b1 - pr0 / mx * (H1 - 20); svgEl("rect", { x: xS(k) - 9, y, width: 18, height: b1 - y, fill: "var(--ink-2)", "fill-opacity": 0.5, rx: 2 }, svg); });
+      } else {
+        const xs = []; for (let i = 0; i <= 200; i++) xs.push(P.lo + (P.hi - P.lo) * i / 200);
+        const mx = Math.max(...xs.map(P.pdf)) * 1.15;
+        let d = `M${xS(P.lo)},${b1}`; xs.forEach(x => { d += `L${xS(x)},${b1 - P.pdf(x) / mx * (H1 - 20)}`; }); d += `L${xS(P.hi)},${b1}Z`;
+        svgEl("path", { d, fill: "var(--ink-2)", "fill-opacity": 0.2, stroke: "var(--ink-2)", "stroke-width": 1.5 }, svg);
+      }
+      svgEl("line", { x1: pl, x2: Wd - pr, y1: b1, y2: b1, stroke: "var(--rule-strong)" }, svg);
+      last.forEach(v => svgEl("circle", { cx: xS(clamp(v, P.lo, P.hi)), cy: b1 - 5, r: 3.5, fill: "var(--median)", stroke: "var(--surface)" }, svg));
+      if (last.length) {
+        const mL = last.reduce((a, b) => a + b, 0) / last.length;
+        svgEl("line", { x1: xS(mL), x2: xS(mL), y1: b1 - 22, y2: b1 + gap + 8, stroke: "var(--median)", "stroke-width": 2, "stroke-dasharray": "3 3" }, svg);
+      }
+      // means histogram
+      const y0 = H1 + gap, b2 = y0 + H2;
+      svgText(svg, Wd - pr, y0 + 10, `ממוצעים של מדגמים בגודל ${n}`, { "text-anchor": "end", "font-size": 12, "font-weight": 600, fill: "var(--ink-2)" });
+      const bins = 70, bwid = (P.hi - P.lo) / bins, cnt = new Array(bins).fill(0);
+      means.forEach(m => { const i = Math.floor((m - P.lo) / bwid); if (i >= 0 && i < bins) cnt[i]++; });
+      const se = P.sd / Math.sqrt(n);
+      const dens = cnt.map(c => means.length ? c / (means.length * bwid) : 0);
+      const peakN = phi(0) / se;
+      const ymax = Math.max(...dens, Math.min(peakN, Math.max(...dens, 0.0001) * 3), 0.0001) * 1.12;
+      const yS = v => b2 - v / ymax * (H2 - 24);
+      dens.forEach((d, i) => { if (d > 0) svgEl("rect", { x: xS(P.lo + i * bwid) + 0.5, y: yS(d), width: Math.max(1, xS(P.lo + bwid) - xS(P.lo) - 1), height: b2 - yS(d), fill: "var(--mean)", "fill-opacity": 0.75 }, svg); });
+      if (means.length >= 50) {
+        let d = ""; for (let i = 0; i <= 300; i++) { const x = P.lo + (P.hi - P.lo) * i / 300; const v = phi((x - P.mu) / se) / se; d += `${i ? "L" : "M"}${xS(x)},${Math.max(y0 + 14, yS(v))}`; }
+        svgEl("path", { d, fill: "none", stroke: "var(--ink)", "stroke-width": 2 }, svg);
+      }
+      svgEl("line", { x1: xS(P.mu), x2: xS(P.mu), y1: y0 + 14, y2: b2, stroke: "var(--ink)", "stroke-dasharray": "5 4" }, svg);
+      axisX(svg, xS, P.lo, P.hi, b2, niceStep(P.hi - P.lo, 8));
+      if (!means.length) svgText(svg, Wd / 2, y0 + H2 / 2, "לחצו על \"1,000 מדגמים\"", { "text-anchor": "middle", "font-size": 13, fill: "var(--muted)" });
+      stats.innerHTML = "";
+      const M = means.length ? means.reduce((a, b) => a + b, 0) / means.length : NaN;
+      const SD = means.length > 1 ? Math.sqrt(means.reduce((a, b) => a + (b - M) ** 2, 0) / (means.length - 1)) : NaN;
+      statTile(stats, "מספר מדגמים", means.length.toLocaleString("he-IL"));
+      statTile(stats, "μ האוכלוסייה", fmt(P.mu, 3));
+      statTile(stats, "ממוצע הממוצעים", fmt(M, 3), { swatch: "mean" });
+      statTile(stats, "טעות התקן לפי הנוסחה", fmt(se, 3), { hl: true });
+      statTile(stats, "סטיית התקן של הממוצעים בפועל", fmt(SD, 3), { hl: true });
+    }
+    render();
+  };
+
+  /* ---------- 9. binomial vs normal ---------- */
+  W.binapprox = function (root) {
+    const st = { n: 30, p: 0.2, k: 9, q: "lt", cc: true };
+    const ctl = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+    slider(ctl, "n", 5, 100, 1, st.n, v => { st.n = v; render(); }, v => String(v));
+    slider(ctl, "p", 0.05, 0.95, 0.01, st.p, v => { st.p = v; render(); }, v => fmt(v, 2));
+    const ctl2 = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    const lq = h("label", null, ctl2); h("span", { text: "השאלה:" }, lq);
+    const sq = h("select", { "aria-label": "סוג השאלה" }, lq);
+    [["eq", "P(X = k)"], ["lt", "P(X < k)"], ["le", "P(X ≤ k)"], ["gt", "P(X > k)"], ["ge", "P(X ≥ k)"]].forEach(([v, t]) => h("option", { value: v, text: t }, sq));
+    sq.value = st.q; sq.addEventListener("change", () => { st.q = sq.value; render(); });
+    const lk = h("label", null, ctl2); h("span", { text: "k =" }, lk);
+    const ik = h("input", { type: "number", step: 1, value: st.k, "aria-label": "k" }, lk);
+    ik.addEventListener("input", () => { const v = parseInt(ik.value, 10); if (Number.isFinite(v)) { st.k = v; render(); } });
+    const lc = h("label", null, ctl2); const cc = h("input", { type: "checkbox" }, lc); cc.checked = true; h("span", { text: "תיקון רציפות" }, lc);
+    cc.addEventListener("change", () => { st.cc = cc.checked; render(); });
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    const note = h("p", { class: "note", style: "margin:10px 0 0" }, root);
+    function render() {
+      const { n, p, k, q } = st, mu = n * p, sd = Math.sqrt(n * p * (1 - p));
+      const inc = x => q === "eq" ? x === k : q === "lt" ? x < k : q === "le" ? x <= k : q === "gt" ? x > k : x >= k;
+      let exact = 0; for (let x = 0; x <= n; x++) if (inc(x)) exact += binomPmf(x, n, p);
+      const bounds = st.cc
+        ? { eq: [k - 0.5, k + 0.5], lt: [-Infinity, k - 0.5], le: [-Infinity, k + 0.5], gt: [k + 0.5, Infinity], ge: [k - 0.5, Infinity] }[q]
+        : { eq: [k, k], lt: [-Infinity, k], le: [-Infinity, k], gt: [k, Infinity], ge: [k, Infinity] }[q];
+      const NC = (b0, b1) => Phi((b1 - mu) / sd) - Phi((b0 - mu) / sd);
+      const approx = Math.max(0, NC(bounds[0], bounds[1]));
+      const lo = Math.max(-0.5, Math.floor(mu - 4.5 * sd)), hi = Math.min(n + 0.5, Math.ceil(mu + 4.5 * sd));
+      holder.innerHTML = "";
+      const Wd = vbW(holder), Hd = 250, pl = 40, pr = 12, pt = 14, pb = 30;
+      const svg = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "בינומית מול קירוב נורמלי" }, holder);
+      const xS = x => pl + (x - lo) / (hi - lo) * (Wd - pl - pr);
+      let mx = 0; for (let x = Math.ceil(lo); x <= hi; x++) mx = Math.max(mx, binomPmf(x, n, p));
+      mx = Math.max(mx, phi(0) / sd) * 1.12;
+      const yS = v => Hd - pb - v / mx * (Hd - pt - pb);
+      const yst = niceStep(mx, 4);
+      for (let t = 0; t <= mx + 1e-9; t += yst) { svgEl("line", { x1: pl, x2: Wd - pr, y1: yS(t), y2: yS(t), stroke: "var(--rule)" }, svg); svgText(svg, pl - 6, yS(t) + 4, fmt(t, 2), { "text-anchor": "end", "font-size": 11, fill: "var(--muted)" }); }
+      // shaded normal area
+      const s0 = Math.max(bounds[0], lo), s1 = Math.min(bounds[1], hi);
+      if (s1 > s0) {
+        let d = `M${xS(s0)},${yS(0)}`;
+        for (let i = 0; i <= 140; i++) { const x = s0 + (s1 - s0) * i / 140; d += `L${xS(x)},${yS(phi((x - mu) / sd) / sd)}`; }
+        d += `L${xS(s1)},${yS(0)}Z`;
+        svgEl("path", { d, fill: "var(--median)", "fill-opacity": 0.3 }, svg);
+      }
+      for (let x = Math.ceil(lo); x <= Math.floor(hi); x++) {
+        const v = binomPmf(x, n, p), on = inc(x);
+        const r = svgEl("rect", { x: xS(x - 0.5) + 0.5, y: yS(v), width: Math.max(1, xS(x + 0.5) - xS(x - 0.5) - 1), height: Hd - pb - yS(v), fill: on ? "var(--accent)" : "var(--rule-strong)", "fill-opacity": on ? 0.55 : 0.45, stroke: on ? "var(--accent)" : "none" }, svg);
+        r.addEventListener("pointermove", ev => showTip(`P(X = ${x}) = ${fmtP(v)}`, ev)); r.addEventListener("pointerleave", hideTip);
+      }
+      let dc = ""; for (let i = 0; i <= 240; i++) { const x = lo + (hi - lo) * i / 240; dc += `${i ? "L" : "M"}${xS(x)},${yS(phi((x - mu) / sd) / sd)}`; }
+      svgEl("path", { d: dc, fill: "none", stroke: "var(--ink)", "stroke-width": 2 }, svg);
+      bounds.filter(Number.isFinite).forEach(bv => { if (bv >= lo && bv <= hi) svgEl("line", { x1: xS(bv), x2: xS(bv), y1: pt, y2: Hd - pb, stroke: "var(--median)", "stroke-width": 2, "stroke-dasharray": "5 3" }, svg); });
+      axisX(svg, xS, Math.ceil(lo), Math.floor(hi), Hd - pb, Math.max(1, Math.round(niceStep(hi - lo, 10))));
+      stats.innerHTML = "";
+      const qs = { eq: `P(X = ${k})`, lt: `P(X < ${k})`, le: `P(X ≤ ${k})`, gt: `P(X > ${k})`, ge: `P(X ≥ ${k})` }[q];
+      statTile(stats, "בינומית מדויקת", fmtP(exact), { hl: true });
+      statTile(stats, st.cc ? "קירוב עם תיקון" : "קירוב בלי תיקון", fmtP(approx), { hl: true });
+      statTile(stats, "הפרש", fmtP(Math.abs(approx - exact)));
+      statTile(stats, "np", fmt(mu, 2));
+      statTile(stats, "n(1−p)", fmt(n * (1 - p), 2));
+      statTile(stats, "σ = √(np(1−p))", fmt(sd, 3));
+      const ok = mu >= 5 && n * (1 - p) >= 5;
+      const bTxt = bounds.filter(Number.isFinite).map(v => fmt(v, 1)).join(" עד ");
+      note.innerHTML = `שאלה: ${L(qs)}. ` + (ok ? "התנאים לקירוב מתקיימים. " : "התנאים לקירוב לא מתקיימים: np או n(1−p) קטן מ-5, ולכן הקירוב עלול להיות גרוע. ") +
+        (st.cc ? `עם התיקון הגבול הוא ${bTxt}, כך שהעמודות הכלולות נכנסות בשלמותן.` : (q === "eq" ? "בלי תיקון, ההסתברות לנקודה אחת בנורמלית היא 0." : `בלי תיקון הגבול הוא ${bTxt}, בדיוק באמצע העמודה של ${k}, ולכן חצי עמודה נכנסת או נשארת בחוץ בטעות.`));
+    }
+    render();
+  };
+
+  /* ---------- 11. quiz ---------- */
+  W.quiz = function (root) {
+    const Q = [
+      { q: "A ו-B זרים, ולשניהם הסתברות חיובית. מה נכון?", o: ["הם בלתי תלויים", "הם תלויים", "אי אפשר לדעת", "P(A∩B) = P(A)·P(B)"], a: 1, e: "אם A קרה, B בוודאות לא קרה, כלומר הידיעה על A שינתה את הסיכוי של B ל-0. לכן הם תלויים. P(A∩B) = 0, ולא P(A)·P(B), שהוא חיובי." },
+      { q: "מטילים שתי קוביות. מה ההסתברות שהסכום יהיה 4?", o: ["1/11", "1/12", "3/36", "4/36"], a: 2, e: "הזוגות (1,3), (2,2), (3,1): שלושה מתוך 36. 1/11 מניח בטעות שכל 11 הסכומים שווים בסיכוי." },
+      { q: "P(A) = 0.3 ו-P(B|A) = 0.5. מה P(A∩B)?", o: ["0.8", "0.15", "0.6", "אי אפשר לדעת בלי P(B)"], a: 1, e: "כלל הכפל: <span class=\"ltr\">P(A∩B) = P(A)·P(B|A) = 0.3·0.5 = 0.15</span>. הוא עובד גם כשהמאורעות תלויים." },
+      { q: "בשלוש הטלות מטבע, X = מספר העצים. מהו המאורע {X = 0}?", o: ["המאורע הריק", "{(פ, פ, פ)}", "המספר 0", "{0}"], a: 1, e: "{X = 0} הוא אוסף התוצאות ש-X שולח ל-0. יש רק אחת כזו: שלוש פעמים פלי. לכן P(X = 0) = 1/8." },
+      { q: "מה מקרי במשתנה מקרי?", o: ["הכלל עצמו משתנה מהרצה להרצה", "תוצאת הניסוי, ולכן גם הערך שהכלל מחזיר", "שניהם", "אף אחד מהם"], a: 1, e: "הכלל קבוע: לאותה תוצאה הוא תמיד מחזיר אותו מספר. המקריות היא באיזו תוצאה תצא." },
+      { q: "E(X) = 4 ו-Var(X) = 9. עבור <span class=\"ltr\">Y = 2X − 3</span>, מהן התוחלת והשונות?", o: ["5 ו-15", "5 ו-36", "8 ו-18", "5 ו-33"], a: 1, e: "<span class=\"ltr\">E(Y) = 2·4 − 3 = 5</span>. בשונות הקבוע נעלם והמקדם נכנס בריבוע: <span class=\"ltr\">4·9 = 36</span>." },
+      { q: "X ו-Y בלתי תלויים, עם שונויות 4 ו-9. מה <span class=\"ltr\">Var(X − Y)</span>?", o: ["−5", "5", "13", "36"], a: 2, e: "בהפרש של משתנים בלתי תלויים השונויות <strong>מתחברות</strong>: 4 + 9 = 13. אי-ודאות לא מתקזזת." },
+      { q: "השונות המשותפת בין גובה (ס\"מ) למשקל (ק\"ג) היא 50. מודדים את המשקל בגרמים. מה קורה למקדם המתאם?", o: ["גדל פי 1,000", "קטן פי 1,000", "לא משתנה", "תלוי בנתונים"], a: 2, e: "השונות המשותפת גדלה פי 1,000, אבל גם סטיית התקן של המשקל, ולכן היחס r לא זז. בדיוק בשביל זה מחלקים בסטיות התקן." },
+      { q: "מקדם המתאם בין שני משתנים הוא 0. מה אפשר להסיק?", o: ["הם בלתי תלויים", "אין ביניהם קשר לינארי", "אין ביניהם שום קשר", "אחד מהם קבוע"], a: 1, e: "r = 0 שולל רק קשר לינארי. ייתכן קשר מעוקל חזק, כמו Y = X² כש-X סימטרי סביב 0." },
+      { q: "<span class=\"ltr\">X ~ B(10, 0.3)</span>. איזה ביטוי שווה ל-<span class=\"ltr\">P(X > 3)</span>?", o: ["1 − P(X ≤ 3)", "1 − P(X < 3)", "P(X ≥ 3)", "1 − P(X ≥ 3)"], a: 0, e: "בבדיד, \"גדול מ-3\" הוא \"4 ומעלה\", והמשלים שלו הוא \"3 ומטה\", כלומר P(X ≤ 3)." },
+      { q: "שיחות מגיעות בקצב ממוצע של 4 לשעה. איך מתפלג מספר השיחות בחצי שעה?", o: ["Pois(4)", "Pois(2)", "Pois(8)", "Exp(2)"], a: 1, e: "בחצי שעה הקצב הוא חצי: 4·0.5 = 2. מעריכית מתארת זמן המתנה, לא מספר שיחות." },
+      { q: "<span class=\"ltr\">X ~ N(70, 9)</span>. מה <span class=\"ltr\">P(X > 76)</span>?", o: ["0.2514", "0.0228", "0.1587", "0.9772"], a: 1, e: "השונות 9, ולכן σ = 3, ו-<span class=\"ltr\">z = (76 − 70)/3 = 2</span>. <span class=\"ltr\">1 − Φ(2) = 0.0228</span>. מי שבחר 0.2514 חילק בטעות ב-9." },
+      { q: "באוכלוסייה σ = 12. דוגמים 36 תצפיות. מהי סטיית התקן של הממוצע?", o: ["12", "2", "6", "1/3"], a: 1, e: "טעות התקן: <span class=\"ltr\">σ/√n = 12/6 = 2</span>." },
+      { q: "מקרבים <span class=\"ltr\">X ~ B(100, 0.3)</span> בנורמלית. איך מחשבים <span class=\"ltr\">P(X ≥ 20)</span>?", o: ["P(Y > 20.5)", "P(Y > 19.5)", "P(Y > 20)", "P(Y < 19.5)"], a: 1, e: "\"לפחות 20\" כולל את העמודה של 20, שמתחילה ב-19.5. לכן הגבול זז החוצה ממנה, ל-19.5." },
+      { q: "למוקד מגיעות 10 שיחות בשעה, 30% מהן דחופות, כל שיחה באופן בלתי תלוי. מה נכון?", o: ["מספר הדחופות ~ Pois(3), והוא בלתי תלוי במספר הלא-דחופות", "מספר הדחופות ~ B(10, 0.3)", "מספר הדחופות ~ Pois(3), אבל הוא תלוי במספר הלא-דחופות", "מספר הדחופות ~ Pois(10)"], a: 0, e: "פיצול פואסון: כל סוג מתפלג פואסון עם חלקו מהקצב, והם בלתי תלויים, כי המספר הכולל עצמו אקראי.", ext: true },
+      { q: "מה אומר משפט הגבול המרכזי, שחוק המספרים הגדולים לא אומר?", o: ["שהממוצע שואף ל-μ", "שהממוצע מתפלג בקירוב נורמלית סביב μ, עם סטיית תקן σ/√n", "שכל תצפית מתפלגת נורמלית", "שהשונות שואפת ל-0"], a: 1, e: "החוק אומר לאן הממוצע הולך. המשפט אומר באיזו צורה ובאיזה רוחב הוא מתפזר בדרך, וזה מה שמאפשר לחשב הסתברויות.", ext: true }
+    ];
+    const score = h("p", { class: "score" }, root);
+    let right = 0, answered = 0;
+    const upd = () => { score.textContent = `ציון: ${right} מתוך ${answered} שנענו (${Q.length} שאלות)`; };
+    Q.forEach((it, idx) => {
+      const box = h("div", { class: "quiz-q" + (it.ext ? " ext-only" : "") }, root);
+      const qh = h("div", { class: "qh" }, box);
+      h("span", { class: "qn", text: `${idx + 1}.` }, qh);
+      h("span", null, qh, it.q);
+      if (it.ext) h("span", { class: "ext-badge", text: "הרחבה" }, qh);
+      const opts = h("div", { class: "quiz-opts" }, box);
+      const exp = h("div", { class: "quiz-exp" }, box);
+      const btns = it.o.map((t, i) => {
+        const b = h("button", { type: "button", text: t }, opts);
+        b.addEventListener("click", () => {
+          btns.forEach(x => x.disabled = true);
+          answered++;
+          if (i === it.a) { right++; b.classList.add("right"); exp.innerHTML = "<strong>נכון.</strong> " + it.e; }
+          else { b.classList.add("wrong"); btns[it.a].classList.add("right"); exp.innerHTML = "<strong>לא בדיוק.</strong> " + it.e; }
+          upd();
+        });
+        return b;
+      });
+    });
+    upd();
+  };
+
+  /* ================= boot ================= */
+  function boot() {
+    document.querySelectorAll("[data-w]").forEach(el => {
+      const fn = W[el.dataset.w];
+      if (fn) {
+        try { fn(el); } catch (e) { console.error("widget " + el.dataset.w, e); el.textContent = "שגיאה בטעינת הרכיב."; }
+      }
+    });
+
+    const themeBtn = document.getElementById("toggle-theme");
+    const root = document.documentElement;
+    const isDark = () => root.dataset.theme ? root.dataset.theme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const syncTheme = () => { themeBtn.textContent = isDark() ? "מצב בהיר" : "מצב כהה"; themeBtn.setAttribute("aria-pressed", String(isDark())); };
+    try { const saved = localStorage.getItem("stats-guide-theme"); if (saved === "dark" || saved === "light") root.dataset.theme = saved; } catch (e) { /* storage unavailable */ }
+    themeBtn.addEventListener("click", () => {
+      root.dataset.theme = isDark() ? "light" : "dark";
+      try { localStorage.setItem("stats-guide-theme", root.dataset.theme); } catch (e) { /* storage unavailable */ }
+      syncTheme();
+    });
+    syncTheme();
+
+    const extBtns = Array.from(document.querySelectorAll("[data-ext]"));
+    extBtns.forEach(b => b.addEventListener("click", () => {
+      const m = b.dataset.ext;
+      extBtns.forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+      document.body.classList.toggle("hide-ext", m === "hidden");
+      document.querySelectorAll("details.ext").forEach(d => { d.open = m === "open"; });
+    }));
+
+    const links = Array.from(document.querySelectorAll("nav.toc a"));
+    const map = new Map(links.map(a => [a.getAttribute("href").slice(1), a]));
+    const secs = Array.from(document.querySelectorAll("section.chapter"));
+    let lastActive = null, ticking = false;
+    function syncToc() {
+      ticking = false;
+      const line = window.innerHeight * 0.3;
+      let cur = secs[0];
+      secs.forEach(sec => { if (sec.getBoundingClientRect().top <= line) cur = sec; });
+      if (cur === lastActive) return;
+      lastActive = cur;
+      links.forEach(l => l.classList.remove("active"));
+      const a = map.get(cur.id);
+      if (a) { a.classList.add("active"); if (window.innerWidth <= 920) a.scrollIntoView({ block: "nearest", inline: "center" }); }
+    }
+    window.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(syncToc); } }, { passive: true });
+    syncToc();
+
+    if (window.renderMathInElement) {
+      window.renderMathInElement(document.body, {
+        delimiters: [{ left: "$$", right: "$$", display: true }, { left: "\\(", right: "\\)", display: false }],
+        throwOnError: false,
+        trust: ctx => ctx.command === "\\htmlClass",
+        strict: code => code === "htmlExtension" ? "ignore" : "warn",
+        macros: { "\\cA": "\\htmlClass{cA}{#1}", "\\cB": "\\htmlClass{cB}{#1}" }
+      });
+      // keep short inline formulas on one line; long calculations may still wrap on phones
+      document.querySelectorAll(".katex").forEach(k => {
+        if (k.closest(".katex-display")) return;
+        const src = k.querySelector("annotation");
+        if (src && src.textContent.trim().length <= 28) k.classList.add("kx-nw");
+      });
+    }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
+})();
+
+});
+</script>
+</body>
+</html>

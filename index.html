@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>סטטיסטיקה · מדריכי למידה</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <p class="eyebrow" id="meta">&nbsp;</p>
+      <h1><span id="title">סטטיסטיקה</span> <span class="sub">מדריכי למידה</span></h1>
+      <p class="lede">לכל הרצאה מדריך אינטראקטיבי עם הסברים, דוגמאות מחושבות ותרגול.</p>
+      <label class="search">
+        <span class="sr">חיפוש</span>
+        <input id="q" type="search" placeholder="חיפוש נושא, למשל: רווח סמך" autocomplete="off">
+      </label>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <ol class="lectures" id="list"></ol>
+    <p class="notice" id="notice" hidden></p>
+  </main>
+
+  <footer class="wrap foot" id="foot"></footer>
+
+  <script>
+  (async () => {
+    const $ = (id) => document.getElementById(id);
+    const el = (tag, cls, text) => {
+      const e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text != null) e.textContent = text;
+      return e;
+    };
+    let data;
+    try {
+      const r = await fetch('lectures.json', { cache: 'no-cache' });
+      if (!r.ok) throw new Error(r.status);
+      data = await r.json();
+    } catch (e) {
+      const n = $('notice');
+      n.hidden = false;
+      n.textContent = location.protocol === 'file:'
+        ? 'הדף נפתח כקובץ. כדי לצפות בו מקומית יש להריץ שרת: python -m http.server'
+        : 'לא הצלחנו לטעון את רשימת ההרצאות. נסו לרענן את הדף.';
+      return;
+    }
+
+    const c = data.course || {};
+    $('title').textContent = c.title || 'סטטיסטיקה';
+    document.title = `${c.title || 'סטטיסטיקה'} · מדריכי למידה`;
+    $('meta').textContent = [c.code, c.institution, c.lecturer, c.semester].filter(Boolean).join(' · ');
+    $('foot').textContent = c.note || '';
+
+    const lectures = (data.lectures || []).filter(l => l.published).sort((a, b) => a.n - b.n);
+    const list = $('list');
+
+    for (const l of lectures) {
+      const li = el('li', 'card');
+      li.dataset.search = [l.title, l.summary, ...(l.topics || [])].join(' ').toLowerCase();
+
+      li.append(el('span', 'num', String(l.n).padStart(2, '0')));
+      const body = el('div', 'body');
+      const h = el('h2');
+      const a = el('a', 'main-link', l.title);
+      a.href = `lectures/${l.slug}/`;
+      h.append(a);
+      body.append(h);
+      if (l.summary) body.append(el('p', 'summary', l.summary));
+      if (l.topics?.length) {
+        const ul = el('ul', 'topics');
+        l.topics.forEach(t => ul.append(el('li', null, t)));
+        body.append(ul);
+      }
+      if (l.solutions?.published) {
+        const s = el('a', 'sol', 'פתרונות לחוברת');
+        s.href = `lectures/${l.slug}/${l.solutions.path}`;
+        body.append(s);
+      }
+      li.append(body);
+      list.append(li);
+    }
+
+    if (!lectures.length) {
+      const n = $('notice');
+      n.hidden = false;
+      n.textContent = 'עדיין לא פורסמו מדריכים.';
+    }
+
+    $('q').addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      let shown = 0;
+      for (const li of list.children) {
+        const hit = !q || li.dataset.search.includes(q);
+        li.hidden = !hit;
+        shown += hit;
+      }
+      const n = $('notice');
+      n.hidden = shown > 0;
+      if (!shown) n.textContent = 'לא נמצאה הרצאה שמתאימה לחיפוש.';
+    });
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,2473 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מרכז ופיזור</title>
+<meta name="description" content="מדריך למידה אינטראקטיבי להרצאה 1 בקורס סטטיסטיקה 4221010: מדדי מרכז ומדדי פיזור">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=IBM+Plex+Sans+Hebrew:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+:root {
+  color-scheme: light;
+  --paper: #f5f7fa;
+  --grid: rgba(31, 78, 140, 0.055);
+  --surface: #ffffff;
+  --surface-2: #eef2f7;
+  --ink: #17202d;
+  --ink-2: #445063;
+  --muted: #6a7486;
+  --rule: #d6dde7;
+  --rule-strong: #b5c0cf;
+  --accent: #1f4e8c;
+  --accent-soft: #e3ecf8;
+  --mean: #2a78d6;
+  --median: #eb6834;
+  --mode: #1baf7a;
+  --neg: #e34948;
+  --pos: #2a78d6;
+  --ext: #5a47cf;
+  --ext-bg: #f2f0fd;
+  --ext-rule: #cfc8f5;
+  --good: #0f7a3e;
+  --good-bg: #e6f4ec;
+  --bad: #b3261e;
+  --bad-bg: #fbe9e7;
+  --radius: 10px;
+  --font-body: "IBM Plex Sans Hebrew", "Segoe UI", Arial, sans-serif;
+  --font-head: "Frank Ruhl Libre", "David", Georgia, serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #13171d;
+    --grid: rgba(140, 170, 220, 0.05);
+    --surface: #1b2129;
+    --surface-2: #232b36;
+    --ink: #e9edf3;
+    --ink-2: #bcc5d2;
+    --muted: #8f9aab;
+    --rule: #2f3946;
+    --rule-strong: #46525f;
+    --accent: #8db6ec;
+    --accent-soft: #22324a;
+    --mean: #3987e5;
+    --median: #d95926;
+    --mode: #199e70;
+    --neg: #e66767;
+    --pos: #3987e5;
+    --ext: #a397f0;
+    --ext-bg: #201d36;
+    --ext-rule: #3d3670;
+    --good: #5fc98d;
+    --good-bg: #17301f;
+    --bad: #f08a80;
+    --bad-bg: #3a1c1a;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #13171d;
+  --grid: rgba(140, 170, 220, 0.05);
+  --surface: #1b2129;
+  --surface-2: #232b36;
+  --ink: #e9edf3;
+  --ink-2: #bcc5d2;
+  --muted: #8f9aab;
+  --rule: #2f3946;
+  --rule-strong: #46525f;
+  --accent: #8db6ec;
+  --accent-soft: #22324a;
+  --mean: #3987e5;
+  --median: #d95926;
+  --mode: #199e70;
+  --neg: #e66767;
+  --pos: #3987e5;
+  --ext: #a397f0;
+  --ext-bg: #201d36;
+  --ext-rule: #3d3670;
+  --good: #5fc98d;
+  --good-bg: #17301f;
+  --bad: #f08a80;
+  --bad-bg: #3a1c1a;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+
+body {
+  margin: 0;
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+
+/* ---------- header ---------- */
+.masthead {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 48px 24px 8px;
+}
+.course-line { color: var(--muted); font-size: 15px; margin: 0 0 10px; }
+.masthead h1 {
+  font-family: var(--font-head);
+  font-weight: 900;
+  font-size: clamp(38px, 6.4vw, 72px);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.masthead h1 .h1-second { display: block; color: var(--ink-2); font-weight: 500; }
+.masthead .lede { max-width: 640px; font-size: 19px; color: var(--ink-2); margin: 18px 0 0; }
+
+.hero-lab { max-width: 1180px; margin: 28px auto 0; padding: 0 24px; }
+
+.controls-bar {
+  max-width: 1180px; margin: 24px auto 0; padding: 0 24px;
+  display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center;
+  font-size: 15px; color: var(--ink-2);
+}
+.legend-ext { display: inline-flex; align-items: center; gap: 8px; }
+
+/* ---------- layout ---------- */
+.layout {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px 24px 80px;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 48px;
+}
+nav.toc {
+  position: sticky; top: 16px; align-self: start;
+  font-size: 15px; line-height: 1.5;
+  max-height: calc(100vh - 32px); overflow: auto;
+}
+nav.toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; }
+nav.toc li { counter-increment: toc; }
+nav.toc a {
+  display: grid; grid-template-columns: 26px 1fr; gap: 4px;
+  padding: 6px 10px; border-radius: 6px; text-decoration: none; color: var(--ink-2);
+  border-inline-start: 2px solid transparent;
+}
+nav.toc a::before { content: counter(toc); color: var(--muted); font-variant-numeric: tabular-nums; }
+nav.toc a:hover { background: var(--surface-2); color: var(--ink); }
+nav.toc a.active { color: var(--ink); border-inline-start-color: var(--accent); background: var(--surface); }
+nav.toc .toc-title { font-weight: 600; color: var(--ink); margin: 0 0 8px; padding-inline-start: 10px; }
+
+main { min-width: 0; max-width: 760px; }
+
+section.chapter { padding-top: 40px; }
+section.chapter + section.chapter { border-top: 1px solid var(--rule); margin-top: 40px; }
+.chapter-num { font-family: var(--font-head); color: var(--muted); font-size: 18px; margin: 0; }
+h2 {
+  font-family: var(--font-head); font-weight: 700;
+  font-size: clamp(28px, 3.6vw, 38px); line-height: 1.15; margin: 2px 0 14px;
+}
+h3 { font-size: 21px; line-height: 1.35; margin: 34px 0 8px; font-weight: 600; }
+h4 { font-size: 17px; margin: 22px 0 4px; font-weight: 600; }
+p { margin: 0 0 14px; }
+ul, ol { margin: 0 0 14px; padding-inline-start: 22px; }
+li { margin-bottom: 4px; }
+strong { font-weight: 600; }
+
+.slide {
+  display: inline-block; font-size: 13px; line-height: 1.4; white-space: nowrap;
+  padding: 1px 8px; border-radius: 999px; vertical-align: 2px;
+  border: 1px solid var(--rule-strong); color: var(--muted); background: var(--surface);
+  margin-inline-start: 6px; font-weight: 500;
+}
+h2 .slide, h3 .slide { vertical-align: 4px; }
+
+.def {
+  border-inline-start: 3px solid var(--accent);
+  padding: 4px 16px; margin: 14px 0 18px; background: var(--surface);
+  border-radius: 0 6px 6px 0;
+}
+[dir="rtl"] .def { border-radius: 6px 0 0 6px; }
+.def p:last-child { margin-bottom: 0; }
+
+.math-block { overflow-x: auto; overflow-y: hidden; padding: 4px 0; margin: 6px 0 14px; }
+.katex { direction: ltr; unicode-bidi: isolate; font-size: 1.05em; }
+.katex-display { margin: 0.4em 0; }
+.ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+.num { font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
+
+table.t {
+  border-collapse: collapse; width: 100%; margin: 10px 0 18px; font-size: 15.5px;
+  background: var(--surface); border-radius: 8px; overflow: hidden;
+}
+.table-wrap { overflow-x: auto; margin: 10px 0 18px; }
+.table-wrap table.t { margin: 0; }
+table.t th, table.t td { padding: 8px 12px; text-align: start; border-bottom: 1px solid var(--rule); }
+table.t th { background: var(--surface-2); font-weight: 600; color: var(--ink); }
+table.t tr:last-child td { border-bottom: 0; }
+table.t td.n, table.t th.n { text-align: center; font-variant-numeric: tabular-nums; unicode-bidi: plaintext; }
+
+.note { color: var(--ink-2); font-size: 15.5px; }
+.callout {
+  background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius);
+  padding: 14px 18px; margin: 16px 0;
+}
+.callout > :last-child { margin-bottom: 0; }
+.callout .callout-h { font-weight: 600; margin-bottom: 4px; }
+.takeaway { font-family: var(--font-head); font-size: 22px; line-height: 1.45; margin: 22px 0; color: var(--ink); }
+
+/* ---------- extension blocks ---------- */
+details.ext {
+  border: 1px solid var(--ext-rule);
+  background: var(--ext-bg);
+  border-radius: var(--radius);
+  margin: 18px 0;
+}
+details.ext > summary {
+  list-style: none; cursor: pointer;
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px;
+  padding: 12px 16px; font-weight: 600; color: var(--ink);
+}
+details.ext > summary::-webkit-details-marker { display: none; }
+details.ext > summary::after {
+  content: "+"; margin-inline-start: auto; color: var(--ext); font-weight: 400; font-size: 22px; line-height: 1;
+}
+details.ext[open] > summary::after { content: "−"; }
+.ext-badge {
+  display: inline-block; font-size: 12.5px; font-weight: 600; line-height: 1.5;
+  color: #fff; background: var(--ext); padding: 1px 9px; border-radius: 999px;
+}
+:root[data-theme="dark"] .ext-badge { color: #15122b; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .ext-badge { color: #15122b; } }
+.ext-later { font-size: 13.5px; font-weight: 400; color: var(--ext); }
+details.ext .ext-body { padding: 2px 18px 16px; border-top: 1px dashed var(--ext-rule); }
+details.ext .ext-body > :first-child { margin-top: 12px; }
+details.ext .ext-body h4:first-child { margin-top: 12px; }
+body.hide-ext details.ext, body.hide-ext .ext-only { display: none; }
+
+/* ---------- reveal ---------- */
+details.reveal { margin: 8px 0 16px; }
+details.reveal > summary {
+  cursor: pointer; display: inline-block; font-size: 15px; font-weight: 600; color: var(--accent);
+  padding: 4px 12px; border: 1px solid var(--rule-strong); border-radius: 999px; background: var(--surface);
+}
+details.reveal > summary::-webkit-details-marker { display: none; }
+details.reveal[open] > summary { margin-bottom: 10px; }
+details.reveal .reveal-body { border-inline-start: 3px solid var(--rule-strong); padding: 2px 16px; }
+
+/* ---------- widgets ---------- */
+figure.lab {
+  margin: 22px 0; padding: 18px 18px 14px; background: var(--surface);
+  border: 1px solid var(--rule); border-radius: 14px;
+}
+.lab-title { font-weight: 600; margin: 0 0 2px; font-size: 16.5px; }
+.lab-hint { color: var(--muted); font-size: 14.5px; margin: 0 0 10px; }
+figure.lab svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: none; }
+figure.lab svg text { font-family: var(--font-body); }
+.lab-row { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin: 10px 0 0; font-size: 15px; }
+.lab-row label { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); }
+.btn {
+  font: inherit; font-size: 14.5px; font-weight: 500; cursor: pointer;
+  padding: 5px 14px; border-radius: 8px; border: 1px solid var(--rule-strong);
+  background: var(--surface); color: var(--ink);
+}
+.btn:hover { background: var(--surface-2); }
+.btn.primary { background: var(--accent); color: var(--surface); border-color: var(--accent); }
+.btn.primary:hover { filter: brightness(1.08); }
+.seg { display: inline-flex; border: 1px solid var(--rule-strong); border-radius: 8px; overflow: hidden; }
+.seg button { font: inherit; font-size: 14.5px; padding: 5px 12px; border: 0; background: var(--surface); color: var(--ink-2); cursor: pointer; }
+.seg button + button { border-inline-start: 1px solid var(--rule-strong); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--surface); }
+input[type="range"] { accent-color: var(--accent); width: 160px; }
+input[type="number"], textarea, select {
+  font: inherit; font-size: 15px; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--rule-strong); border-radius: 6px; padding: 4px 8px;
+}
+input[type="number"] { width: 72px; }
+textarea { width: 100%; min-height: 72px; direction: ltr; text-align: left; font-variant-numeric: tabular-nums; }
+
+.stats {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  gap: 8px; margin-top: 12px;
+}
+.stat {
+  border: 1px solid var(--rule); border-radius: 8px; padding: 6px 10px; background: var(--paper);
+}
+.stat .k { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.stat .v { font-size: 19px; font-weight: 600; font-variant-numeric: tabular-nums; direction: ltr; text-align: right; }
+.stat.ext-stat { border-color: var(--ext-rule); background: var(--ext-bg); }
+.swatch { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+.swatch.mean { background: var(--mean); }
+.swatch.median { background: repeating-linear-gradient(90deg, var(--median) 0 4px, transparent 4px 6px); }
+.swatch.mode { background: repeating-linear-gradient(90deg, var(--mode) 0 2px, transparent 2px 4px); }
+
+.twin { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.twin > div { min-width: 0; }
+.twin .tw-h { font-weight: 600; font-size: 15px; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.twin .tw-h .num { color: var(--ink-2); font-weight: 500; }
+
+.feedback { font-size: 15px; margin-top: 8px; min-height: 1.5em; }
+.feedback.ok { color: var(--good); }
+.feedback.no { color: var(--bad); }
+
+/* classifier */
+.classify { display: grid; gap: 10px; margin-top: 8px; }
+.cl-item { border: 1px solid var(--rule); border-radius: 10px; padding: 10px 12px; background: var(--paper); }
+.cl-item .cl-q { font-weight: 500; margin-bottom: 6px; }
+.cl-opts { display: flex; flex-wrap: wrap; gap: 6px; }
+.cl-opts button {
+  font: inherit; font-size: 14px; padding: 3px 12px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--rule-strong); background: var(--surface); color: var(--ink);
+}
+.cl-opts button.right { background: var(--good-bg); border-color: var(--good); color: var(--good); font-weight: 600; }
+.cl-opts button.wrong { background: var(--bad-bg); border-color: var(--bad); color: var(--bad); }
+.cl-why { font-size: 14.5px; color: var(--ink-2); margin-top: 6px; }
+
+/* quiz */
+.quiz-q { border: 1px solid var(--rule); background: var(--surface); border-radius: 12px; padding: 14px 16px; margin: 12px 0; }
+.quiz-q .qh { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; font-weight: 600; margin-bottom: 8px; }
+.quiz-q .qn { color: var(--muted); font-variant-numeric: tabular-nums; }
+.quiz-opts { display: grid; gap: 6px; }
+.quiz-opts button {
+  font: inherit; text-align: start; padding: 8px 12px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--rule); background: var(--paper); color: var(--ink);
+}
+.quiz-opts button:hover:not(:disabled) { border-color: var(--rule-strong); }
+.quiz-opts button.right { background: var(--good-bg); border-color: var(--good); }
+.quiz-opts button.wrong { background: var(--bad-bg); border-color: var(--bad); }
+.quiz-opts button:disabled { cursor: default; }
+.quiz-exp { margin-top: 10px; font-size: 15.5px; color: var(--ink-2); }
+.score { font-weight: 600; }
+
+/* kibbutz steps */
+.steps { counter-reset: st; }
+.step { border-inline-start: 2px solid var(--rule-strong); padding: 0 16px 6px; margin: 0 0 6px; position: relative; }
+.step-h { font-weight: 600; }
+
+/* tooltips */
+.tip {
+  position: fixed; z-index: 50; pointer-events: none; background: var(--ink); color: var(--paper);
+  font-size: 13.5px; padding: 4px 8px; border-radius: 6px; opacity: 0; transition: opacity .1s;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.tip.on { opacity: 1; }
+
+footer.foot { max-width: 1180px; margin: 0 auto; padding: 24px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--rule); }
+
+/* ---------- responsive ---------- */
+@media (max-width: 920px) {
+  .layout { grid-template-columns: 1fr; gap: 0; padding: 8px 16px 64px; }
+  nav.toc {
+    position: sticky; top: 0; z-index: 20; max-height: none; overflow-x: auto; overflow-y: hidden;
+    background: var(--paper); margin: 0 -16px; padding: 8px 16px; border-bottom: 1px solid var(--rule);
+  }
+  nav.toc .toc-title { display: none; }
+  nav.toc ol { display: flex; gap: 4px; white-space: nowrap; }
+  nav.toc a { display: inline-flex; gap: 6px; padding: 4px 10px; border-inline-start: 0; border-bottom: 2px solid transparent; border-radius: 6px 6px 0 0; }
+  nav.toc a.active { border-bottom-color: var(--accent); }
+  .masthead { padding: 32px 16px 4px; }
+  .hero-lab, .controls-bar { padding: 0 16px; }
+  html { scroll-padding-top: 60px; }
+}
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  .twin { grid-template-columns: 1fr; }
+  figure.lab { padding: 14px 12px 12px; margin-left: -4px; margin-right: -4px; }
+  table.t th, table.t td { padding: 6px 8px; }
+}
+@media print {
+  body { background: #fff; }
+  nav.toc, .controls-bar { display: none; }
+  .layout { display: block; }
+  details.ext { break-inside: avoid; }
+}
+
+figure.lab svg g .ring { opacity: 0; }
+figure.lab svg g:focus .ring { opacity: 1; }
+
+/* range sliders: min on the left, max on the right, like the number line */
+input[type="range"] { direction: ltr; }
+
+/* scales ladder */
+.ladder { display: grid; grid-template-columns: minmax(96px, 1.2fr) repeat(4, minmax(0, 1fr)); gap: 6px; }
+.ld-corner { min-height: 1px; }
+.ld-cap { display: flex; flex-direction: column; align-items: center; justify-content: end; text-align: center; padding: 2px 2px 4px; }
+.ld-sym { font-size: 19px; font-weight: 700; color: var(--ink); letter-spacing: 0.04em; direction: ltr; }
+.ld-capname { font-size: 13px; color: var(--muted); }
+.ld-scale {
+  font: inherit; text-align: start; cursor: pointer; border: 1px solid var(--rule); background: var(--paper);
+  border-radius: 8px; padding: 6px 10px; display: flex; flex-direction: column; line-height: 1.25; color: var(--ink);
+}
+.ld-scale:hover { border-color: var(--rule-strong); }
+.ld-scale.sel { border-color: var(--accent); background: var(--accent-soft); }
+.ld-name { font-weight: 700; font-size: 16px; }
+.ld-en { font-size: 12px; color: var(--muted); direction: ltr; text-align: end; }
+.ld-cell {
+  border-radius: 8px; border: 1px dashed var(--rule); min-height: 46px; position: relative;
+  display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700; direction: ltr;
+  color: var(--accent); transition: background .15s;
+}
+.ld-cell.on { border: 1px solid transparent; background: var(--accent-soft); }
+.ld-cell.on.new { background: var(--accent); color: var(--surface); }
+.ld-cell.sel { box-shadow: 0 0 0 2px var(--accent) inset; }
+.ld-cell.on.new.sel { box-shadow: none; }
+.ld-newtag { position: absolute; top: 2px; inset-inline-end: 6px; font-size: 10px; font-weight: 600; opacity: .85; direction: rtl; }
+.ladder-detail { display: grid; grid-template-columns: 220px 1fr; gap: 16px; align-items: center; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--rule); }
+.ld-art svg { width: 100%; height: auto; }
+.ld-text p { margin: 0 0 8px; }
+.ld-title { font-weight: 700; font-size: 18px; }
+.ld-adds { font-weight: 500; font-size: 14.5px; color: var(--accent); margin-inline-start: 8px; }
+.ld-can strong { color: var(--good); }
+.ld-cant strong { color: var(--bad); }
+@media (max-width: 600px) {
+  .ladder { grid-template-columns: 82px repeat(4, minmax(0, 1fr)); gap: 4px; }
+  .ld-capname { font-size: 11.5px; }
+  .ld-sym { font-size: 16px; }
+  .ld-newtag { display: none; }
+  .ladder-detail { grid-template-columns: 1fr; }
+  .ld-art { max-width: 260px; }
+}
+
+input[type="number"] { direction: ltr; text-align: right; }
+
+</style>
+</head>
+<body>
+<header class="masthead">
+  <h1>מרכז ופיזור<span class="h1-second">איך מתארים אלף מספרים בשניים</span></h1>
+  <p class="lede">מדריך רעיוני ומעשי לסטטיסטיקה תיאורית. אפשר לשחק עם כל גרף: לגרור נקודות, להזיז מחוונים ולראות מה משתנה ומה לא.</p>
+</header>
+
+<div class="controls-bar">
+  <span class="legend-ext"><span class="ext-badge">הרחבה</span> חומר שמעבר לחומר היחידה. מקופל כברירת מחדל.</span>
+  <button class="btn" id="toggle-theme" type="button" aria-pressed="false">מצב כהה</button>
+  <button class="btn" id="toggle-ext-open" type="button">פתח את כל ההרחבות</button>
+  <label><input type="checkbox" id="toggle-ext-hide"> הסתר הרחבות (חומר בסיס בלבד)</label>
+</div>
+
+<div class="layout">
+  <nav class="toc" aria-label="תוכן המדריך">
+    <p class="toc-title">תוכן</p>
+    <ol>
+      <li><a href="#intro">מהי סטטיסטיקה</a></li>
+      <li><a href="#concepts">מושגי יסוד</a></li>
+      <li><a href="#tables">טבלאות ותרשימים</a></li>
+      <li><a href="#center">מדדי מרכז</a></li>
+      <li><a href="#spread">מדדי פיזור</a></li>
+      <li><a href="#transform">טרנספורמציות לינאריות</a></li>
+      <li><a href="#lab">מחשבון</a></li>
+      <li><a href="#quiz">בדקו את עצמכם</a></li>
+      <li><a href="#pitfalls">מלכודות נפוצות</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+<!-- ============ 1 ============ -->
+<section class="chapter" id="intro">
+  <p class="chapter-num">פרק 1</p>
+  <h2>מהי סטטיסטיקה</h2>
+  <div class="def"><p><strong>סטטיסטיקה</strong> היא תחום ידע שעוסק באיסוף, עיבוד, ניתוח והצגת מסקנות מנתונים כמותיים, כדי לפתור בעיות מסוגים שונים.</p></div>
+
+  <h3>שני ענפים וגשר ביניהם</h3>
+  <div class="table-wrap"><table class="t">
+    <tr><th></th><th>סטטיסטיקה תיאורית</th><th>סטטיסטיקה היסקית</th></tr>
+    <tr><td><strong>מה היא עושה</strong></td><td>מתארת בתמציתיות את הנתונים שנאספו, בלי להכליל מעבר להם</td><td>מסיקה מסקנות על האוכלוסייה מתוך נתוני המדגם</td></tr>
+    <tr><td><strong>הכלים</strong></td><td>טבלאות, מדדים, גרפים</td><td>אמידה נקודתית, רווח סמך, בדיקת השערות</td></tr>
+    <tr><td><strong>טעות אפשרית?</strong></td><td>לא, היא מתארת את מה שיש</td><td>כן, תמיד קיימת הסתברות לטעות</td></tr>
+  </table></div>
+  <p><strong>תורת ההסתברות</strong> היא הגשר בין השניים: ענף מתמטי שמספק מודלים לאי-ודאות. בזכותה אפשר לומר עד כמה מסקנה ממדגם עלולה להיות שגויה. היחידה הזו כולה עוסקת בצד התיאורי. שאר הקורס עוסק בהסקה.</p>
+
+  <h3>שלוש שאלות שכל סטטיסטיקאי שואל</h3>
+  <ol>
+    <li>בהינתן הנתונים שראינו וההנחות שלנו, מה אפשר להניח על נתונים שעוד לא ראינו?</li>
+    <li>כמה בטוחים אנחנו יכולים להיות בהנחות האלה?</li>
+    <li>אם אפשר לאסוף עוד נתונים, מה כדאי לאסוף ואיך?</li>
+  </ol>
+  <p>המטרה הסופית בכל המקרים: <strong>לקבל החלטות</strong> על סמך המידע הקיים.</p>
+</section>
+
+<!-- ============ 2 ============ -->
+<section class="chapter" id="concepts">
+  <p class="chapter-num">פרק 2</p>
+  <h2>מושגי יסוד</h2>
+
+  <h3>אוכלוסייה ומדגם</h3>
+  <div class="def">
+    <p><strong>אוכלוסייה:</strong> אוסף כל הפריטים הרלוונטיים לשאלה שאנחנו חוקרים. היא יכולה להיות קיימת (כל הדבורים בכוורות בארץ) או רעיונית (כל החרקים שרואים צבעים).</p>
+    <p><strong>מדגם:</strong> תת-קבוצה של האוכלוסייה, שמשמשת מודל שלה. הפרטים יכולים להיות בני אדם, בעלי חיים או חפצים.</p>
+  </div>
+  <p>בתאוריה היינו מודדים את כל האוכלוסייה. בפועל היא גדולה מדי, ולכן דוגמים. המדגם מבטא את האוכלוסייה <strong>באופן חלקי בלבד</strong>, וזו בדיוק הסיבה שצריך סטטיסטיקה היסקית.</p>
+
+  <details class="ext">
+    <summary><span class="ext-badge">הרחבה</span> איך דוגמים? מה הופך מדגם לטוב, ואיך עושים את זה בסקרי בחירות</summary>
+    <div class="ext-body">
+      <h4>מדגם טוב הוא מדגם מייצג</h4>
+      <p>מדגם <strong>מייצג</strong> הוא מדגם שבו התכונות הרלוונטיות מתפלגות כמו באוכלוסייה. למשל, יש בו אותו שיעור של צעירים, של נשים ושל תושבי פריפריה. שני דברים מרחיקים מדגם מהאוכלוסייה:</p>
+      <ul>
+        <li><strong>טעות דגימה מקרית:</strong> גם מדגם שנבחר בצורה מושלמת לא יהיה זהה לאוכלוסייה, רק בגלל המקרה. הטעות הזו <strong>קטנה ככל שהמדגם גדל</strong>, ואפשר לחשב את גודלה. נלמד את זה בהמשך הקורס.</li>
+        <li><strong>הטיה:</strong> טעות שיטתית בדרך שבה המדגם נבחר, שגורמת לקבוצה מסוימת להיות מיוצגת יותר או פחות מדי. <strong>הטיה לא נעלמת כשמגדילים את המדגם</strong>, ולכן היא המסוכנת מבין השתיים.</li>
+      </ul>
+      <p class="note"><strong>הדוגמה הקלאסית:</strong> בבחירות לנשיאות ארה"ב ב-1936 שלח המגזין Literary Digest כעשרה מיליון שאלונים, וקיבל בחזרה כ-2.4 מיליון. הוא חזה ניצחון ללנדון, ובפועל רוזוולט ניצח בהפרש עצום. הרשימות שמהן נשלחו השאלונים (בעלי טלפון ומנויי המגזין) ייצגו יותר את בעלי האמצעים, וגם ענו בעיקר מי שרצו לענות. גאלופ, עם מדגם קטן בהרבה אבל מתוכנן היטב, חזה נכון. מדגם ענק ומוטה גרוע ממדגם קטן ומייצג.</p>
+
+      <h4>שיטות דגימה</h4>
+      <div class="table-wrap"><table class="t">
+        <tr><th>שיטה</th><th>איך</th><th>דוגמה</th></tr>
+        <tr><td><strong>אקראית פשוטה</strong></td><td>לכל פרט באוכלוסייה יש אותו סיכוי להיבחר, כמו בהגרלה מתוך רשימה מלאה</td><td>הגרלת 200 סטודנטים מתוך רשימת כל הרשומים באוניברסיטה</td></tr>
+        <tr><td><strong>שכבתית</strong></td><td>מחלקים את האוכלוסייה לקבוצות (שכבות) ודוגמים באקראי מכל אחת, לפי גודלה</td><td>דגימה נפרדת מכל פקולטה, ביחס למספר הסטודנטים בה</td></tr>
+        <tr><td><strong>אשכולות</strong></td><td>מגרילים קבוצות שלמות, ובודקים את כל הפרטים בקבוצות שנבחרו</td><td>הגרלת 30 בתי ספר ובדיקת כל התלמידים בהם</td></tr>
+        <tr><td><strong>שיטתית</strong></td><td>בוחרים כל פרט k-י ברשימה, אחרי נקודת התחלה אקראית</td><td>כל לקוח עשירי שנכנס לסניף</td></tr>
+        <tr><td><strong>נוחות</strong> (לא מומלצת)</td><td>דוגמים את מי שזמין, או את מי שבחר לענות</td><td>סקר בקבוצת ווטסאפ, או עצירת עוברים ושבים ברחוב אחד</td></tr>
+      </table></div>
+
+      <h4>איך דוגמים בסקרי בחירות</h4>
+      <ul>
+        <li><strong>גודל:</strong> סקר בחירות טיפוסי שואל כמה מאות עד אלף משיבים. מדגם של כ-600 איש מספיק כדי לאמוד את שיעור התמיכה במפלגה ברמת דיוק של כ-4 נקודות אחוז לכל כיוון. זו "טעות הדגימה" שמופיעה בתחתית הסקר.</li>
+        <li><strong>שכבות ומכסות:</strong> כדי שהמדגם ייצג את בוחרי המדינה, קובעים מראש כמה משיבים צריך מכל קבוצה: לפי גיל, מגדר, אזור, מגזר ודתיות.</li>
+        <li><strong>שקלול:</strong> אחרי האיסוף, אם קבוצה מסוימת יצאה מיוצגת מדי או פחות מדי, נותנים לכל משיב משקל, כך שהתמהיל יתאים לנתוני האוכלוסייה. זה בדיוק ממוצע משוקלל, שנלמד בפרק 4.</li>
+        <li><strong>למה סקרים בכל זאת טועים:</strong> אנשים שמסרבים לענות שונים לעתים ממי שעונה, חלק מהמשיבים לא אומרים את האמת, קשה לדעת מי באמת יגיע להצביע, ואנשים משנים את דעתם עד יום הבחירות. אלה הטיות, ולכן הגדלת המדגם לא פותרת אותן.</li>
+      </ul>
+    </div>
+  </details>
+
+  <h4>תרגול: זהו אוכלוסייה, מדגם ומשתנה</h4>
+  <p><strong>א.</strong> חברת סלולר רוצה לדעת כמה דקות שיחה בחודש צורכים לקוחותיה. היא הגרילה 500 לקוחות מתוך מאגר כל הלקוחות שלה, ובדקה כמה דקות שוחח כל אחד מהם בחודש אוקטובר.</p>
+  <details class="reveal"><summary>הצג פתרון</summary><div class="reveal-body">
+    <p><strong>אוכלוסייה:</strong> כל לקוחות החברה. <strong>מדגם:</strong> 500 הלקוחות שהוגרלו. <strong>משתנה:</strong> מספר דקות השיחה בחודש. זה משתנה כמותי בסולם מנה, כי 0 דקות פירושו שלא שוחחו בכלל. הוא רציף מטבעו, אבל אם החברה רושמת דקות שלמות, הנתונים בפועל בדידים (ראו "משתנים על הגבול" בהמשך).</p>
+  </div></details>
+  <p><strong>ב.</strong> ועד הסטודנטים רצה לבדוק עד כמה סטודנטי האוניברסיטה מרוצים מהקפיטריה. הוא פרסם סקר בקבוצת הווטסאפ של הפקולטה להנדסה, ו-120 סטודנטים דירגו את שביעות רצונם בסקאלה של 1 עד 5.</p>
+  <details class="reveal"><summary>הצג פתרון</summary><div class="reveal-body">
+    <p><strong>אוכלוסייה:</strong> כל סטודנטי האוניברסיטה. <strong>מדגם:</strong> 120 הסטודנטים שענו. <strong>משתנה:</strong> שביעות רצון בסקאלה 1–5, משתנה איכותי בסולם סדר.</p>
+    <p>שימו לב לבעיה: המדגם כולל רק סטודנטים מהנדסה, ורק כאלה שבחרו לענות. סביר שמי שממש מרוצה או ממש לא מרוצה יענה יותר. זה מדגם נוחות, והוא לא מייצג את כל הסטודנטים.</p>
+  </div></details>
+  <p><strong>ג.</strong> מכון מחקר רוצה לבדוק את הגובה של תלמידי כיתות א' בישראל. הוא הגריל 30 בתי ספר יסודיים מכל הארץ, ומדד את הגובה של כל תלמידי כיתות א' בבתי הספר האלה.</p>
+  <details class="reveal"><summary>הצג פתרון</summary><div class="reveal-body">
+    <p><strong>אוכלוסייה:</strong> כל תלמידי כיתות א' בישראל. <strong>מדגם:</strong> תלמידי כיתות א' ב-30 בתי הספר שהוגרלו. <strong>משתנה:</strong> גובה, משתנה כמותי רציף בסולם מנה.</p>
+    <p class="ext-only">בשפה של ההרחבה על שיטות דגימה, זו דגימת אשכולות: מגרילים בתי ספר, ולא תלמידים בודדים.</p>
+  </div></details>
+
+  <h3>סוגי משתנים</h3>
+  <div class="table-wrap"><table class="t">
+    <tr><th>סוג</th><th>הגדרה</th><th>דוגמאות</th></tr>
+    <tr><td><strong>כמותי</strong></td><td>מוגדר באמצעות גודל מספרי</td><td>גיל, גובה, מחיר, מספר שנות לימוד</td></tr>
+    <tr><td><strong>איכותי</strong></td><td>מוגדר באמצעות תכונה, לא גודל</td><td>צבע עיניים, מגדר, ארץ מוצא, השכלה</td></tr>
+  </table></div>
+  <p>משתנה כמותי יכול להיות <strong>בדיד</strong>, כלומר מקבל ערכים נפרדים שאפשר למנות, כמו מספר הסטודנטים בקורס או סכום כסף. הוא יכול להיות גם <strong>רציף</strong>, כלומר מקבל כל ערך בתחום, כמו טמפרטורה או גיל. משתנה איכותי הוא תמיד בדיד.</p>
+  <p class="note">"אפשר למנות" לא אומר "מספר סופי". מספר השטרות בארנק הוא בדיד גם אם אין לו גבול עליון: בין 2 שטרות ל-3 שטרות אין ערך אפשרי. מה שמבדיל בדיד מרציף הוא שיש "רווחים" בין הערכים.</p>
+
+  <h4>משתנים על הגבול: הכול תלוי ברזולוציה</h4>
+  <p>יש משתנים שהסיווג שלהם תלוי ב<strong>רזולוציה</strong>, כלומר ביחידת המדידה הקטנה ביותר שקבענו:</p>
+  <ul>
+    <li><strong>גיל</strong> הוא רציף מטבעו: אדם יכול להיות בן 23.7 שנים. אבל אם רושמים גיל בשנים שלמות, הנתונים שבידינו הם בדידים.</li>
+    <li><strong>זמן ריצה</strong> רציף, אבל שעון שמודד בשניות שלמות הופך אותו לבדיד.</li>
+    <li><strong>כסף</strong> הוא בדיד, כי אין פחות מאגורה. אבל כשהערכים גדולים והקפיצות זעירות, כמו במשכורות, מתייחסים אליו בפועל כאל רציף.</li>
+  </ul>
+  <p>הכלל: שואלים מה המשתנה מודד <strong>מטבעו</strong>. אם הוא יכול לקבל כל ערך בקטע, הוא רציף, גם אם בפועל עיגלנו אותו. אם הוא ספירה, הוא בדיד.</p>
+
+  <h3>ארבעה סולמות מדידה</h3>
+  <p>הסולם קובע אילו פעולות חשבון מותר לעשות על הנתונים, ולכן גם אילו מדדים מותר לחשב. אפשר לחשוב על הסולמות כעל סולם מדרגות: כל סולם יודע לעשות את כל מה שקודמו יודע, ומוסיף <strong>יכולת אחת</strong> חדשה.</p>
+
+  <figure class="lab" id="w-scales">
+    <p class="lab-title">ארבעה סולמות, ארבע יכולות</p>
+    <p class="lab-hint">לחצו על סולם כדי לראות דוגמה, מה מותר לומר עליו ומה אסור.</p>
+    <div data-w="scales"></div>
+  </figure>
+
+  <div class="callout"><p class="callout-h">המבחן המהיר: רווח או מנה?</p>
+    <p>שואלים: האם לאפס יש משמעות של "אין בכלל"? 0 ק"ג פירושו שאין משקל, ולכן משקל הוא בסולם מנה. 0°C אינו "אין טמפרטורה". זו רק נקודה שבחרו: נקודת הקיפאון של מים.</p></div>
+
+  <figure class="lab" id="w-classify">
+    <p class="lab-title">סווגו את המשתנים</p>
+    <p class="lab-hint">לכל משתנה בחרו את סולם המדידה.</p>
+    <div data-w="classify"></div>
+  </figure>
+</section>
+
+<!-- ============ 3 ============ -->
+<section class="chapter" id="tables">
+  <p class="chapter-num">פרק 3</p>
+  <h2>טבלאות שכיחויות ותרשימים</h2>
+  <p>התוצר הראשון של כל מחקר הוא רשימה ארוכה של נתונים, למשל "נשוי, רווק, רווק, נשוי, גרוש…" עבור 30 נבדקים. מרשימה כזו קשה להסיק משהו. לכן הצעד הראשון הוא לרכז את הנתונים ב<strong>טבלת שכיחויות</strong>.</p>
+
+  <h3>עמודות הטבלה</h3>
+  <div class="table-wrap"><table class="t">
+    <tr><th>עמודה</th><th>סימון</th><th>מה היא אומרת</th></tr>
+    <tr><td>שכיחות</td><td class="n">\(f(x)\)</td><td>כמה פעמים הופיע הערך</td></tr>
+    <tr><td>שכיחות יחסית</td><td class="n">\(f\%\) או \(p\)</td><td>\(f(x)/n\), החלק היחסי של הערך</td></tr>
+    <tr><td>שכיחות מצטברת</td><td class="n">\(F\) או \(Cf\)</td><td>כמה תצפיות יש עד הערך הזה, כולל</td></tr>
+    <tr><td>שכיחות יחסית מצטברת</td><td class="n">\(F\%\) או \(Cp\)</td><td>איזה אחוז מהתצפיות נמצא עד הערך הזה</td></tr>
+  </table></div>
+  <p>שתי בדיקות שפיות: ה-\(F\) בשורה האחרונה תמיד שווה ל-\(n\), וה-\(F\%\) בשורה האחרונה תמיד שווה ל-100%.</p>
+
+  <figure class="lab" id="w-freq">
+    <p class="lab-title">טבלת שכיחויות חיה: שביעות רצון של 20 עובדים מהשכר</p>
+    <p class="lab-hint">שנו את השכיחויות בעזרת ‎+‎ ו-‎−‎ ועקבו אחרי כל העמודות. כדאי לשים לב לשורה האחרונה. מתחת לטבלה מוסבר איך מוצאים ממנה את החציון, בשיטה שמפורטת בפרק 4.</p>
+    <div data-w="freq"></div>
+  </figure>
+
+  <h3>טבלה מקובצת</h3>
+  <p>כשיש ערכים אפשריים רבים, כמו גובה, או כשהמשתנה רציף, כמו גיל, מחלקים את התחום ל<strong>סלים</strong> (bins), למשל גילאי 15–19, 20–24 וכן הלאה, וסופרים כמה תצפיות נפלו בכל סל. החלוקה היא איזון בין דיוק לבין עומס מידע. יש לה שני כללים:</p>
+  <ul>
+    <li><strong>זרות:</strong> אף ערך לא נופל בשני סלים.</li>
+    <li><strong>מיצוי:</strong> כל ערך שהתקבל נופל בסל כלשהו.</li>
+  </ul>
+
+  <h3>איזה תרשים לאיזה משתנה</h3>
+  <div class="table-wrap"><table class="t">
+    <tr><th>תרשים</th><th>מתאים ל</th><th>מה חשוב לזכור</th></tr>
+    <tr><td>עוגה</td><td>סולם שמי</td><td>כל פרוסה מייצגת את חלקה של קטגוריה מהשלם</td></tr>
+    <tr><td>מקלות (bar)</td><td>סולם שמי וסדר</td><td>הגובה הוא השכיחות, והעמודות לא נוגעות זו בזו. בסולם סדר שומרים על סדר הקטגוריות.</td></tr>
+    <tr><td>היסטוגרמה</td><td>סולם רווח ומנה</td><td>העמודות צמודות. <strong>השטח</strong>, ולא הגובה, מייצג את השכיחות.</td></tr>
+    <tr><td>פיזור (scatter)</td><td>שני משתנים כמותיים</td><td>מראה את הקשר ביניהם</td></tr>
+  </table></div>
+
+  <details class="ext">
+    <summary><span class="ext-badge">הרחבה</span> היסטוגרמה: שכיחות מול צפיפות</summary>
+    <div class="ext-body">
+  <p>בהיסטוגרמה יש שני מושגים שקל לבלבל ביניהם:</p>
+  <ul>
+    <li><strong>שכיחות</strong> (\(f\)) היא מספר התצפיות שנפלו בסל. למשל, 653 אלף איש בגילאי 15–19.</li>
+    <li><strong>צפיפות</strong> היא השכיחות <strong>לכל יחידה</strong> של רוחב הסל: \(\text{density} = \dfrac{f}{x_{\text{up}} - x_{\text{low}}}\). בדוגמה, זה מספר האנשים בכל שנת גיל: 653 אלף חלקי 5 שנים, כלומר כ-131 אלף איש לשנה.</li>
+  </ul>
+  <p>כשכל הסלים ברוחב שווה, אין הבדל בין השתיים: הצפיפות היא פשוט השכיחות חלקי אותו מספר, וצורת הגרף לא משתנה. ההבדל מופיע כש<strong>הסלים ברוחב שונה</strong>. סל רחב "אוסף" יותר תצפיות רק בגלל שהוא רחב, ואם הגובה ייקבע לפי השכיחות, הסל הזה ייראה גדול מדי. לכן בהיסטוגרמה הגובה הוא הצפיפות, ו<strong>השטח</strong> של העמודה, כלומר גובה כפול רוחב, הוא השכיחות.</p>
+
+  <figure class="lab" id="w-hist">
+    <p class="lab-title">אוכלוסיית בני 15+ בישראל לפי גיל, 2015</p>
+    <p class="lab-hint">כל הסלים ברוחב 5 שנים, חוץ מהסל 55–64, שרוחבו 10 שנים (בכתום). התחילו ב"גובה = שכיחות" ושאלו את עצמכם: באיזה גיל יש הכי הרבה אנשים? אחר כך עברו ל"גובה = צפיפות" ובדקו מה השתנה. רחפו מעל עמודה כדי לראות את המספרים.</p>
+    <div data-w="hist"></div>
+  </figure>
+    </div>
+  </details>
+</section>
+
+<!-- ============ 4 ============ -->
+<section class="chapter" id="center">
+  <p class="chapter-num">פרק 4</p>
+  <h2>מדדי מרכז</h2>
+  <p><strong>מדד</strong> הוא מספר אחד שנותן מידע על קבוצת נתונים. <strong>מדדי מרכז</strong> עונים על השאלה איפה "מרכז הכובד" של הנתונים. ההבדל העיקרי בין המדדים הוא <strong>כמה הם רגישים לערכים קיצוניים</strong>.</p>
+
+  <figure class="lab" id="w-center">
+    <p class="lab-title">מגרש המשחקים של מדדי המרכז</p>
+    <p class="lab-hint">משכורות של 6 עובדים, באלפי ₪. גררו את המשכורת הגבוהה ימינה ושמאלה, ועקבו אחרי מי זז ומי נשאר במקום. אפשר גם להוסיף ולהסיר נקודות. במקלדת: Tab ואז החצים.</p>
+    <div data-w="center"></div>
+  </figure>
+
+  <h3>1. ממוצע חשבוני (Mean)</h3>
+  <p>הממוצע הוא הערך שכל פרט היה מקבל, <strong>אילו הסכום הכולל היה מתחלק שווה בשווה</strong>. הוא מתאים רק למשתנים כמותיים, והוא המדד היחיד שמתחשב בכל הערכים. כשמדברים על אוכלוסייה, קוראים לו <strong>תוחלת</strong> ומסמנים \(\mu\).</p>
+  <div class="math-block">$$\bar{x} = \frac{x_1 + x_2 + \dots + x_n}{n} = \frac{\sum_{i=1}^{n} x_i}{n} \qquad\qquad \bar{x} = \frac{\sum_{i=1}^{m} x_i f_i}{\sum_{i=1}^{m} f_i}$$</div>
+  <p class="note">הנוסחה הימנית משמשת לנתונים מטבלת שכיחויות, שבה \(m\) הוא מספר הערכים השונים.</p>
+  <p class="note">דוגמה: \(\{2.3, 3.6, 3.6, 5.6, 7.2, 10\}\), והממוצע הוא \(32.3/6 \approx 5.38\).</p>
+
+  <h4>הממוצע הוא נקודת איזון, וסכום הסטיות ממנו תמיד אפס</h4>
+      <p>אם מניחים את הערכים כמשקולות על קרש, הקרש מתאזן בדיוק על הממוצע. במגרש המשחקים למעלה רואים את זה: הסטיות מימין לממוצע והסטיות משמאלו מתקזזות בדיוק. ההוכחה היא שורה אחת:</p>
+      <div class="math-block">$$\sum_{i=1}^{n}(x_i - \bar{x}) = \sum x_i - n\bar{x} = n\bar{x} - n\bar{x} = 0$$</div>
+      <p>זה נכון לכל סט נתונים. לכן אי אפשר למדוד פיזור כ"ממוצע הסטיות", כי הוא תמיד יוצא 0. נחזור לזה בפרק 5.</p>
+
+  <h4>ממוצע משוקלל (Weighted Mean)</h4>
+  <p>זה ממוצע שבו לכל ערך יש משקל, כלומר חשיבות שונה. הממוצע הרגיל הוא מקרה פרטי שבו כל המשקלות שווים. הדוגמה המוכרת לכל סטודנט היא ממוצע ציונים לפי נקודות זכות.</p>
+  <div class="math-block">$$\bar{x}_w = \frac{\sum_{i=1}^{n} w_i x_i}{\sum_{i=1}^{n} w_i}$$</div>
+
+  <h4>ממוצע הנדסי (Geometric Mean)</h4>
+  <div class="math-block">$$G = \sqrt[n]{x_1 \cdot x_2 \cdots x_n} = \left(x_1 \cdot x_2 \cdots x_n\right)^{1/n}$$</div>
+  <p>מכפילים את כל הערכים ומוציאים שורש מסדר \(n\). כדי להבין למה צריך את זה, כדאי לשים לב שכל ממוצע עונה על שאלה אחרת:</p>
+  <ul>
+    <li><strong>ממוצע חשבוני:</strong> איזה מספר קבוע, אם <strong>נחבר</strong> אותו \(n\) פעמים, ייתן את אותו <strong>סכום</strong>?</li>
+    <li><strong>ממוצע הנדסי:</strong> איזה מספר קבוע, אם <strong>נכפיל</strong> אותו \(n\) פעמים, ייתן את אותה <strong>מכפלה</strong>?</li>
+  </ul>
+  <p>לכן כשהערכים מצטברים בחיבור, כמו משכורות או ציונים, משתמשים בממוצע חשבוני. כשהם מצטברים בכפל, כמו תשואות, ריבית דריבית או קצבי גידול, משתמשים בממוצע הנדסי.</p>
+
+  <h4>דוגמה: למה ממוצע חשבוני של אחוזים מטעה</h4>
+  <p>השקעתם 100 ₪. בשנה הראשונה ההשקעה עלתה ב-50%, ובשנה השנייה ירדה ב-50%: <span class="ltr">100 → 150 → 75</span>. בסוף נשארו לכם <strong>75 ₪</strong>.</p>
+  <ul>
+    <li><strong>לפי ממוצע חשבוני:</strong> \(\frac{+50\% + (-50\%)}{2} = 0\%\). כלומר "בממוצע לא הרווחתם ולא הפסדתם". זה לא נכון: הפסדתם 25 ₪.</li>
+    <li><strong>לפי ממוצע הנדסי:</strong> עובדים עם <strong>מקדמי הגידול</strong> ולא עם האחוזים. עלייה של 50% היא כפל ב-1.5, וירידה של 50% היא כפל ב-0.5:
+      <div class="math-block">$$G = \sqrt{1.5 \cdot 0.5} = \sqrt{0.75} \approx 0.866$$</div>
+      כלומר ירידה ממוצעת של כ-13.4% בשנה. בדיקה: \(100 \cdot 0.866 \cdot 0.866 \approx 75\) ✓</li>
+  </ul>
+  <p><strong>למה החשבוני טועה?</strong> 50% מ-150 הם 75, אבל 50% מ-100 הם רק 50. כל אחוז מחושב מבסיס אחר, ולכן אי אפשר פשוט לחבר אחוזים.</p>
+
+  <h4>עובדות שכדאי לדעת</h4>
+  <ul>
+    <li>הממוצע ההנדסי תמיד <strong>קטן מהחשבוני או שווה לו</strong>. הם שווים רק כשכל הערכים זהים.</li>
+    <li>הוא מוגדר רק ל<strong>ערכים חיוביים</strong>. אם יש 0, המכפלה מתאפסת, ולכן נהוג להחליף אותו בערך קטן, בדרך כלל ב-1. אי אפשר לחשב אותו לערבוב של מספרים חיוביים ושליליים.</li>
+  </ul>
+  <p class="note">דוגמה לחישוב: \(\sqrt[5]{8\cdot1\cdot1\cdot2\cdot2} = \sqrt[5]{32} = 2\), לעומת ממוצע חשבוני של 2.8.</p>
+
+  <figure class="lab" id="w-geo">
+    <p class="lab-title">נסו בעצמכם: איזה ממוצע מגיע לסכום הנכון?</p>
+    <p class="lab-hint">הקו הרציף השחור הוא מה שקרה להשקעה באמת. שני הקווים המקווקווים מראים מה היה קורה אילו בכל שנה הייתה אותה תשואה קבועה: פעם לפי הממוצע החשבוני ופעם לפי ההנדסי. רק הקו ההנדסי מגיע לאותו סכום סופי. שנו את התשואות, הוסיפו שנים, ובדקו שזה תמיד כך.</p>
+    <div data-w="geo"></div>
+  </figure>
+
+  <h3>2. אחוזון (Percentile)</h3>
+  <p>האחוזון של פריט אומר <strong>איזה אחוז מהנתונים קטנים ממנו</strong>. באותו אופן אפשר לחלק לחמישונים, לעשירונים וכן הלאה. העשירון הרביעי, למשל, כולל את האחוזונים 30 עד 40.</p>
+
+  <h3>3. חציון (Median)</h3>
+  <p>החציון הוא הערך שחוצה את הנתונים: מספר שווה של ערכים מתחתיו ומעליו. לכן הוא גם <strong>האחוזון ה-50</strong>. מחשבים אותו כך:</p>
+  <ol>
+    <li>ממיינים את הערכים מהקטן לגדול.</li>
+    <li>אם \(n\) אי-זוגי, החציון הוא התצפית במקום \(\frac{n+1}{2}\).</li>
+    <li>אם \(n\) זוגי, החציון הוא הממוצע של התצפיות במקומות \(\frac{n}{2}\) ו-\(\frac{n}{2}+1\).</li>
+  </ol>
+  <p class="note">דוגמאות: החציון של \(\{8,3,1,10,2\}\) הוא 3. החציון של \(\{3,6,9,2,4,7\}\) הוא 5, הממוצע של 4 ו-6. הטעות הנפוצה כאן היא לשכוח למיין.</p>
+
+  <h4>חציון מתוך טבלת שכיחויות</h4>
+  <p>כשהנתונים מגיעים בטבלת שכיחויות, אין לנו רשימה ממוינת שאפשר "לספור" בה. במקומה יש את עמודת <strong>F</strong>, השכיחות המצטברת. F אומרת כמה תצפיות יש <strong>עד</strong> הערך הזה, כולל, ולכן היא מגלה איזה ערך יושב בכל מקום ברשימה הממוינת.</p>
+  <p>דוגמה: מספר העולים החדשים שהגיעו בכל יום בחודש, \(n = 30\) ימים. הנה חלק מהטבלה:</p>
+  <div class="table-wrap"><table class="t" style="max-width:520px">
+    <tr><th class="n">x</th><th class="n">f</th><th class="n">F</th><th>אילו מקומות ברשימה הממוינת</th></tr>
+    <tr><td class="n">11</td><td class="n">1</td><td class="n">11</td><td>המקום ה-11</td></tr>
+    <tr style="background:var(--accent-soft)"><td class="n">12</td><td class="n">4</td><td class="n">15</td><td>המקומות 12 עד <strong>15</strong></td></tr>
+    <tr style="background:var(--accent-soft)"><td class="n">13</td><td class="n">2</td><td class="n">17</td><td>המקומות <strong>16</strong> עד 17</td></tr>
+  </table></div>
+  <ol>
+    <li><strong>קובעים אילו מקומות מחפשים.</strong> \(n = 30\) זוגי, ולכן מחפשים את המקומות \(\frac{n}{2} = 15\) ו-\(\frac{n}{2}+1 = 16\).</li>
+    <li><strong>מוצאים כל מקום בעמודת F.</strong> התצפית במקום \(k\) היא הערך בשורה <strong>הראשונה</strong> שבה \(F \ge k\). התצפית ה-15 היא 12, כי \(F(12) = 15\). הערך 12 "נגמר" בדיוק במקום ה-15, ולכן התצפית ה-16 כבר שייכת לשורה הבאה, והיא 13.</li>
+    <li><strong>מחשבים:</strong> החציון הוא \(\frac{12 + 13}{2} = 12.5\).</li>
+  </ol>
+  <div class="callout">
+    <p class="callout-h">הכלל לזכור</p>
+    <p>אם F מגיע <strong>בדיוק</strong> ל-\(n/2\) בשורה מסוימת, החציון הוא הממוצע של הערך בשורה הזו ושל הערך בשורה הבאה. אם F <strong>עובר</strong> את \(n/2\) בתוך שורה, שתי התצפיות האמצעיות באותה שורה, והחציון הוא פשוט הערך שלה.</p>
+  </div>
+  <p class="note"><strong>זהירות עם אחוזים מעוגלים.</strong> אפשר לחפש גם את השורה שבה F% מגיע ל-50%, אבל רק בלי לעגל באמצע הדרך. בדוגמה \(F\% = 15/30 = 50\%\) בדיוק. מי שמעגל כל שורה ומצטבר עלול לקבל 49%, להסיק שהחציון הוא 13, ולטעות. לכן הדרך הבטוחה היא לעבוד עם F, שהיא ספירה שלמה.</p>
+
+  <h3>4. שכיח (Mode)</h3>
+  <p>השכיח הוא הערך שמופיע הכי הרבה פעמים. בטבלת שכיחויות זה הערך עם ה-\(f(x)\) הגבוה ביותר.</p>
+  <ul>
+    <li>ב-\([1,3,6,6,6,6,7,7,12,12,17]\) השכיח הוא 6.</li>
+    <li>ב-\([1,1,2,4,4]\) יש שני שכיחים, וההתפלגות נקראת <strong>דו-שיאית</strong>. עם יותר משני שכיחים היא <strong>רב-שיאית</strong>. אין הגבלה על מספר השכיחים.</li>
+    <li>כשכל הערכים מופיעים אותו מספר פעמים, כמו בהתפלגות אחידה, <strong>אין שכיח</strong>.</li>
+  </ul>
+
+  <h3>ממוצע שלא מתאר אף אחד</h3>
+  <p>בחברה קטנה עובדים 8 אנשים. ארבעה גרים ליד המשרד ומגיעים תוך 8–12 דקות, וארבעה מגיעים מעיר אחרת, תוך 55–65 דקות. זמן הנסיעה הממוצע הוא 35 דקות, אבל <strong>אף עובד לא נוסע 35 דקות</strong>. מנהל שיקבע ישיבת בוקר לפי זמן הגעה של 35 דקות יטעה לגבי כולם: חצי מהעובדים יחכו, וחצי יאחרו.</p>
+  <figure class="lab" id="w-party">
+    <p class="lab-title">זמני הנסיעה של 8 עובדים</p>
+    <p class="lab-hint">גם החציון (33.5) נופל בעמק שבין שתי הקבוצות. דווקא שני השכיחים, 10 ו-60, מראים שיש כאן שתי קבוצות נפרדות. כשההתפלגות דו-שיאית, אף מדד מרכז יחיד לא מספר את הסיפור, וצריך להסתכל על הנתונים עצמם.</p>
+    <div data-w="party"></div>
+  </figure>
+
+  <h3>יתרונות וחסרונות</h3>
+  <div class="table-wrap"><table class="t">
+    <tr><th>מדד</th><th>יתרונות</th><th>חסרונות</th></tr>
+    <tr><td><strong>ממוצע</strong></td><td>קל לחישוב, תמיד אפשר לחשב אותו, מבוסס על כל הנתונים, ומשמש לחישובים אחרים כמו סטיית תקן</td><td>יכול להטעות, כמו בדוגמת זמני הנסיעה, ורגיש לערכים קיצוניים</td></tr>
+    <tr><td><strong>חציון</strong></td><td>קל לחישוב, תמיד אפשר לחשב אותו, ולא מושפע מערכים קיצוניים</td><td>לא מבוסס על כל הנתונים, ופחות שימושי בחישובים</td></tr>
+    <tr><td><strong>שכיח</strong></td><td>קל לחישוב ולא מושפע מערכים קיצוניים</td><td>לא תמיד אפשר לחשב אותו, ולא תמיד מצביע על הנטייה הכללית (למשל כשיש שני שכיחים)</td></tr>
+  </table></div>
+  <h4>למה החציון "לא מבוסס על כל הנתונים" ו"פחות שימושי בחישובים"?</h4>
+  <ul>
+    <li><strong>לא מבוסס על כל הנתונים:</strong> החציון תלוי רק ב<strong>ערך האמצעי</strong> ובסדר של שאר הערכים, ולא בגודל שלהם. במשכורות 5, 7, 8, 8, 10, 22, אפשר להחליף את 22 ב-11 או ב-200, ואת 5 ב-0 או ב-7, והחציון יישאר 8. הממוצע, לעומת זאת, משתנה עם כל שינוי בכל ערך. זו בדיוק הסיבה שהחציון חסין לערכים קיצוניים: היתרון והחיסרון הם אותה תכונה.</li>
+    <li><strong>פחות שימושי בחישובים:</strong> לחציון אין נוסחה אלגברית שאפשר "להמשיך לעבוד" איתה. שתי דוגמאות:
+      <ul>
+        <li><strong>איחוד קבוצות:</strong> אם בכיתה א' 20 תלמידים עם ממוצע 80, ובכיתה ב' 30 תלמידים עם ממוצע 70, הממוצע המשותף הוא \(\frac{20\cdot80 + 30\cdot70}{50} = 74\). אבל מהחציונים של שתי הכיתות <strong>אי אפשר</strong> לחשב את החציון המשותף. צריך את כל הנתונים מחדש.</li>
+        <li><strong>מדדים אחרים:</strong> השונות וסטיית התקן בנויות על הממוצע, וכך גם רוב הכלים שנלמד בהמשך הקורס. לחציון אין תפקיד כזה.</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>איזה מדד מותר לחשב בכל סולם</h3>
+      <p>זה סיכום שנובע ישירות מטבלת הסולמות: ממוצע דורש משתנה כמותי, וחציון דורש לפחות סדר.</p>
+      <div class="table-wrap"><table class="t">
+        <tr><th>סולם</th><th>דוגמה</th><th>שכיח</th><th>חציון</th><th>ממוצע</th></tr>
+        <tr><td>שמי</td><td>צבע רכב, עיר</td><td class="n">✓</td><td class="n">✗</td><td class="n">✗</td></tr>
+        <tr><td>סדר</td><td>שביעות רצון 1–5</td><td class="n">✓</td><td class="n">✓</td><td class="n">✗</td></tr>
+        <tr><td>רווח / מנה</td><td>משכורת, גובה</td><td class="n">✓</td><td class="n">✓</td><td class="n">✓</td></tr>
+      </table></div>
+      <p>השכיח הוא המדד היחיד שעובד גם על נתונים שאינם מספרים. בפועל מחשבים לא פעם ממוצע של סקאלת 1–5, אבל זו הנחה שהמרווחים בין הדרגות שווים, והסולם לא מבטיח אותה.</p>
+
+  <h3>צורת ההתפלגות: איפה נופלים הממוצע, החציון והשכיח</h3>
+  <p>שלושת מדדי המרכז מתלכדים רק כשההתפלגות סימטרית וחד-שיאית. כשיש <strong>זנב</strong>, כלומר מעט ערכים קיצוניים בצד אחד, כל מדד מגיב אחרת:</p>
+  <ul>
+    <li><strong>השכיח</strong> נשאר בפסגה, כי שם רוב הנתונים.</li>
+    <li><strong>החציון</strong> זז מעט לכיוון הזנב, כי חצי מהנתונים צריכים להיות מכל צד שלו.</li>
+    <li><strong>הממוצע</strong> נמשך הכי רחוק לכיוון הזנב, כי כל ערך קיצוני "מושך" אותו.</li>
+  </ul>
+  <figure class="lab" id="w-shape">
+    <p class="lab-title">שנו את צורת ההתפלגות</p>
+    <p class="lab-hint">בחרו צורה מוכנה, או שחקו עם המחוונים. עקבו אחרי שלושת הקווים: מי נשאר בפסגה ומי נמשך לזנב?</p>
+    <div data-w="shape"></div>
+  </figure>
+  <p class="takeaway">הממוצע תמיד נמשך לכיוון הזנב.</p>
+  <div class="table-wrap"><table class="t">
+    <tr><th>צורה</th><th>הסדר בין המדדים</th><th>דוגמה</th></tr>
+    <tr><td>סימטרית</td><td>ממוצע = חציון = שכיח</td><td>גובה של אנשים</td></tr>
+    <tr><td>זנב ימני (אסימטריה חיובית)</td><td>שכיח &lt; חציון &lt; ממוצע</td><td>משכורות, מחירי דירות</td></tr>
+    <tr><td>זנב שמאלי (אסימטריה שלילית)</td><td>ממוצע &lt; חציון &lt; שכיח</td><td>ציונים במבחן קל</td></tr>
+  </table></div>
+  <p>ובהתפלגות <strong>דו-שיאית</strong>, כמו בזמני הנסיעה של העובדים, הממוצע והחציון יכולים ליפול בעמק שבו כמעט אין נתונים, ויש שני שכיחים.</p>
+
+  <h4>למה זנב ימני נקרא "אסימטריה חיובית"?</h4>
+  <p>כי הזנב נמשך לכיוון ה<strong>ערכים הגבוהים</strong>, הצד החיובי של ציר המספרים. סימן נוסף: בזנב ימני הממוצע גדול מהחציון, ולכן ההפרש <strong>ממוצע פחות חציון חיובי</strong>. בזנב שמאלי ההפרש שלילי, וזו "אסימטריה שלילית". ברכיב שלמעלה ההפרש מופיע מתחת לגרף. נסו לעבור בין זנב ימני לזנב שמאלי ולראות את הסימן מתהפך.</p>
+
+  <details class="ext">
+    <summary><span class="ext-badge">הרחבה</span> הממוצע והחציון הם פתרונות של בעיית אופטימיזציה</summary>
+    <div class="ext-body">
+      <p>נניח שחייבים לבחור <strong>מספר אחד \(c\)</strong> שייצג את כל הנתונים. כדי להחליט איזה \(c\) הכי טוב, צריך להגדיר "מחיר" על כל נקודה לפי המרחק שלה מ-\(c\). יש שתי הגדרות טבעיות:</p>
+      <div class="math-block">$$f(c) = \sum (x_i - c)^2 \qquad\qquad g(c) = \sum |x_i - c|$$</div>
+      <p class="note">\(f\) הוא המחיר הריבועי, ו-\(g\) הוא המחיר המוחלט.</p>
+      <p><strong>המחיר הריבועי מינימלי בממוצע, והמחיר המוחלט מינימלי בחציון.</strong> הסיבה היא שבמחיר ריבועי כל נקודה "מושכת" את \(c\) בכוח שפרופורציונלי למרחק שלה, כמו קפיץ. במחיר מוחלט כל נקודה מושכת בכוח 1, כמו הצבעה: שיווי המשקל מתקבל כשמספר הנקודות מימין שווה למספר הנקודות משמאל.</p>
+      <figure class="lab" id="w-loss">
+        <p class="lab-title">חפשו את המינימום</p>
+        <p class="lab-hint">הזיזו את \(c\) בעזרת המחוון. גררו את הנקודה 10 רחוק ימינה: מינימום המחיר הריבועי (הממוצע) בורח אחריה, ומינימום המחיר המוחלט (החציון) לא זז.</p>
+        <div data-w="loss"></div>
+      </figure>
+      <p><strong>מכאן נובעת הרגישות לחריגים:</strong> נקודה רחוקה מושכת את הממוצע בכוח עצום, ואילו בחציון יש לה קול אחד בלבד. אותו רעיון קיים גם בלמידת מכונה: מודל שמאמנים עם MSE לומד לחזות ממוצע, ומודל שמאמנים עם MAE לומד לחזות חציון.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============ 6 ============ -->
+<section class="chapter" id="spread">
+  <p class="chapter-num">פרק 5</p>
+  <h2>מדדי פיזור</h2>
+  <p>מדד מרכז אומר <strong>איפה</strong> נמצאים הנתונים: מהו ערך טיפוסי. <strong>מדד פיזור</strong> אומר <strong>עד כמה הם מתפזרים</strong>: האם הערכים צפופים סביב המרכז, או רחוקים ממנו ומזה מזה. כדי לראות למה צריך את שניהם, הנה שתי קבוצות עם אותו ממוצע בדיוק:</p>
+
+  <figure class="lab" id="w-hero">
+    <p class="lab-title">שתי קבוצות, אותו ממוצע</p>
+    <p class="lab-hint">גררו נקודות בכל אחת מהקבוצות. הממוצע יכול להישאר 10 בשתיהן, אבל הנתונים מפוזרים אחרת לגמרי. האזור המוצלל מראה את הממוצע פחות ועוד סטיית תקן אחת.</p>
+    <div class="twin" data-w="hero"></div>
+  </figure>
+
+  <p>ממוצע לבדו לא מבדיל בין הקבוצות. לכן תמיד מדווחים על מרכז <strong>וגם</strong> על פיזור.</p>
+
+  <h3>1. טווח (Range)</h3>
+  <div class="math-block">$$R = x_{\max} - x_{\min}$$</div>
+  <p>הטווח הוא המדד הפשוט ביותר, וגם הרגיש ביותר לערכים קיצוניים: הוא תלוי רק בשני ערכים, ושניהם בדיוק הקיצוניים.</p>
+  <details class="ext">
+    <summary><span class="ext-badge">הרחבה</span> אם הטווח כל כך גרוע, למה משתמשים בו?</summary>
+    <div class="ext-body">
+      <ul>
+        <li><strong>בקרת איכות סטטיסטית (SPC):</strong> בתרשימי R דוגמים 4–5 יחידות מקו הייצור. במדגמים כל כך קטנים הטווח כמעט יעיל כמו סטיית תקן, והרבה יותר קל לחשב אותו על רצפת הייצור. אפשר גם לאמוד ממנו את \(\sigma\) לפי \(\bar{R}/d_2\). זה נושא מרכזי בהנדסת תעשייה.</li>
+        <li><strong>כשהקצוות הם מה שמעניין:</strong> טולרנסים בייצור, טמפרטורות מינימום ומקסימום.</li>
+        <li><strong>נרמול min-max בלמידת מכונה:</strong> \((x - \min)/(\max - \min)\) הוא בעצם חלוקה בטווח.</li>
+        <li><strong>בדיקה ראשונית מהירה:</strong> טווח מוזר, כמו גיל 250, חושף מיד שגיאת הקלדה.</li>
+      </ul>
+    </div>
+  </details>
+
+  <h3>2. שונות (Variance)</h3>
+  <p>הרעיון הוא למדוד כמה, בממוצע, כל ערך רחוק מהממוצע. סכום הסטיות עצמן תמיד אפס, כי החיוביות והשליליות מתקזזות. לכן <strong>מעלים כל סטייה בריבוע</strong>, וכך הסימן נעלם וסטיות גדולות מקבלות משקל רב יותר.</p>
+  <div class="math-block">$$s^2 = \frac{1}{n-1}\sum_{i=1}^{n}(x_i - \bar{x})^2 \qquad\qquad s^2 = \frac{1}{n-1}\left(\sum_{i=1}^{m} x_i^2 f_i - n\bar{x}^2\right)$$</div>
+  <p class="note">הנוסחה השמאלית היא ההגדרה. הימנית שקולה לה ונוחה לחישוב מטבלת שכיחויות.</p>
+
+  <figure class="lab" id="w-var">
+    <p class="lab-title">שונות היא, פשוטו כמשמעו, ממוצע של ריבועים</p>
+    <p class="lab-hint">כל ריבוע בנוי על הסטייה של נקודה מהממוצע. כחול מסמן סטייה חיובית ואדום סטייה שלילית, אבל אחרי ההעלאה בריבוע השטח תמיד חיובי. גררו את הנקודה הרחוקה וראו כמה מהר הריבוע שלה גדל. הריבוע המקווקו הוא "הריבוע הממוצע", כלומר השונות.</p>
+    <div data-w="var"></div>
+  </figure>
+
+  <h4>מדגם או אוכלוסייה?</h4>
+  <div class="table-wrap"><table class="t">
+    <tr><th></th><th>מדגם</th><th>אוכלוסייה</th></tr>
+    <tr><td>שונות</td><td class="n">\(s^2 = \dfrac{\sum(x-\bar{x})^2}{n-1}\)</td><td class="n">\(\sigma^2 = \dfrac{\sum(x-\mu)^2}{n}\)</td></tr>
+    <tr><td>סטיית תקן</td><td class="n">\(s = \sqrt{s^2}\)</td><td class="n">\(\sigma = \sqrt{\sigma^2}\)</td></tr>
+  </table></div>
+  <p>בקורס, אלא אם נאמר אחרת, הנתונים הם מדגם ומחלקים ב-\(n-1\). במחשבון כיס זה ההבדל בין המקשים \(s_x\) (או \(\sigma_{n-1}\)) לבין \(\sigma_x\) (או \(\sigma_n\)).</p>
+
+  <h3>3. סטיית תקן (Standard Deviation)</h3>
+  <div class="math-block">$$s = \sqrt{s^2} = \sqrt{\frac{1}{n-1}\sum_{i=1}^{n}(x_i - \bar{x})^2}$$</div>
+  <p>השונות נמדדת ב"יחידות בריבוע", למשל ₪², ולזה אין משמעות אינטואיטיבית. השורש מחזיר אותנו <strong>ליחידות המקוריות</strong>. סטיית התקן היא המרחק הטיפוסי של ערך מהממוצע, ולכן היא מדד הפיזור הנפוץ ביותר. השונות, מצידה, נוחה יותר לפיתוחים תאורטיים, כמו שונות משותפת בהמשך הקורס.</p>
+
+  <h3>4. רבעונים וטווח בין-רבעוני (IQR)</h3>
+  <p>אם החציון הוא הגרסה החסינה של הממוצע, ה-IQR הוא הגרסה החסינה של סטיית התקן. הרבעונים מחלקים את הנתונים הממוינים לארבעה חלקים שווים בגודלם:</p>
+  <ul>
+    <li>\(Q_1\), <strong>הרבעון הראשון</strong>: עד אליו נמצאים 25% מהנתונים, ומעליו 75%. זה האחוזון ה-25.</li>
+    <li>\(Q_2\), <strong>הרבעון השני</strong>: החציון, האחוזון ה-50.</li>
+    <li>\(Q_3\), <strong>הרבעון השלישי</strong>: מתחתיו 75% מהנתונים, ומעליו 25%. זה האחוזון ה-75.</li>
+  </ul>
+  <div class="math-block">$$IQR = Q_3 - Q_1$$</div>
+  <p><strong>הטווח הבין-רבעוני</strong> הוא הטווח שבו נמצאים 50% האמצעיים של הנתונים. הוא מתאים לסולם סדר, רווח ומנה. כיוון שהוא מתעלם מהרבע העליון ומהרבע התחתון, ערכים קיצוניים לא משפיעים עליו.</p>
+  <h4>איך מחשבים</h4>
+  <ol>
+    <li>ממיינים את הנתונים ומוצאים את החציון.</li>
+    <li>\(Q_1\) הוא החציון של החצי התחתון, ו-\(Q_3\) הוא החציון של החצי העליון. כש-\(n\) אי-זוגי, החציון עצמו לא נכלל באף חצי.</li>
+  </ol>
+  <p class="note">דוגמה: במשכורות 5, 7, 8, 8, 10, 22 החצי התחתון הוא 5, 7, 8 והחצי העליון הוא 8, 10, 22. לכן \(Q_1 = 7\), \(Q_3 = 10\) ו-\(IQR = 3\). לעומת זאת סטיית התקן יוצאת 6.1, כי ה-22 "מנפח" אותה.</p>
+  <p class="note">יש כמה שיטות מקובלות לחישוב רבעונים, ואקסל, פייתון ומחשבונים עלולים לתת תוצאות מעט שונות. במבחן עובדים לפי השיטה שהוגדרה בקורס.</p>
+
+  <figure class="lab" id="w-iqr">
+    <p class="lab-title">סטיית תקן מול IQR</p>
+    <p class="lab-hint">האזור המוצלל הוא 50% האמצעיים, בין \(Q_1\) ל-\(Q_3\). גררו את המשכורת הגבוהה ימינה: סטיית התקן מזנקת, וה-IQR לא זז. אחר כך גררו נקודה מתוך האזור המוצלל ושימו לב מה כן משנה אותו.</p>
+    <div data-w="iqr"></div>
+  </figure>
+
+  <details class="ext">
+    <summary><span class="ext-badge">הרחבה</span> זיהוי חריגים ו-Box Plot</summary>
+    <div class="ext-body">
+      <p><strong>כלל אצבע לחריגים:</strong> ערך גבוה מ-\(Q_3 + 1.5\cdot IQR\) או נמוך מ-\(Q_1 - 1.5\cdot IQR\) נחשב חריג. במשכורות הגבול העליון הוא \(10 + 1.5\cdot 3 = 14.5\), ולכן <strong>22 חריג</strong>.</p>
+      <p><strong>Box Plot</strong> מציג את כל זה בתרשים אחד: קופסה מ-\(Q_1\) עד \(Q_3\), קו בחציון, "שפמים" עד הערך הקיצוני ביותר שאינו חריג, ונקודות נפרדות לחריגים. זה התרשים שמקבלים, למשל, מ-<code>plt.boxplot</code> בפייתון.</p>
+      <figure class="lab" id="w-box">
+        <p class="lab-title">Box Plot חי</p>
+        <p class="lab-hint">כל חלק בתרשים מסומן בשמו. גררו את הנקודות למעלה: הזיזו את 22 קרוב ל-10 וראו מתי הוא מפסיק להיות חריג והשפם "בולע" אותו.</p>
+        <div data-w="box"></div>
+      </figure>
+    </div>
+  </details>
+
+  <details class="ext">
+    <summary><span class="ext-badge">הרחבה</span> מקדם השתנות (CV) ו-MAD</summary>
+    <div class="ext-body">
+      <div class="math-block">$$CV = \frac{s}{\bar{x}} \qquad\qquad MAD = \frac{1}{n}\sum |x_i - \bar{x}|$$</div>
+      <p><strong>CV</strong> הוא פיזור יחסי, בלי יחידות. הוא שימושי כשמשווים קבוצות בסקאלות שונות. לדוגמה, מה משתנה יותר אצל אנשים, גובה או משקל? את סטיות התקן אי אפשר להשוות ישירות, כי היחידות שונות, אבל את ה-CV אפשר. הוא מוגדר רק לנתונים חיוביים בסולם מנה.</p>
+      <p><strong>MAD</strong>, הסטייה המוחלטת הממוצעת, היא הדרך השנייה להיפטר מהסימנים: ערך מוחלט במקום ריבוע. היא פחות רגישה לחריגים משונות, אבל פחות נוחה מתמטית.</p>
+    </div>
+  </details>
+
+  <details class="ext">
+    <summary><span class="ext-badge">הרחבה</span> שונות מול MSE, וסטיית תקן מול RMSE</summary>
+    <div class="ext-body">
+      <p>לשניהם אותה צורה, ממוצע של ריבועי סטיות. ההבדל הוא <strong>ממה סוטים</strong>:</p>
+      <div class="table-wrap"><table class="t">
+        <tr><th></th><th>סוטים מ…</th><th>מודדים</th><th>אחרי שורש</th></tr>
+        <tr><td><strong>שונות</strong></td><td>הממוצע \(\bar{x}\)</td><td>פיזור של הנתונים</td><td>סטיית תקן</td></tr>
+        <tr><td><strong>MSE</strong></td><td>הערך האמיתי או החיזוי</td><td>גודל הטעות</td><td>RMSE</td></tr>
+      </table></div>
+      <h4>MSE של אומד</h4>
+      <p>אומד, למשל \(\bar{x}\), הוא <strong>משתנה מקרי</strong>: בכל מדגם יוצא ערך אחר. לכן יש לו תוחלת, שונות וגם MSE:</p>
+      <div class="math-block">$$MSE(\hat{\theta}) = E\left[(\hat{\theta} - \theta)^2\right] = \mathrm{Var}(\hat{\theta}) + \text{Bias}^2$$</div>
+      <p>אפשר לחשוב על זה כמו על חיצים במטרה. <strong>הטיה</strong> היא כשהחיצים מקובצים יחד, אבל לא סביב המרכז. <strong>שונות</strong> היא כשהם מפוזרים. <strong>MSE</strong> משלב את שתיהן. נקודה מפתיעה: בנתונים נורמליים, האומד שמחלק ב-\(n\) מוטה, ובכל זאת ה-MSE שלו <strong>נמוך יותר</strong> מזה של \(s^2\). חוסר הטיה הוא לא בהכרח האפשרות הטובה ביותר.</p>
+      <h4>MSE של מודל חיזוי</h4>
+      <div class="math-block">$$MSE = \frac{1}{n}\sum (y_i - \hat{y}_i)^2 \qquad\qquad R^2 = 1 - \frac{SSE}{SST}$$</div>
+      <p>השונות של \(y\) (בחלוקה ב-\(n\)) היא בדיוק ה-MSE של המודל הכי פשוט שיש, מודל שתמיד חוזה \(\bar{y}\). לכן סטיית התקן של \(y\) היא ה-RMSE שלו. <strong>בדיקת שפיות לכל מודל רגרסיה:</strong> אם ה-RMSE שלך קרוב לסטיית התקן של \(y\), המודל לא עדיף על חיזוי הממוצע. \(R^2\) מודד בדיוק את השיפור הזה.</p>
+    </div>
+  </details>
+
+  <p class="takeaway">ממוצע הולך עם סטיית תקן. חציון הולך עם IQR.</p>
+  <p class="note">כשהנתונים סימטריים ואין חריגים, מדווחים על ממוצע וסטיית תקן. כשיש אסימטריה או חריגים, כמו במשכורות או במחירי דירות, מדווחים על חציון ו-IQR.</p>
+</section>
+
+<!-- ============ 5 ============ -->
+<section class="chapter" id="transform">
+  <p class="chapter-num">פרק 6</p>
+  <h2>טרנספורמציות לינאריות</h2>
+  <p>טרנספורמציה לינארית היא שינוי שיטתי שמפעילים על <strong>כל</strong> הנתונים: \(Y = aX + b\). כל ערך מוכפל ב-\(a\), ואז מוסיפים לו \(b\). דוגמאות: המרת דולרים לשקלים היא כפל, שי לחג בסכום אחיד לכל העובדים הוא חיבור, ופקטור במבחן יכול להיות כל אחד מהם.</p>
+  <p>כדי להבין מה קורה למדדים, כדאי לפרק את הטרנספורמציה לשתי הפעולות שלה ולבדוק כל אחת בנפרד.</p>
+
+  <h3>חיבור או חיסור של קבוע: \(Y = X + b\)</h3>
+  <p>כל הנתונים <strong>זזים יחד</strong> באותו מרחק, כמו להזיז את כל הנקודות על ציר המספרים בבת אחת.</p>
+  <ul>
+    <li><strong>מדדי מרכז זזים ב-\(b\).</strong> אם כל עובד מקבל 500 ₪ נוספים, גם הממוצע, החציון והשכיח עולים ב-500 ₪.</li>
+    <li><strong>מדדי פיזור לא משתנים בכלל.</strong> המרחקים בין הנתונים נשארים בדיוק אותם מרחקים: מי שהרוויח 2,000 ₪ יותר מחברו עדיין מרוויח 2,000 ₪ יותר. לכן הטווח, ה-IQR, השונות וסטיית התקן נשארים כפי שהיו.</li>
+  </ul>
+
+  <h3>כפל או חילוק בקבוע: \(Y = aX\)</h3>
+  <p>כל הנתונים <strong>נמתחים</strong> (כש-\(|a| &gt; 1\)) או <strong>מתכווצים</strong> (כש-\(|a| &lt; 1\)), ואיתם גם המרחקים ביניהם.</p>
+  <ul>
+    <li><strong>מדדי מרכז מוכפלים ב-\(a\).</strong> העלאה של 10% בכל המשכורות (\(a = 1.1\)) מעלה את הממוצע ב-10%.</li>
+    <li><strong>טווח, IQR וסטיית תקן מוכפלים ב-\(|a|\).</strong> המרחקים נמתחים באותו יחס. הערך המוחלט נדרש כי מרחק לא יכול להיות שלילי.</li>
+    <li><strong>השונות מוכפלת ב-\(a^2\).</strong> היא נמדדת ביחידות בריבוע, ולכן גם המקדם עולה בריבוע. בהעלאה של 10% השונות גדלה ב-21% (\(1.1^2 = 1.21\)), ולא ב-10%.</li>
+  </ul>
+
+  <div class="callout">
+    <p class="callout-h">הכלל לזכור</p>
+    <p><strong>מדדי מרכז</strong> עוברים את כל הטרנספורמציה: גם את הכפל וגם את החיבור.</p>
+    <p><strong>מדדי פיזור</strong> מושפעים <strong>רק מהכפל</strong>. החיבור מזיז את הנתונים בלי לשנות את המרחקים ביניהם, ולכן הוא לא משפיע עליהם.</p>
+  </div>
+
+  <h3>הסיכום בטבלה</h3>
+  <p>בטבלה, \(M_X\) מסמן מדד מרכז כלשהו של \(X\) (ממוצע, חציון, שכיח או רבעון), ו-\(R_X\) מסמן את הטווח או את ה-IQR של \(X\). בכל שורה כתוב מה ערך המדד אחרי הטרנספורמציה, כלומר עבור הנתונים החדשים \(Y\), ובמילים למה.</p>
+  <div class="table-wrap"><table class="t">
+    <tr><th>מדד</th><th>הערך אחרי הטרנספורמציה \(Y = aX + b\)</th><th>במילים</th></tr>
+    <tr><td>ממוצע, חציון, שכיח, רבעונים</td><td class="n">\(a\cdot M_X + b\)</td><td>עוברים בדיוק את אותה פעולה כמו כל ערך: מכפילים ב-\(a\) ומוסיפים \(b\).</td></tr>
+    <tr><td>טווח, IQR</td><td class="n">\(|a| \cdot R_X\)</td><td>הם הפרש בין שני ערכים, וה-\(b\) מתקזז בחיסור. נשאר רק הכפל, בערך מוחלט.</td></tr>
+    <tr><td>סטיית תקן</td><td class="n">\(|a| \cdot s_X\)</td><td>גם היא מרחק טיפוסי מהממוצע, ולכן מתנהגת כמו הטווח: \(b\) לא משפיע, ו-\(a\) נכנס בערך מוחלט.</td></tr>
+    <tr><td>שונות</td><td class="n">\(a^2 \cdot \mathrm{Var}(X)\)</td><td>\(b\) לא משפיע, ו-\(a\) נכנס <strong>בריבוע</strong>, כי השונות היא ממוצע של סטיות בריבוע.</td></tr>
+  </table></div>
+
+  <figure class="lab" id="w-lin">
+    <p class="lab-title">טרנספורמציה על טמפרטורות</p>
+    <p class="lab-hint">X הוא הטמפרטורה המקסימלית (במעלות צלזיוס) בכל אחד מ-30 ימים. בשורה העליונה רואים את X, ובשורה התחתונה את Y, אותם ימים אחרי הטרנספורמציה. כל עמודה היא ערך, וגובהה הוא מספר הימים. הקו הכחול הוא הממוצע. הקו האפור מתחת לציר משתרע מהממוצע פחות סטיית תקן אחת עד הממוצע ועוד סטיית תקן אחת: ככל שהוא ארוך יותר, הפיזור גדול יותר.</p>
+    <p class="lab-hint">נסו קודם "חימום של 2 מעלות": כל העמודות זזות יחד, והקו האפור לא משתנה באורכו. אחר כך נסו "כפל ב-2": הנתונים נמתחים, והקו האפור מתארך. ההמרה לפרנהייט משלבת את שתי הפעולות.</p>
+    <div data-w="lin"></div>
+  </figure>
+</section>
+
+
+<!-- ============ 8 ============ -->
+<section class="chapter" id="lab">
+  <p class="chapter-num">פרק 7</p>
+  <h2>מחשבון: הדביקו נתונים, קבלו את כל המדדים</h2>
+  <p>הקלידו או הדביקו מספרים, מופרדים בפסיקים, ברווחים או בשורות. המדדים שמסומנים בסגול הם הרחבה.</p>
+  <figure class="lab" id="w-calc">
+    <div data-w="calc"></div>
+  </figure>
+</section>
+
+<!-- ============ 9 ============ -->
+<section class="chapter" id="quiz">
+  <p class="chapter-num">פרק 8</p>
+  <h2>בדקו את עצמכם</h2>
+  <p>לחצו על תשובה כדי לקבל משוב והסבר.</p>
+  <div data-w="quiz"></div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section class="chapter" id="pitfalls">
+  <p class="chapter-num">פרק 9</p>
+  <h2>מלכודות נפוצות</h2>
+  <ul>
+    <li><strong>לשכוח למיין</strong> לפני חישוב חציון.</li>
+    <li><strong>לבלבל בין השכיח לשכיחות שלו.</strong> אם הערך 3 הופיע 35 פעמים, השכיח הוא 3, ולא 35.</li>
+    <li><strong>לחלק ב-\(n\) במקום ב-\(n-1\)</strong>, או ללחוץ במחשבון על \(\sigma_x\) במקום על \(s_x\).</li>
+    <li><strong>להוסיף את \(b\) לשונות</strong> בטרנספורמציה לינארית, או לשכוח להעלות את \(a\) בריבוע.</li>
+    <li><strong>לשכוח את השורש:</strong> סטיית תקן היא שורש השונות, ולהפך.</li>
+    <li><strong>לחשב ממוצע למשתנה שמי</strong>, כמו "ממוצע ארץ המוצא".</li>
+    <li class="ext-only"><strong>היסטוגרמה עם סלים ברוחב שונה</strong>, שבה הגובה נקבע לפי השכיחות במקום לפי הצפיפות.</li>
+    <li><strong>לדווח על ממוצע בלבד</strong> כשההתפלגות דו-שיאית או מוטה. זכרו את זמני הנסיעה של העובדים.</li>
+  </ul>
+</section>
+
+  </main>
+</div>
+
+<div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+
+<script>
+window.addEventListener("DOMContentLoaded", function () {
+(function () {
+  "use strict";
+
+  /* ================= utilities ================= */
+  const NS = "http://www.w3.org/2000/svg";
+  function svgEl(tag, attrs, parent) {
+    const e = document.createElementNS(NS, tag);
+    if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function h(tag, attrs, parent, html) {
+    const e = document.createElement(tag);
+    if (attrs) for (const k in attrs) {
+      if (k === "class") e.className = attrs[k];
+      else if (k === "text") e.textContent = attrs[k];
+      else e.setAttribute(k, attrs[k]);
+    }
+    if (html !== undefined) e.innerHTML = html;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function svgText(parent, x, y, str, attrs) {
+    const t = svgEl("text", Object.assign({ x: x, y: y }, attrs || {}), parent);
+    t.textContent = /[\u0590-\u05FF]/.test(str) ? "\u2067" + str.replace(/[−-]?\d[\d.,]*%?/g, m => "\u2066" + m + "\u2069") + "\u2069" : str;
+    return t;
+  }
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const vbW = el => clamp(Math.round((el && el.clientWidth) || 640), 340, 640);
+
+  function fmt(x, d) {
+    if (x === null || x === undefined || Number.isNaN(x)) return "—";
+    if (!Number.isFinite(x)) return "∞";
+    if (d === undefined) d = 2;
+    const r = Number(x.toFixed(d));
+    return (Object.is(r, -0) ? 0 : r).toString();
+  }
+  function fmtList(arr) { return arr.length ? arr.map(v => fmt(v)).join(", ") : "אין"; }
+
+  const S = {
+    sum: a => a.reduce((s, v) => s + v, 0),
+    mean: a => a.length ? S.sum(a) / a.length : NaN,
+    sorted: a => a.slice().sort((x, y) => x - y),
+    median(a) {
+      if (!a.length) return NaN;
+      const s = S.sorted(a), n = s.length, m = Math.floor(n / 2);
+      return n % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+    },
+    modes(a) {
+      if (!a.length) return [];
+      const c = new Map();
+      a.forEach(v => c.set(v, (c.get(v) || 0) + 1));
+      if (c.size === 1) return [a[0]];
+      let mx = 0; c.forEach(v => { if (v > mx) mx = v; });
+      const top = []; c.forEach((v, k) => { if (v === mx) top.push(k); });
+      if (top.length === c.size) return []; // every value equally frequent: no mode (slide 51)
+      return top.sort((x, y) => x - y);
+    },
+    ss(a) { const m = S.mean(a); return a.reduce((s, v) => s + (v - m) * (v - m), 0); },
+    variance(a, ddof) { const n = a.length; return n - ddof > 0 ? S.ss(a) / (n - ddof) : NaN; },
+    sd(a, ddof) { return Math.sqrt(S.variance(a, ddof)); },
+    quartiles(a) {
+      const s = S.sorted(a), n = s.length;
+      if (n < 2) return { q1: NaN, q3: NaN };
+      const half = Math.floor(n / 2);
+      const lower = s.slice(0, half), upper = s.slice(n % 2 ? half + 1 : half);
+      return { q1: S.median(lower), q3: S.median(upper) };
+    },
+    mad(a) { const m = S.mean(a); return S.mean(a.map(v => Math.abs(v - m))); },
+    skew(a) {
+      const n = a.length, m = S.mean(a), s = S.sd(a, 1);
+      if (n < 3 || !(s > 0)) return NaN;
+      return a.reduce((t, v) => t + Math.pow(v - m, 3), 0) / (n * s * s * s);
+    }
+  };
+
+  function niceStep(span, target) {
+    const raw = span / (target || 8);
+    const p = Math.pow(10, Math.floor(Math.log10(raw)));
+    const f = raw / p;
+    return (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * p;
+  }
+
+  /* tooltip */
+  const tip = document.getElementById("tip");
+  function showTip(text, ev) {
+    if (!tip) return;
+    tip.textContent = text;
+    tip.classList.add("on");
+    const x = ev.clientX, y = ev.clientY;
+    const r = tip.getBoundingClientRect();
+    tip.style.left = clamp(x - r.width / 2, 8, window.innerWidth - r.width - 8) + "px";
+    tip.style.top = Math.max(8, y - r.height - 14) + "px";
+  }
+  function hideTip() { if (tip) tip.classList.remove("on"); }
+
+  function svgPoint(svg, ev) {
+    const pt = svg.createSVGPoint();
+    pt.x = ev.clientX; pt.y = ev.clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
+  }
+
+  function statTile(parent, key, value, opts) {
+    opts = opts || {};
+    const d = h("div", { class: "stat" + (opts.ext ? " ext-stat ext-only" : "") }, parent);
+    const k = h("div", { class: "k" }, d);
+    if (opts.swatch) h("span", { class: "swatch " + opts.swatch }, k);
+    h("span", { text: key }, k);
+    h("div", { class: "v", text: value }, d);
+    return d;
+  }
+
+  function seg(parent, options, value, onChange) {
+    const wrap = h("div", { class: "seg", role: "group" }, parent);
+    const btns = options.map(o => {
+      const b = h("button", { type: "button", "aria-pressed": String(o.value === value), text: o.label }, wrap);
+      b.addEventListener("click", () => {
+        btns.forEach(x => x.setAttribute("aria-pressed", "false"));
+        b.setAttribute("aria-pressed", "true");
+        onChange(o.value);
+      });
+      return b;
+    });
+    return wrap;
+  }
+
+  /* ================= DotStrip: the core draggable widget ================= */
+  function DotStrip(container, o) {
+    const opt = Object.assign({
+      data: [], min: 0, max: 30, step: 1, editable: true,
+      markers: { mean: true, median: true, mode: true },
+      squares: false, ddof: 1, box: false, sdBand: false,
+      glyph: "dot", unit: "", tickStep: null, onChange: null, ariaLabel: "נקודות נתונים"
+    }, o);
+    const data = opt.data.slice();
+    let W = vbW(container); const padX = 22;
+    const svg = svgEl("svg", { role: "group", "aria-label": opt.ariaLabel, style: "direction:ltr" }, container);
+    let focusIdx = -1, dragIdx = -1;
+
+    const xs = v => padX + (v - opt.min) / (opt.max - opt.min) * (W - 2 * padX);
+    const xv = px => clamp(Math.round((opt.min + (px - padX) / (W - 2 * padX) * (opt.max - opt.min)) / opt.step) * opt.step, opt.min, opt.max);
+    const unitPx = (W - 2 * padX) / (opt.max - opt.min);
+
+    function render() {
+      W = vbW(container);
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      const n = data.length;
+      const mean = S.mean(data), med = S.median(data), modes = S.modes(data);
+      const mk = opt.markers || {};
+      const rows = [];
+      if (mk.mean) rows.push("mean");
+      if (mk.median) rows.push("median");
+      if (mk.mode) rows.push("mode");
+      if (mk.q) rows.push("q");
+      const labelH = rows.length ? 34 : 6;
+
+      // stacking
+      const counts = new Map();
+      const stackK = data.map(v => { const k = counts.get(v) || 0; counts.set(v, k + 1); return k; });
+      const maxStack = Math.max(1, ...Array.from(counts.values()));
+      const glyphH = opt.glyph === "person" ? 26 : 15;
+
+      let squaresH = 0;
+      if (opt.squares && n) {
+        const maxDev = Math.max(...data.map(v => Math.abs(v - mean)));
+        const avgSide = Math.sqrt(S.variance(data, opt.ddof) || 0);
+        squaresH = Math.max(maxDev, avgSide) * unitPx + 10;
+      }
+      const stackH = opt.squares ? 16 : maxStack * glyphH + 8;
+      const top = labelH;
+      const base = top + Math.max(stackH, squaresH) + 6;
+      const axisH = 30;
+      const boxH = opt.box ? 46 : 0;
+      const H = base + axisH + boxH + 4;
+      svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+
+      // sd band
+      if (opt.sdBand && n > 1) {
+        const s = S.sd(data, 1);
+        const x1 = xs(clamp(mean - s, opt.min, opt.max)), x2 = xs(clamp(mean + s, opt.min, opt.max));
+        svgEl("rect", { x: x1, y: top, width: Math.max(0, x2 - x1), height: base - top, fill: "var(--mean)", opacity: 0.09 }, svg);
+        svgEl("line", { x1: x1, x2: x2, y1: base + 4, y2: base + 4, stroke: "var(--mean)", "stroke-width": 2 }, svg);
+        svgText(svg, (x1 + x2) / 2, base - 4, "x̄ ± s", { "text-anchor": "middle", "font-size": 11, fill: "var(--muted)" });
+      }
+
+      // interquartile band
+      if (opt.iqrBand && n >= 2) {
+        const q = S.quartiles(data);
+        svgEl("rect", { x: xs(q.q1), y: top, width: Math.max(0, xs(q.q3) - xs(q.q1)), height: base - top, fill: "var(--ink-2)", opacity: 0.1 }, svg);
+        svgEl("line", { x1: xs(q.q1), x2: xs(q.q3), y1: base + 4, y2: base + 4, stroke: "var(--ink-2)", "stroke-width": 3 }, svg);
+      }
+
+      // axis
+      svgEl("line", { x1: padX, x2: W - padX, y1: base, y2: base, stroke: "var(--rule-strong)", "stroke-width": 1 }, svg);
+      const tStep = opt.tickStep || niceStep(opt.max - opt.min, 8);
+      for (let t = Math.ceil(opt.min / tStep) * tStep; t <= opt.max + 1e-9; t += tStep) {
+        const x = xs(t);
+        svgEl("line", { x1: x, x2: x, y1: base, y2: base + 5, stroke: "var(--rule-strong)" }, svg);
+        svgText(svg, x, base + 19, fmt(t), { "text-anchor": "middle", "font-size": 12, fill: "var(--muted)" });
+      }
+      if (opt.unit) svgText(svg, W - padX, base + axisH - 1, opt.unit, { "text-anchor": "end", "font-size": 11, fill: "var(--muted)" });
+
+      // squares
+      if (opt.squares && n) {
+        data.forEach(v => {
+          const d = v - mean, side = Math.abs(d) * unitPx;
+          if (side < 0.5) return;
+          const x = d > 0 ? xs(mean) : xs(v);
+          svgEl("rect", { x: x, y: base - side, width: side, height: side,
+            fill: d > 0 ? "var(--pos)" : "var(--neg)", "fill-opacity": 0.1,
+            stroke: d > 0 ? "var(--pos)" : "var(--neg)", "stroke-opacity": 0.65, "stroke-width": 1.2 }, svg);
+        });
+        const v2 = S.variance(data, opt.ddof);
+        if (v2 > 0) {
+          const side = Math.sqrt(v2) * unitPx;
+          svgEl("rect", { x: xs(mean) - side / 2, y: base - side, width: side, height: side, fill: "none",
+            stroke: "var(--ink)", "stroke-width": 1.6, "stroke-dasharray": "5 4" }, svg);
+          svgText(svg, xs(mean), base - side - 5, `ריבוע ממוצע = ${fmt(v2)}`, { "text-anchor": "middle", "font-size": 12, fill: "var(--ink)", "font-weight": 600 });
+        }
+      }
+
+      // markers: one label row, labels pushed apart, leader lines down to the true position
+      if (n && rows.length) {
+        const items = [];
+        rows.forEach(kind => {
+          if (kind === "mean") items.push({ kind, val: mean, label: `ממוצע ${fmt(mean)}` });
+          if (kind === "median") items.push({ kind, val: med, label: `חציון ${fmt(med)}` });
+          if (kind === "q" && n >= 2) { const q = S.quartiles(data); items.push({ kind: "q", val: q.q1, label: `Q1 ${fmt(q.q1)}` }); items.push({ kind: "q", val: q.q3, label: `Q3 ${fmt(q.q3)}` }); }
+          if (kind === "mode") {
+            if (modes.length <= 3) modes.forEach(m => items.push({ kind, val: m, label: `שכיח ${fmt(m)}` }));
+            else modes.forEach((m, j) => items.push({ kind, val: m, label: j === 0 ? `${modes.length} שכיחים` : "" }));
+          }
+        });
+        items.forEach(it => {
+          it.x = xs(it.val);
+          if (!it.label) { it.w = 0; return; }
+          const t = svgText(svg, -999, -999, it.label, { "font-size": 12.5, "font-weight": 600 });
+          let w = 0; try { w = t.getComputedTextLength(); } catch (e) { w = 0; }
+          it.w = (w || it.label.length * 7) + 10;
+          svg.removeChild(t);
+        });
+        const lab = items.filter(it => it.label).sort((a, b) => a.x - b.x || a.kind.localeCompare(b.kind));
+        lab.forEach(it => { it.lx = it.x; });
+        for (let k = 0; k < 4; k++) {
+          for (let j = 0; j < lab.length; j++) {
+            const it = lab[j];
+            const minX = j ? lab[j - 1].lx + lab[j - 1].w / 2 + it.w / 2 : padX + it.w / 2 - 10;
+            if (it.lx < minX) it.lx = minX;
+          }
+          for (let j = lab.length - 1; j >= 0; j--) {
+            const it = lab[j];
+            const maxX = j < lab.length - 1 ? lab[j + 1].lx - lab[j + 1].w / 2 - it.w / 2 : W - padX - it.w / 2 + 10;
+            if (it.lx > maxX) it.lx = maxX;
+          }
+        }
+        items.forEach(it => {
+          const color = it.kind === "q" ? "var(--ink-2)" : `var(--${it.kind})`;
+          const dash = it.kind === "mean" ? null : it.kind === "median" ? "6 4" : it.kind === "q" ? "4 3" : "2 3";
+          const ln = svgEl("line", { x1: it.x, x2: it.x, y1: labelH - 4, y2: base, stroke: color, "stroke-width": 2 }, svg);
+          if (dash) ln.setAttribute("stroke-dasharray", dash);
+          if (it.label) {
+            svgEl("path", { d: `M${it.lx},19 L${it.lx},22 L${it.x},${labelH - 4}`, fill: "none", stroke: color, "stroke-width": 1.5 }, svg);
+            svgText(svg, it.lx, 13, it.label, { "text-anchor": "middle", "font-size": 12.5, "font-weight": 600, fill: "var(--ink)" });
+          }
+        });
+      }
+
+      // points
+      data.forEach((v, i) => {
+        const cx = xs(v);
+        const cy = opt.squares ? base - 7 : base - 9 - stackK[i] * glyphH;
+        const g = svgEl("g", { tabindex: opt.editable ? 0 : -1, role: opt.editable ? "slider" : "img",
+          "aria-label": `ערך ${fmt(v)}`, "aria-valuenow": v, "aria-valuemin": opt.min, "aria-valuemax": opt.max,
+          style: opt.editable ? "cursor:grab;outline:none" : "outline:none" }, svg);
+        g.dataset.i = i;
+        const hy = opt.glyph === "person" ? base - 14 - stackK[i] * glyphH : cy;
+        svgEl("circle", { cx: cx, cy: hy, r: 14, fill: "transparent" }, g);
+        if (opt.glyph === "person") {
+          const yb = base - 2 - stackK[i] * glyphH;
+          svgEl("circle", { cx: cx, cy: yb - 19, r: 4.2, fill: "var(--ink-2)" }, g);
+          svgEl("rect", { x: cx - 5, y: yb - 13.5, width: 10, height: 12, rx: 4, fill: "var(--ink-2)" }, g);
+        } else {
+          svgEl("circle", { cx: cx, cy: cy, r: 6.5, fill: "var(--ink)", stroke: "var(--surface)", "stroke-width": 2 }, g);
+        }
+        if (opt.editable) svgEl("circle", { class: "ring", cx: cx, cy: cy, r: 11, fill: "none", stroke: "var(--accent)", "stroke-width": 2.5 }, g);
+        g.addEventListener("pointerenter", ev => showTip(`${fmt(v)}${opt.unit ? " " + opt.unit : ""}`, ev));
+        g.addEventListener("pointermove", ev => { if (dragIdx < 0) showTip(`${fmt(v)}${opt.unit ? " " + opt.unit : ""}`, ev); });
+        g.addEventListener("pointerleave", hideTip);
+        if (opt.editable) {
+          g.addEventListener("pointerdown", ev => { ev.preventDefault(); dragIdx = i; focusIdx = i; svg.style.cursor = "grabbing"; });
+          g.addEventListener("focus", () => { focusIdx = i; });
+          g.addEventListener("keydown", ev => {
+            let d = 0;
+            if (ev.key === "ArrowRight" || ev.key === "ArrowUp") d = opt.step;
+            if (ev.key === "ArrowLeft" || ev.key === "ArrowDown") d = -opt.step;
+            if (ev.key === "PageUp") d = opt.step * 5;
+            if (ev.key === "PageDown") d = -opt.step * 5;
+            if (d) { ev.preventDefault(); keyboardMode = true; data[i] = clamp(Number((data[i] + d).toFixed(6)), opt.min, opt.max); changed(); }
+          });
+        }
+      });
+
+      // box plot
+      if (opt.box && n >= 2) {
+        const q = S.quartiles(data), iqr = q.q3 - q.q1;
+        const lo = q.q1 - 1.5 * iqr, hi = q.q3 + 1.5 * iqr;
+        const inside = data.filter(v => v >= lo && v <= hi);
+        const wl = Math.min(...inside), wh = Math.max(...inside);
+        const y0 = base + axisH + 8, bh = 22, yc = y0 + bh / 2;
+        svgEl("line", { x1: xs(wl), x2: xs(q.q1), y1: yc, y2: yc, stroke: "var(--ink-2)", "stroke-width": 1.5 }, svg);
+        svgEl("line", { x1: xs(q.q3), x2: xs(wh), y1: yc, y2: yc, stroke: "var(--ink-2)", "stroke-width": 1.5 }, svg);
+        [wl, wh].forEach(w => svgEl("line", { x1: xs(w), x2: xs(w), y1: y0 + 5, y2: y0 + bh - 5, stroke: "var(--ink-2)", "stroke-width": 1.5 }, svg));
+        svgEl("rect", { x: xs(q.q1), y: y0, width: Math.max(1, xs(q.q3) - xs(q.q1)), height: bh, rx: 3, fill: "var(--ext)", "fill-opacity": 0.14, stroke: "var(--ext)", "stroke-width": 1.5 }, svg);
+        svgEl("line", { x1: xs(med), x2: xs(med), y1: y0, y2: y0 + bh, stroke: "var(--median)", "stroke-width": 2.5 }, svg);
+        data.filter(v => v < lo || v > hi).forEach(v => {
+          svgEl("circle", { cx: xs(v), cy: yc, r: 5, fill: "none", stroke: "var(--neg)", "stroke-width": 2 }, svg);
+        });
+        svgText(svg, padX, y0 + bh + 14, "Box Plot", { "font-size": 11, fill: "var(--ext)" });
+      }
+
+    }
+
+    let keyboardMode = false;
+    svg.addEventListener("keydown", () => { keyboardMode = true; });
+    svg.addEventListener("pointerdown", () => { keyboardMode = false; });
+
+    function changed() {
+      render();
+      if (opt.onChange) opt.onChange(data);
+      if (focusIdx >= 0 && keyboardMode) {
+        const el = svg.querySelector(`g[data-i="${focusIdx}"]`);
+        if (el) el.focus({ preventScroll: true });
+      }
+    }
+
+    window.addEventListener("pointermove", ev => {
+      if (dragIdx < 0) return;
+      const p = svgPoint(svg, ev);
+      const v = xv(p.x);
+      if (v !== data[dragIdx]) { data[dragIdx] = v; changed(); }
+      showTip(`${fmt(v)}${opt.unit ? " " + opt.unit : ""}`, ev);
+    });
+    window.addEventListener("pointerup", () => {
+      if (dragIdx >= 0) { dragIdx = -1; svg.style.cursor = ""; hideTip(); }
+    });
+
+    render();
+    return {
+      data: data,
+      set(arr) { data.length = 0; arr.forEach(v => data.push(v)); focusIdx = -1; changed(); },
+      add(v) { data.push(clamp(v, opt.min, opt.max)); changed(); },
+      removeLast() { if (data.length > 1) { data.pop(); focusIdx = -1; changed(); } },
+      setOpt(k, v) { opt[k] = v; changed(); },
+      render: changed
+    };
+  }
+
+  /* ================= widgets ================= */
+  const W = {};
+
+  W.hero = function (root) {
+    const sets = [
+      { name: "קבוצה א", data: [12, 8, 10, 10, 8, 12] },
+      { name: "קבוצה ב", data: [28, 4, 6, 4, 2, 16] }
+    ];
+    sets.forEach(set => {
+      const col = h("div", null, root);
+      const head = h("div", { class: "tw-h" }, col);
+      h("span", { text: set.name }, head);
+      const meta = h("span", { class: "num" }, head);
+      const strip = h("div", null, col);
+      const upd = d => { meta.textContent = `ממוצע ${fmt(S.mean(d))}, סטיית תקן ${fmt(S.sd(d, 1))}`; };
+      DotStrip(strip, { data: set.data, min: 0, max: 30, step: 1, markers: { mean: true }, sdBand: true, onChange: upd, tickStep: 5, ariaLabel: set.name });
+      upd(set.data);
+    });
+  };
+
+  W.center = function (root) {
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    const caption = h("p", { class: "note", style: "margin:10px 0 0" }, root);
+    const row = h("div", { class: "lab-row" }, root);
+    const initial = [5, 7, 8, 8, 10, 22];
+    const strip = DotStrip(holder, { data: initial, min: 0, max: 40, step: 1, unit: "אלפי ₪", tickStep: 5, onChange: upd, ariaLabel: "משכורות" });
+    const bAdd = h("button", { class: "btn", type: "button", text: "הוסף נקודה" }, row);
+    const bRem = h("button", { class: "btn", type: "button", text: "הסר נקודה" }, row);
+    const outLabel = "מה אם הגבוה ביותר היה 200?";
+    const bOut = h("button", { class: "btn", type: "button", text: outLabel }, row);
+    const bReset = h("button", { class: "btn", type: "button", text: "איפוס" }, row);
+    bAdd.addEventListener("click", () => strip.add(Math.round(S.median(strip.data))));
+    bRem.addEventListener("click", () => strip.removeLast());
+    bReset.addEventListener("click", () => strip.set(initial));
+    bOut.addEventListener("click", () => {
+      const d = strip.data.slice(); const big = d.slice().sort((a, b) => b - a)[0];
+      const alt = d.map(v => v === big ? 200 : v);
+      bOut.textContent = `עם 200: ממוצע ${fmt(S.mean(alt))}, חציון ${fmt(S.median(alt))}`;
+      setTimeout(() => { bOut.textContent = outLabel; }, 5000);
+    });
+    function upd(d) {
+      stats.innerHTML = "";
+      const mean = S.mean(d), med = S.median(d);
+      statTile(stats, "n", String(d.length));
+      statTile(stats, "ממוצע", fmt(mean), { swatch: "mean" });
+      statTile(stats, "חציון", fmt(med), { swatch: "median" });
+      statTile(stats, "שכיח", fmtList(S.modes(d)), { swatch: "mode" });
+      statTile(stats, "סכום הסטיות", fmt(S.sum(d.map(v => v - mean)), 6));
+      const diff = mean - med;
+      const kind = Math.abs(diff) < 1e-9 ? "ממוצע = חציון, כמו בהתפלגות סימטרית" : diff > 0 ? "ממוצע > חציון: זנב ימני (אסימטריה חיובית)" : "ממוצע < חציון: זנב שמאלי (אסימטריה שלילית)";
+      caption.textContent = kind + ".";
+    }
+    upd(initial);
+  };
+
+  W.iqr = function (root) {
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    const row = h("div", { class: "lab-row" }, root);
+    const initial = [5, 7, 8, 8, 10, 22];
+    const strip = DotStrip(holder, { data: initial, min: 0, max: 40, step: 1, unit: "אלפי ₪", tickStep: 5,
+      markers: { median: true, q: true }, iqrBand: true, onChange: upd, ariaLabel: "משכורות" });
+    const bReset = h("button", { class: "btn", type: "button", text: "איפוס" }, row);
+    bReset.addEventListener("click", () => strip.set(initial));
+    function upd(d) {
+      const q = S.quartiles(d);
+      stats.innerHTML = "";
+      statTile(stats, "Q1", fmt(q.q1));
+      statTile(stats, "חציון", fmt(S.median(d)), { swatch: "median" });
+      statTile(stats, "Q3", fmt(q.q3));
+      statTile(stats, "IQR", fmt(q.q3 - q.q1));
+      statTile(stats, "סטיית תקן s", fmt(S.sd(d, 1)));
+      statTile(stats, "טווח", fmt(Math.max(...d) - Math.min(...d)));
+    }
+    upd(initial);
+  };
+
+  /* ---------- distribution shape explorer ---------- */
+  function normCdf(z) {
+    // Abramowitz–Stegun 7.1.26
+    const t = 1 / (1 + 0.3275911 * Math.abs(z) / Math.SQRT2);
+    const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-z * z / 2);
+    return z >= 0 ? 0.5 * (1 + y) : 0.5 * (1 - y);
+  }
+  function skewNormal(x, xi, om, al) {
+    const z = (x - xi) / om;
+    return 2 / om * Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI) * normCdf(al * z);
+  }
+
+  W.shape = function (root) {
+    const OM = 1.8, C = 0, XMIN = -7.5, XMAX = 10.5, N = 480;
+    const presets = [
+      { label: "סימטרית", p: { alpha: 0, w: 0, d: 4 } },
+      { label: "זנב ימני", p: { alpha: 7, w: 0, d: 4 } },
+      { label: "זנב שמאלי", p: { alpha: -7, w: 0, d: 4 } },
+      { label: "דו-שיאית", p: { alpha: 0, w: 0.5, d: 5.5 } },
+      { label: "דו-שיאית לא מאוזנת", p: { alpha: 0, w: 0.3, d: 5.5 } }
+    ];
+    const st = { alpha: 7, w: 0, d: 4 };
+    const presetRow = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    const presetBtns = presets.map(pr => {
+      const b = h("button", { class: "btn", type: "button", text: pr.label, "aria-pressed": "false" }, presetRow);
+      b.addEventListener("click", () => animateTo(pr.p));
+      return b;
+    });
+    const holder = h("div", null, root);
+    const ctl = h("div", { class: "lab-row" }, root);
+    function slider(label, key, min, max, step, fmtV) {
+      const lab = h("label", null, ctl);
+      h("span", { text: label }, lab);
+      const inp = h("input", { type: "range", min, max, step, value: st[key], "aria-label": label }, lab);
+      const out = h("strong", { class: "num", style: "min-width:3em" }, lab);
+      inp.addEventListener("input", () => { st[key] = parseFloat(inp.value); render(); });
+      return { inp, out, key, fmtV };
+    }
+    const sliders = [
+      slider("אסימטריה", "alpha", -10, 10, 0.5, v => fmt(v, 1)),
+      slider("שיא שני", "w", 0, 0.6, 0.05, v => Math.round(v * 100) + "%"),
+      slider("מרחק בין השיאים", "d", 2, 7, 0.5, v => fmt(v, 1))
+    ];
+    const stats = h("div", { class: "stats" }, root);
+    const verdict = h("p", { style: "margin:12px 0 0;font-weight:500" }, root);
+
+    function modeOffset(alpha) {
+      // where the peak of a skew-normal with xi=0 sits, found numerically
+      let best = 0, bv = -1;
+      for (let x = -3 * OM; x <= 3 * OM; x += 0.01) { const v = skewNormal(x, 0, OM, alpha); if (v > bv) { bv = v; best = x; } }
+      return best;
+    }
+    function compute() {
+      const xi1 = C - modeOffset(st.alpha) - st.w * st.d / 2;
+      const xs = [], fs = [];
+      const dx = (XMAX - XMIN) / (N - 1);
+      for (let i = 0; i < N; i++) {
+        const x = XMIN + i * dx;
+        xs.push(x);
+        fs.push((1 - st.w) * skewNormal(x, xi1, OM, st.alpha) + st.w * skewNormal(x, xi1 + st.d, OM, st.alpha));
+      }
+      let area = 0, m1 = 0;
+      for (let i = 0; i < N; i++) { area += fs[i] * dx; m1 += xs[i] * fs[i] * dx; }
+      const mean = m1 / area;
+      let cum = 0, median = xs[N - 1];
+      for (let i = 0; i < N; i++) {
+        const prev = cum; cum += fs[i] * dx / area;
+        if (cum >= 0.5) { median = xs[i] - dx * (cum - 0.5) / (cum - prev || 1); break; }
+      }
+      const fmax = Math.max(...fs);
+      const modes = [];
+      for (let i = 1; i < N - 1; i++) {
+        if (fs[i] >= fs[i - 1] && fs[i] > fs[i + 1] && fs[i] >= 0.97 * fmax) modes.push(xs[i]);
+      }
+      const peaks = [];
+      for (let i = 1; i < N - 1; i++) if (fs[i] >= fs[i - 1] && fs[i] > fs[i + 1] && fs[i] > 0.15 * fmax) peaks.push(xs[i]);
+      return { xs, fs, mean, median, modes, fmax, peaks };
+    }
+
+    function render() {
+      sliders.forEach(sl => { sl.inp.value = st[sl.key]; sl.out.textContent = sl.fmtV(st[sl.key]); });
+      sliders[2].inp.disabled = st.w === 0;
+      const R = compute();
+      holder.innerHTML = "";
+      const Wd = vbW(holder), Hd = 270, pl = 14, pr = 14, top = 40, pb = 26;
+      const svg = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "עקומת התפלגות עם ממוצע, חציון ושכיח" }, holder);
+      const xS = x => pl + (x - XMIN) / (XMAX - XMIN) * (Wd - pl - pr);
+      const base = Hd - pb;
+      const yS = f => base - Math.min(f / 0.46, 1) * (base - top);
+      let d = `M${xS(R.xs[0])},${base}`;
+      R.xs.forEach((x, i) => { d += `L${xS(x)},${yS(R.fs[i])}`; });
+      d += `L${xS(R.xs[R.xs.length - 1])},${base}Z`;
+      svgEl("path", { d, fill: "var(--accent)", "fill-opacity": 0.1, stroke: "none" }, svg);
+      let line = "";
+      R.xs.forEach((x, i) => { line += `${i ? "L" : "M"}${xS(x)},${yS(R.fs[i])}`; });
+      svgEl("path", { d: line, fill: "none", stroke: "var(--ink)", "stroke-width": 2.4, "stroke-linejoin": "round" }, svg);
+      svgEl("line", { x1: pl, x2: Wd - pr, y1: base, y2: base, stroke: "var(--rule-strong)" }, svg);
+      svgText(svg, Wd - pr, Hd - 6, "ערכי המשתנה", { "text-anchor": "end", "font-size": 11, fill: "var(--muted)" });
+
+      const fAt = x => { const i = clamp(Math.round((x - XMIN) / (XMAX - XMIN) * (R.xs.length - 1)), 0, R.xs.length - 1); return R.fs[i]; };
+      const items = [{ kind: "mean", x: R.mean, label: "ממוצע" }, { kind: "median", x: R.median, label: "חציון" }];
+      R.modes.forEach(m => items.push({ kind: "mode", x: m, label: "שכיח" }));
+      items.forEach(it => {
+        it.px = xS(it.x);
+        const t = svgText(svg, -999, -999, it.label, { "font-size": 13, "font-weight": 600 });
+        let w = 0; try { w = t.getComputedTextLength(); } catch (e) { w = 0; }
+        it.w = (w || it.label.length * 8) + 12; svg.removeChild(t);
+      });
+      const lab = items.slice().sort((a, b) => a.px - b.px);
+      lab.forEach(it => { it.lx = it.px; });
+      for (let k = 0; k < 4; k++) {
+        for (let j = 1; j < lab.length; j++) { const mn = lab[j - 1].lx + lab[j - 1].w / 2 + lab[j].w / 2; if (lab[j].lx < mn) lab[j].lx = mn; }
+        for (let j = lab.length - 2; j >= 0; j--) { const mx = lab[j + 1].lx - lab[j + 1].w / 2 - lab[j].w / 2; if (lab[j].lx > mx) lab[j].lx = mx; }
+        lab.forEach(it => { it.lx = clamp(it.lx, pl + it.w / 2, Wd - pr - it.w / 2); });
+      }
+      items.forEach(it => {
+        const color = `var(--${it.kind})`;
+        const dash = it.kind === "mean" ? null : it.kind === "median" ? "6 4" : "2 3";
+        const ln = svgEl("line", { x1: it.px, x2: it.px, y1: top - 8, y2: base, stroke: color, "stroke-width": 2.4 }, svg);
+        if (dash) ln.setAttribute("stroke-dasharray", dash);
+        svgEl("circle", { cx: it.px, cy: yS(fAt(it.x)), r: 4, fill: color, stroke: "var(--surface)", "stroke-width": 1.5 }, svg);
+        svgEl("path", { d: `M${it.lx},18 L${it.lx},22 L${it.px},${top - 8}`, fill: "none", stroke: color, "stroke-width": 1.5 }, svg);
+        svgText(svg, it.lx, 13, it.label, { "text-anchor": "middle", "font-size": 13, "font-weight": 600, fill: "var(--ink)" });
+      });
+
+      stats.innerHTML = "";
+      statTile(stats, "ממוצע", fmt(R.mean, 2), { swatch: "mean" });
+      statTile(stats, "חציון", fmt(R.median, 2), { swatch: "median" });
+      statTile(stats, R.modes.length > 1 ? "שכיחים" : "שכיח", R.modes.map(m => fmt(m, 2)).join(", "), { swatch: "mode" });
+      statTile(stats, "ממוצע פחות חציון", fmt(R.mean - R.median, 2));
+
+      const diff = R.mean - R.median, bimodal = R.peaks.length > 1;
+      let txt;
+      if (bimodal) txt = Math.abs(diff) < 0.05
+        ? "דו-שיאית וסימטרית: הממוצע והחציון נופלים בעמק שבין השיאים, במקום שבו כמעט אין נתונים. אף מדד מרכז יחיד לא מתאר אותה טוב."
+        : `דו-שיאית: הממוצע והחציון נמצאים בין השיאים, והממוצע נמשך לכיוון השיא ${diff > 0 ? "הימני" : "השמאלי"} והזנב שלו.`;
+      else if (Math.abs(diff) < 0.05) txt = "סימטרית: הממוצע, החציון והשכיח נופלים כמעט באותה נקודה.";
+      else if (diff > 0) txt = "זנב ימני (אסימטריה חיובית): שכיח < חציון < ממוצע. הממוצע נמשך ימינה, לכיוון הזנב.";
+      else txt = "זנב שמאלי (אסימטריה שלילית): ממוצע < חציון < שכיח. הממוצע נמשך שמאלה, לכיוון הזנב.";
+      verdict.textContent = txt;
+      presetBtns.forEach((b, i) => {
+        const p = presets[i].p;
+        const on = p.alpha === st.alpha && p.w === st.w && (p.w === 0 || p.d === st.d);
+        b.setAttribute("aria-pressed", String(on));
+        b.classList.toggle("primary", on);
+      });
+    }
+
+    let anim = 0;
+    function animateTo(target) {
+      cancelAnimationFrame(anim);
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const from = Object.assign({}, st);
+      if (reduce) { Object.assign(st, target); render(); return; }
+      const t0 = performance.now(), dur = 550;
+      const step = now => {
+        const t = Math.min(1, (now - t0) / dur), e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        Object.keys(target).forEach(k => { st[k] = from[k] + (target[k] - from[k]) * e; });
+        if (t >= 1) Object.assign(st, target);
+        render();
+        if (t < 1) anim = requestAnimationFrame(step);
+      };
+      anim = requestAnimationFrame(step);
+    }
+    render();
+  };
+
+  /* ---------- measurement scales ladder ---------- */
+  W.scales = function (root) {
+    const caps = [
+      { sym: "= ≠", name: "הבחנה", desc: "אפשר לומר ששני ערכים שווים או שונים" },
+      { sym: "< >", name: "סדר", desc: "אפשר לומר מי גדול יותר" },
+      { sym: "+ −", name: "מרווחים", desc: "להפרש יש משמעות: אפשר לומר בכמה" },
+      { sym: "× ÷", name: "יחס", desc: "יש אפס מוחלט: אפשר לומר פי כמה" }
+    ];
+    const scales = [
+      { name: "שמי", en: "Nominal", can: "שחקן 7 ושחקן 23 הם שני שחקנים שונים.", cant: "שחקן 23 אינו \"יותר\" משחקן 7, ולממוצע של מספרי החולצות אין שום משמעות. המספר הוא רק שם.", ex: "מספר סטודנט, מגדר, סטטוס משפחתי, צבע עיניים", measures: "שכיח בלבד", draw: drawNominal },
+      { name: "סדר", en: "Ordinal", can: "מי שסיים במקום הראשון הקדים את מי שסיים שני.", cant: "לא יודעים בכמה: אולי בשנייה אחת, ואולי בדקה. הפער בין מקום 1 ל-2 לא בהכרח שווה לפער בין 2 ל-3.", ex: "דרגה בעבודה, מיקום בכיתה, שביעות רצון 1–5", measures: "שכיח, חציון", draw: drawOrdinal },
+      { name: "רווח", en: "Interval", can: "20° חם יותר מ-10°, ובדיוק ב-10 מעלות. מרווח של מעלה אחת שווה בכל מקום בסולם.", cant: "20° אינו \"חם פי 2\" מ-10°. בפרנהייט אותם שני ימים הם 68° ו-50°, יחס של 1.36 בלבד. היחס תלוי ביחידות, כי האפס נבחר באופן שרירותי.", ex: "טמפרטורה בצלזיוס, תאריך, שנת לידה", measures: "שכיח, חציון, ממוצע", draw: drawInterval },
+      { name: "מנה", en: "Ratio", can: "80 ק\"ג הם פי 2 מ-40 ק\"ג, כי 0 ק\"ג פירושו שאין משקל בכלל.", cant: "כאן אין מגבלה: כל פעולות החשבון מותרות.", ex: "משקל, מרחק, זמן, הכנסה", measures: "כל המדדים", draw: drawRatio }
+    ];
+    let sel = 0;
+    const grid = h("div", { class: "ladder", role: "tablist", "aria-label": "סולמות מדידה" }, root);
+    const detail = h("div", { class: "ladder-detail", role: "tabpanel" }, root);
+
+    h("div", { class: "ld-corner" }, grid);
+    caps.forEach(c => {
+      const hd = h("div", { class: "ld-cap" }, grid);
+      h("span", { class: "ld-sym", text: c.sym }, hd);
+      h("span", { class: "ld-capname", text: c.name }, hd);
+    });
+    const rows = scales.map((sc, i) => {
+      const btn = h("button", { class: "ld-scale", type: "button", role: "tab", "aria-selected": "false" }, grid);
+      h("span", { class: "ld-name", text: sc.name }, btn);
+      h("span", { class: "ld-en", text: sc.en }, btn);
+      btn.addEventListener("click", () => { sel = i; update(); });
+      btn.addEventListener("keydown", ev => {
+        if (ev.key === "ArrowDown" || ev.key === "ArrowUp") {
+          ev.preventDefault(); sel = (sel + (ev.key === "ArrowDown" ? 1 : 3)) % 4; update(); rows[sel].btn.focus();
+        }
+      });
+      const cells = caps.map((c, j) => {
+        const cell = h("div", { class: "ld-cell" + (j <= i ? " on" : "") + (j === i ? " new" : "") }, grid);
+        if (j <= i) cell.textContent = c.sym;
+        if (j === i) h("span", { class: "ld-newtag", text: i === 0 ? "בסיס" : "חדש" }, cell);
+        return cell;
+      });
+      return { btn, cells };
+    });
+
+    function update() {
+      rows.forEach((r, i) => {
+        r.btn.setAttribute("aria-selected", String(i === sel));
+        r.btn.classList.toggle("sel", i === sel);
+        r.cells.forEach(c => c.classList.toggle("sel", i === sel));
+      });
+      const sc = scales[sel], cap = caps[sel];
+      detail.innerHTML = "";
+      const art = h("div", { class: "ld-art" }, detail);
+      sc.draw(art);
+      const txt = h("div", { class: "ld-text" }, detail);
+      h("p", { class: "ld-title" }, txt, `סולם ${sc.name} <span class="ld-adds">${sel === 0 ? "יכולת הבסיס" : "מוסיף"}: ${cap.name} (${cap.sym})</span>`);
+      h("p", { class: "ld-can" }, txt, `<strong>מותר לומר:</strong> ${sc.can}`);
+      h("p", { class: "ld-cant" }, txt, `<strong>${sel === 3 ? "מגבלות" : "אסור לומר"}:</strong> ${sc.cant}`);
+      h("p", { class: "note" }, txt, `<strong>דוגמאות:</strong> ${sc.ex}. <strong>מדדי מרכז מותרים:</strong> ${sc.measures}.`);
+    }
+
+    function artSvg(parent, label) { return svgEl("svg", { viewBox: "0 0 260 130", style: "direction:ltr", role: "img", "aria-label": label }, parent); }
+    function drawNominal(p) {
+      const svg = artSvg(p, "חולצות ממוספרות");
+      [["7", "var(--mean)"], ["23", "var(--median)"], ["10", "var(--mode)"]].forEach(([n, c], i) => {
+        const x = 45 + i * 85;
+        svgEl("path", { d: `M${x - 26},40 L${x - 12},28 L${x + 12},28 L${x + 26},40 L${x + 18},50 L${x + 14},46 L${x + 14},96 L${x - 14},96 L${x - 14},46 L${x - 18},50 Z`, fill: c, "fill-opacity": 0.85 }, svg);
+        svgText(svg, x, 76, n, { "text-anchor": "middle", "font-size": 20, "font-weight": 700, fill: "#fff" });
+      });
+      svgText(svg, 130, 120, "7 ≠ 23", { "text-anchor": "middle", "font-size": 14, fill: "var(--ink-2)", "font-weight": 600 });
+    }
+    function drawOrdinal(p) {
+      const svg = artSvg(p, "פודיום");
+      [[2, 70, 52], [1, 130, 72], [3, 190, 38]].forEach(([n, x, hgt]) => {
+        svgEl("rect", { x: x - 28, y: 104 - hgt, width: 56, height: hgt, rx: 4, fill: "var(--accent)", "fill-opacity": n === 1 ? 0.9 : 0.55 }, svg);
+        svgText(svg, x, 104 - hgt + 24, String(n), { "text-anchor": "middle", "font-size": 20, "font-weight": 700, fill: "var(--surface)" });
+      });
+      svgText(svg, 130, 124, "מקום 1 לפני מקום 2. בכמה? לא ידוע", { "text-anchor": "middle", "font-size": 12.5, fill: "var(--ink-2)" });
+    }
+    function drawInterval(p) {
+      const svg = artSvg(p, "סקלת טמפרטורה");
+      const xS = t => 20 + (t + 10) / 50 * 220;
+      svgEl("line", { x1: 20, x2: 240, y1: 70, y2: 70, stroke: "var(--ink-2)", "stroke-width": 2 }, svg);
+      for (let t = -10; t <= 40; t += 10) {
+        svgEl("line", { x1: xS(t), x2: xS(t), y1: 64, y2: 76, stroke: "var(--ink-2)", "stroke-width": t === 0 ? 2.5 : 1.5 }, svg);
+        svgText(svg, xS(t), 94, t + "°", { "text-anchor": "middle", "font-size": 12, fill: t === 0 ? "var(--neg)" : "var(--muted)", "font-weight": t === 0 ? 700 : 400 });
+      }
+      svgEl("path", { d: `M${xS(10)},52 Q${(xS(10) + xS(20)) / 2},30 ${xS(20)},52`, fill: "none", stroke: "var(--accent)", "stroke-width": 2 }, svg);
+      svgText(svg, (xS(10) + xS(20)) / 2, 30, "+10°", { "text-anchor": "middle", "font-size": 13, "font-weight": 700, fill: "var(--accent)" });
+      svgText(svg, xS(0), 116, "0° אינו \"אין טמפרטורה\"", { "text-anchor": "middle", "font-size": 12, fill: "var(--neg)" });
+    }
+    function drawRatio(p) {
+      const svg = artSvg(p, "משקלות מאפס");
+      const xS = v => 30 + v / 90 * 210;
+      svgEl("line", { x1: xS(0), x2: xS(0), y1: 20, y2: 100, stroke: "var(--ink)", "stroke-width": 2.5 }, svg);
+      svgText(svg, xS(0), 116, "0 = אין משקל", { "text-anchor": "start", "font-size": 12, fill: "var(--ink-2)" });
+      svgEl("rect", { x: xS(0), y: 30, width: xS(40) - xS(0), height: 22, rx: 4, fill: "var(--accent)", "fill-opacity": 0.55 }, svg);
+      svgEl("rect", { x: xS(0), y: 62, width: xS(80) - xS(0), height: 22, rx: 4, fill: "var(--accent)", "fill-opacity": 0.9 }, svg);
+      svgText(svg, xS(40) + 6, 46, "40 ק\"ג", { "font-size": 12.5, fill: "var(--ink)" });
+      svgText(svg, xS(80) - 6, 78, "80 ק\"ג", { "text-anchor": "end", "font-size": 12.5, fill: "var(--surface)", "font-weight": 600 });
+      svgText(svg, 240, 22, "×2", { "text-anchor": "end", "font-size": 16, "font-weight": 700, fill: "var(--accent)" });
+    }
+    update();
+  };
+
+  /* ---------- annotated box plot ---------- */
+  W.box = function (root) {
+    const MIN = 0, MAX = 30, padX = 22;
+    const initial = [5, 7, 8, 8, 10, 22];
+    const stripHolder = h("div", null, root);
+    const boxHolder = h("div", null, root);
+    const summary = h("p", { class: "note", style: "margin:8px 0 0" }, root);
+    const row = h("div", { class: "lab-row" }, root);
+    const strip = DotStrip(stripHolder, { data: initial, min: MIN, max: MAX, step: 1, markers: {}, tickStep: 5, unit: "אלפי ₪", onChange: draw, ariaLabel: "משכורות" });
+    const bReset = h("button", { class: "btn", type: "button", text: "איפוס" }, row);
+    bReset.addEventListener("click", () => strip.set(initial));
+
+    function draw(d) {
+      boxHolder.innerHTML = "";
+      if (d.length < 2) return;
+      const s = S.sorted(d), med = S.median(d), q = S.quartiles(d), iqr = q.q3 - q.q1;
+      const lo = q.q1 - 1.5 * iqr, hi = q.q3 + 1.5 * iqr;
+      const inside = s.filter(v => v >= lo && v <= hi), outl = s.filter(v => v < lo || v > hi);
+      const wl = Math.min(...inside), wh = Math.max(...inside);
+      const Wd = vbW(boxHolder), Hd = 130;
+      const svg = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "Box Plot עם שמות החלקים" }, boxHolder);
+      const xs = v => padX + (v - MIN) / (MAX - MIN) * (Wd - 2 * padX);
+      const y0 = 26, bh = 26, yc = y0 + bh / 2;
+      const ink = "var(--ink-2)";
+      // fences
+      [[lo, "גבול תחתון"], [hi, "גבול עליון"]].forEach(([f, lab]) => {
+        if (f < MIN || f > MAX) return;
+        svgEl("line", { x1: xs(f), x2: xs(f), y1: y0 - 6, y2: y0 + bh + 6, stroke: "var(--neg)", "stroke-width": 1.2, "stroke-dasharray": "3 3", opacity: 0.8 }, svg);
+        svgText(svg, clamp(xs(f), 40, Wd - 40), 122, `${lab}: ${fmt(f)}`, { "text-anchor": "middle", "font-size": 11, fill: "var(--neg)" });
+      });
+      // whiskers
+      svgEl("line", { x1: xs(wl), x2: xs(q.q1), y1: yc, y2: yc, stroke: ink, "stroke-width": 1.6 }, svg);
+      svgEl("line", { x1: xs(q.q3), x2: xs(wh), y1: yc, y2: yc, stroke: ink, "stroke-width": 1.6 }, svg);
+      [wl, wh].forEach(w => svgEl("line", { x1: xs(w), x2: xs(w), y1: y0 + 6, y2: y0 + bh - 6, stroke: ink, "stroke-width": 1.6 }, svg));
+      if (q.q1 - wl > 0) svgText(svg, (xs(wl) + xs(q.q1)) / 2, y0 - 6, "שפם", { "text-anchor": "middle", "font-size": 11.5, fill: "var(--muted)" });
+      if (wh - q.q3 > 0) svgText(svg, (xs(wh) + xs(q.q3)) / 2, y0 - 6, "שפם", { "text-anchor": "middle", "font-size": 11.5, fill: "var(--muted)" });
+      // box + median
+      svgEl("rect", { x: xs(q.q1), y: y0, width: Math.max(1, xs(q.q3) - xs(q.q1)), height: bh, rx: 3, fill: "var(--accent)", "fill-opacity": 0.14, stroke: "var(--accent)", "stroke-width": 1.6 }, svg);
+      svgEl("line", { x1: xs(med), x2: xs(med), y1: y0, y2: y0 + bh, stroke: "var(--median)", "stroke-width": 3 }, svg);
+      // outliers
+      outl.forEach(v => {
+        svgEl("circle", { cx: xs(v), cy: yc, r: 5, fill: "none", stroke: "var(--neg)", "stroke-width": 2 }, svg);
+        svgText(svg, xs(v), y0 - 6, "חריג", { "text-anchor": "middle", "font-size": 11.5, fill: "var(--neg)", "font-weight": 600 });
+      });
+      // labels under the box
+      svgText(svg, xs(q.q1) - 3, y0 + bh + 15, `Q1 = ${fmt(q.q1)}`, { "text-anchor": "end", "font-size": 12, fill: "var(--ink)", "font-weight": 600 });
+      svgText(svg, xs(q.q3) + 3, y0 + bh + 15, `Q3 = ${fmt(q.q3)}`, { "text-anchor": "start", "font-size": 12, fill: "var(--ink)", "font-weight": 600 });
+      svgText(svg, xs(med), y0 + bh + 31, `חציון = ${fmt(med)}`, { "text-anchor": "middle", "font-size": 12, fill: "var(--ink)", "font-weight": 600 });
+      // IQR bracket
+      const by = y0 + bh + 44;
+      svgEl("path", { d: `M${xs(q.q1)},${by - 5} L${xs(q.q1)},${by} L${xs(q.q3)},${by} L${xs(q.q3)},${by - 5}`, fill: "none", stroke: "var(--accent)", "stroke-width": 1.6 }, svg);
+      svgText(svg, (xs(q.q1) + xs(q.q3)) / 2, by + 14, `IQR = ${fmt(iqr)}`, { "text-anchor": "middle", "font-size": 12, fill: "var(--accent)", "font-weight": 700 });
+      const L = (k, v) => `<span class="ltr"><strong>${k} = ${v}</strong></span>`;
+      summary.innerHTML = [L("Q1", fmt(q.q1)), L("חציון", fmt(med)), L("Q3", fmt(q.q3)), L("IQR", fmt(iqr))].join(", ") +
+        `. גבולות החריגים הם <span class="num">${fmt(lo)}</span> ו-<span class="num">${fmt(hi)}</span>. ` +
+        (outl.length ? `חריגים: <span class="ltr"><strong>${outl.map(v => fmt(v)).join(", ")}</strong></span>.` : "אין חריגים.");
+    }
+    draw(initial);
+  };
+
+  W.party = function (root) {
+    DotStrip(root, { data: [8, 10, 10, 12, 55, 60, 60, 65], min: 0, max: 70, step: 1, editable: false,
+      markers: { mean: true, median: true, mode: true }, glyph: "person", unit: "דקות", tickStep: 10, ariaLabel: "זמני הנסיעה של העובדים" });
+  };
+
+  W.var = function (root) {
+    let ddof = 1;
+    const holder = h("div", null, root);
+    const row = h("div", { class: "lab-row" }, root);
+    h("span", { text: "מחלקים ב:" }, row);
+    const initial = [5, 7, 8, 8, 10, 22];
+    const strip = DotStrip(holder, { data: initial, min: 0, max: 26, step: 1, squares: true, ddof: 1,
+      markers: { mean: true }, unit: "אלפי ₪", tickStep: 2, onChange: upd, ariaLabel: "משכורות" });
+    seg(row, [{ label: "n−1 (מדגם)", value: 1 }, { label: "n (אוכלוסייה)", value: 0 }], 1, v => { ddof = v; strip.setOpt("ddof", v); });
+    const bReset = h("button", { class: "btn", type: "button", text: "איפוס" }, row);
+    bReset.addEventListener("click", () => strip.set(initial));
+    const lines = h("div", { class: "note", style: "margin-top:10px;line-height:1.9" }, root);
+    const stats = h("div", { class: "stats" }, root);
+    function upd(d) {
+      const m = S.mean(d);
+      const dev = d.map(v => v - m), sq = dev.map(v => v * v);
+      const sgn = v => (v > 0 ? "+" : "") + fmt(v);
+      lines.innerHTML =
+        `<div>סטיות מהממוצע: <span class="num">${dev.map(sgn).join(", ")}</span>. סכום: <strong class="num">${fmt(S.sum(dev), 6)}</strong></div>` +
+        `<div>בריבוע: <span class="num">${sq.map(v => fmt(v)).join(", ")}</span>. סכום: <strong class="num">${fmt(S.sum(sq))}</strong></div>`;
+      stats.innerHTML = "";
+      const n = d.length, dd = ddof;
+      statTile(stats, "Σ(x−x̄)²", fmt(S.sum(sq)));
+      statTile(stats, "מחלקים ב", dd ? `n−1 = ${n - 1}` : `n = ${n}`);
+      statTile(stats, dd ? "שונות s²" : "שונות σ²", fmt(S.variance(d, dd)));
+      statTile(stats, dd ? "סטיית תקן s" : "סטיית תקן σ", fmt(S.sd(d, dd)));
+      statTile(stats, "טווח", fmt(Math.max(...d) - Math.min(...d)));
+    }
+    upd(initial);
+  };
+
+  W.freq = function (root) {
+    const xs = [1, 2, 3, 4, 5];
+    const labels = ["1 (לא מרוצה כלל)", "2", "3", "4", "5 (מרוצה מאוד)"];
+    const f = [2, 4, 5, 5, 4];
+    const twin = h("div", { class: "twin" }, root);
+    const left = h("div", { class: "table-wrap", style: "margin:0" }, twin);
+    const right = h("div", null, twin);
+    const summary = h("p", { class: "note", style: "margin:10px 0 0" }, root);
+    const bReset = h("button", { class: "btn", type: "button", text: "איפוס" }, h("div", { class: "lab-row" }, root));
+    const init = f.slice();
+    bReset.addEventListener("click", () => { init.forEach((v, i) => f[i] = v); render(); });
+
+    function render() {
+      const n = S.sum(f);
+      let F = 0;
+      const rows = xs.map((x, i) => { F += f[i]; return { x, f: f[i], p: n ? f[i] / n : 0, F, Fp: n ? F / n : 0 }; });
+      // median via positions in the F column (counts, no rounding)
+      const pos = n ? (n % 2 ? [(n + 1) / 2] : [n / 2, n / 2 + 1]) : [];
+      const posRow = pos.map(q => rows.findIndex(r => r.F >= q));
+      const medRows = new Set(posRow);
+      left.innerHTML = "";
+      const t = h("table", { class: "t" }, left);
+      const hr = h("tr", null, t);
+      ["X", "f(x)", "f%", "F", "F%"].forEach(s => h("th", { class: "n", text: s }, hr));
+      rows.forEach((r, i) => {
+        const tr = h("tr", null, t);
+        if (medRows.has(i)) tr.style.background = "var(--accent-soft)";
+        h("td", { class: "n", text: String(r.x) }, tr);
+        const td = h("td", { class: "n", style: "white-space:nowrap" }, tr);
+        const minus = h("button", { class: "btn", type: "button", "aria-label": `הפחת שכיחות של ${r.x}`, style: "padding:0 8px", text: "−" }, td);
+        h("span", { class: "num", style: "display:inline-block;min-width:2.2em", text: String(r.f) }, td);
+        const plus = h("button", { class: "btn", type: "button", "aria-label": `הוסף שכיחות ל-${r.x}`, style: "padding:0 8px", text: "+" }, td);
+        minus.addEventListener("click", () => { if (f[i] > 0) { f[i]--; render(); } });
+        plus.addEventListener("click", () => { if (f[i] < 30) { f[i]++; render(); } });
+        h("td", { class: "n", text: fmt(r.p * 100, 1) + "%" }, tr);
+        h("td", { class: "n", text: String(r.F) }, tr);
+        h("td", { class: "n", text: fmt(r.Fp * 100, 1) + "%", style: i === rows.length - 1 ? "font-weight:700" : "" }, tr);
+      });
+      // bar chart
+      right.innerHTML = "";
+      const Wd = 320, Hd = 220, pl = 30, pb = 40, pt = 14;
+      const svg = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "דיאגרמת מקלות של השכיחויות" }, right);
+      const maxF = Math.max(6, ...f);
+      const yS = v => Hd - pb - v / maxF * (Hd - pb - pt);
+      const stp = niceStep(maxF, 4);
+      for (let t2 = 0; t2 <= maxF; t2 += stp) {
+        svgEl("line", { x1: pl, x2: Wd - 6, y1: yS(t2), y2: yS(t2), stroke: "var(--rule)", "stroke-width": 1 }, svg);
+        svgText(svg, pl - 6, yS(t2) + 4, fmt(t2), { "text-anchor": "end", "font-size": 11, fill: "var(--muted)" });
+      }
+      const bw = (Wd - pl - 6) / xs.length;
+      f.forEach((v, i) => {
+        const x = pl + i * bw + bw * 0.22, w = bw * 0.56;
+        const y = yS(v);
+        if (v > 0) svgEl("rect", { x: x, y: y, width: w, height: Hd - pb - y, rx: 4, fill: medRows.has(i) ? "var(--median)" : "var(--mean)" }, svg);
+        svgText(svg, x + w / 2, y - 5, String(v), { "text-anchor": "middle", "font-size": 12, fill: "var(--ink)", "font-weight": 600 });
+        svgText(svg, x + w / 2, Hd - pb + 16, String(xs[i]), { "text-anchor": "middle", "font-size": 12, fill: "var(--muted)" });
+      });
+      svgText(svg, (Wd + pl) / 2, Hd - 6, "שביעות רצון", { "text-anchor": "middle", "font-size": 12, fill: "var(--muted)" });
+      // summary
+      const raw = []; xs.forEach((x, i) => { for (let k = 0; k < f[i]; k++) raw.push(x); });
+      const modes = S.modes(raw);
+      let medTxt = "";
+      if (n % 2) {
+        medTxt = `n = ${n} אי-זוגי, ולכן מחפשים את התצפית במקום ${pos[0]}. השורה הראשונה שבה F מגיע ל-${pos[0]} היא של ${xs[posRow[0]]}, ולכן <strong>החציון הוא ${xs[posRow[0]]}</strong>.`;
+      } else if (n) {
+        const a = xs[posRow[0]], b = xs[posRow[1]];
+        medTxt = `n = ${n} זוגי, ולכן מחפשים את המקומות ${pos[0]} ו-${pos[1]}. ` +
+          `התצפית ה-${pos[0]} היא ${a} (השורה הראשונה שבה F ≥ ${pos[0]}), והתצפית ה-${pos[1]} היא ${b}` +
+          (a === b ? `. שתיהן באותה שורה, ולכן <strong>החציון הוא ${a}</strong>.` : `, כי F(${a}) = ${pos[0]} בדיוק. לכן <strong>החציון הוא (${a} + ${b}) / 2 = ${fmt((a + b) / 2)}</strong>.`);
+      }
+      summary.innerHTML = n ? `${medTxt} השכיח: <strong>${fmtList(modes)}</strong>. ${medRows.size > 1 ? "השורות המודגשות הן אלה שבהן נמצא החציון." : "השורה המודגשת היא זו שבה נמצא החציון."}` : "אין נתונים.";
+    }
+    render();
+  };
+
+  W.hist = function (root) {
+    const bins = [
+      [15, 20, 653.4, "15–19"], [20, 25, 608.8, "20–24"], [25, 30, 590.0, "25–29"], [30, 35, 578.1, "30–34"],
+      [35, 40, 556.5, "35–39"], [40, 45, 518.5, "40–44"], [45, 50, 437.6, "45–49"], [50, 55, 399.3, "50–54"],
+      [55, 65, 750.4, "55–64"], [65, 85, 919.5, "65+"]
+    ];
+    let mode = "freq";
+    const row = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+    seg(row, [{ label: "גובה = שכיחות", value: "freq" }, { label: "גובה = צפיפות", value: "dens" }], mode, v => { mode = v; render(); });
+    const holder = h("div", null, root);
+    const note = h("p", { class: "note", style: "margin:8px 0 0" }, root);
+    function render() {
+      holder.innerHTML = "";
+      const Wd = vbW(holder), Hd = 280, pl = 52, pr = 12, pt = 26, pb = 42;
+      const svg = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "היסטוגרמה של גילאים" }, holder);
+      const val = b => mode === "freq" ? b[2] : b[2] / (b[1] - b[0]);
+      const maxV = Math.max(...bins.map(val)) * 1.1;
+      const xS = a => pl + (a - 15) / (85 - 15) * (Wd - pl - pr);
+      const yS = v => Hd - pb - v / maxV * (Hd - pb - pt);
+      const stp = niceStep(maxV, 5);
+      for (let t = 0; t <= maxV; t += stp) {
+        svgEl("line", { x1: pl, x2: Wd - pr, y1: yS(t), y2: yS(t), stroke: "var(--rule)" }, svg);
+        svgText(svg, pl - 6, yS(t) + 4, fmt(t, 1), { "text-anchor": "end", "font-size": 11, fill: "var(--muted)" });
+      }
+      bins.forEach(b => {
+        const x1 = xS(b[0]) + 1, x2 = xS(b[1]) - 1, y = yS(val(b));
+        const wide = b[1] - b[0] !== 5;
+        const r = svgEl("rect", { x: x1, y: y, width: x2 - x1, height: Hd - pb - y, fill: wide ? "var(--median)" : "var(--mean)", "fill-opacity": wide ? 0.85 : 0.75 }, svg);
+        if (b[3] === "65+") r.setAttribute("fill-opacity", 0.4);
+        r.addEventListener("pointermove", ev => showTip(`${b[3]}: ${fmt(b[2], 1)} אלף, רוחב ${b[1] - b[0]}, צפיפות ${fmt(b[2] / (b[1] - b[0]), 1)} אלף לשנה`, ev));
+        r.addEventListener("pointerleave", hideTip);
+        svgText(svg, (x1 + x2) / 2, Hd - pb + 15, b[3], { "text-anchor": "middle", "font-size": 10.5, fill: "var(--muted)" });
+      });
+      svgText(svg, (Wd + pl) / 2, Hd - 6, "גיל", { "text-anchor": "middle", "font-size": 12, fill: "var(--muted)" });
+      svgText(svg, 4, 11, mode === "freq" ? "אלפי אנשים" : "אלפים לשנת גיל", { "font-size": 11, fill: "var(--muted)" });
+      note.innerHTML = mode === "freq"
+        ? "לפי הגובה, נראה שבגילאי 55–64 יש יותר אנשים מאשר בכל קבוצת גיל אחרת מתחת ל-65. אבל זו אשליה: הסל הזה פשוט רחב פי 2, ולכן הוא אוסף עשר שנות גיל במקום חמש."
+        : "עכשיו הגובה הוא מספר האנשים בכל שנת גיל, והשטח של כל עמודה הוא השכיחות. בגילאי 55–64 יש בממוצע כ-75 אלף איש לכל שנת גיל, כלומר <strong>פחות</strong> מבגילאי 15–19 (כ-131 אלף). את הסל הפתוח 65+ ציירנו עד גיל 85 לצורך ההמחשה בלבד, ולכן הוא חלש יותר.";
+    }
+    render();
+  };
+
+  W.geo = function (root) {
+    const rates = [50, -50];
+    const inputsRow = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    function buildInputs() {
+      inputsRow.innerHTML = "";
+      rates.forEach((r, i) => {
+        const lab = h("label", null, inputsRow);
+        h("span", { text: `שנה ${i + 1}:` }, lab);
+        const inp = h("input", { type: "number", min: -90, max: 300, step: 5, value: r, "aria-label": `תשואה בשנה ${i + 1} באחוזים` }, lab);
+        h("span", { text: "%" }, lab);
+        inp.addEventListener("input", () => { const v = parseFloat(inp.value); if (Number.isFinite(v) && v > -100) { rates[i] = v; render(); } });
+      });
+      const add = h("button", { class: "btn", type: "button", text: "+ שנה" }, inputsRow);
+      add.addEventListener("click", () => { if (rates.length < 8) { rates.push(0); buildInputs(); render(); } });
+      if (rates.length > 2) {
+        const rem = h("button", { class: "btn", type: "button", text: "− שנה" }, inputsRow);
+        rem.addEventListener("click", () => { rates.pop(); buildInputs(); render(); });
+      }
+    }
+    function render() {
+      const factors = rates.map(r => 1 + r / 100);
+      const n = rates.length;
+      const prod = factors.reduce((a, b) => a * b, 1);
+      const G = Math.pow(prod, 1 / n);
+      const A = 1 + S.mean(rates) / 100;
+      const actual = [100]; factors.forEach(f => actual.push(actual[actual.length - 1] * f));
+      const arith = [], geo = [];
+      for (let t = 0; t <= n; t++) { arith.push(100 * Math.pow(A, t)); geo.push(100 * Math.pow(G, t)); }
+      holder.innerHTML = "";
+      const Wd = vbW(holder), Hd = 250, pl = 46, pr = 120, pt = 14, pb = 34;
+      const svg = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "ערך ההשקעה לאורך השנים" }, holder);
+      const all = actual.concat(arith, geo);
+      let lo = Math.min(...all), hi = Math.max(...all);
+      const padv = (hi - lo) * 0.1 || 10; lo = Math.max(0, lo - padv); hi += padv;
+      const xS = t => pl + t / n * (Wd - pl - pr);
+      const yS = v => Hd - pb - (v - lo) / (hi - lo) * (Hd - pb - pt);
+      const stp = niceStep(hi - lo, 5);
+      for (let t = Math.ceil(lo / stp) * stp; t <= hi; t += stp) {
+        svgEl("line", { x1: pl, x2: Wd - pr, y1: yS(t), y2: yS(t), stroke: "var(--rule)" }, svg);
+        svgText(svg, pl - 6, yS(t) + 4, fmt(t, 0), { "text-anchor": "end", "font-size": 11, fill: "var(--muted)" });
+      }
+      for (let t = 0; t <= n; t++) svgText(svg, xS(t), Hd - pb + 16, String(t), { "text-anchor": "middle", "font-size": 11, fill: "var(--muted)" });
+      svgText(svg, (pl + Wd - pr) / 2, Hd - 4, "שנה", { "text-anchor": "middle", "font-size": 11.5, fill: "var(--muted)" });
+      const path = arr => arr.map((v, t) => `${t ? "L" : "M"}${xS(t)},${yS(v)}`).join("");
+      const series = [
+        { arr: arith, color: "var(--mean)", dash: "6 4", label: `חשבוני: ${fmt(arith[n], 1)}` },
+        { arr: geo, color: "var(--median)", dash: "2 4", label: `הנדסי: ${fmt(geo[n], 1)}` },
+        { arr: actual, color: "var(--ink)", dash: null, label: `בפועל: ${fmt(actual[n], 1)}` }
+      ];
+      // direct labels with collision avoidance
+      const ends = series.map(s => ({ s, y: yS(s.arr[n]) })).sort((a, b) => a.y - b.y);
+      for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 15) ends[i].y = ends[i - 1].y + 15;
+      series.forEach(s => {
+        const p = svgEl("path", { d: path(s.arr), fill: "none", stroke: s.color, "stroke-width": 2.2, "stroke-linejoin": "round" }, svg);
+        if (s.dash) p.setAttribute("stroke-dasharray", s.dash);
+        s.arr.forEach((v, t) => {
+          const c = svgEl("circle", { cx: xS(t), cy: yS(v), r: s.dash ? 3 : 4.5, fill: s.color }, svg);
+          const hit = svgEl("circle", { cx: xS(t), cy: yS(v), r: 10, fill: "transparent" }, svg);
+          hit.addEventListener("pointermove", ev => showTip(`${s.label.split(":")[0]}, שנה ${t}: ${fmt(v, 1)}`, ev));
+          hit.addEventListener("pointerleave", hideTip);
+          void c;
+        });
+      });
+      ends.forEach(e => svgText(svg, Wd - pr + 8, e.y + 4, e.s.label, { "font-size": 12, fill: "var(--ink)", "font-weight": e.s.dash ? 400 : 600 }));
+      stats.innerHTML = "";
+      statTile(stats, "ממוצע חשבוני של התשואות", fmt(S.mean(rates), 2) + "%", { swatch: "mean" });
+      statTile(stats, "ממוצע הנדסי (שנתי)", fmt((G - 1) * 100, 2) + "%", { swatch: "median" });
+      statTile(stats, "סכום סופי בפועל", fmt(actual[n], 2));
+    }
+    buildInputs();
+    render();
+  };
+
+  W.lin = function (root) {
+    // daily maximum temperatures (°C) over 30 days
+    const fx = [[18, 1], [19, 2], [20, 3], [21, 4], [22, 5], [23, 6], [24, 4], [25, 2], [26, 1], [27, 1], [28, 1]];
+    const X = []; fx.forEach(([x, f]) => { for (let k = 0; k < f; k++) X.push(x); });
+    let a = 1.8, b = 32;
+    const presets = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    const presetList = [["ללא שינוי: X", 1, 0], ["חימום של 2 מעלות: X + 2", 1, 2], ["כפל ב-2: 2X", 2, 0], ["המרה לפרנהייט: 1.8X + 32", 1.8, 32]];
+    const presetBtns = presetList.map(([lab, pa, pb]) => {
+      const btn = h("button", { class: "btn", type: "button", text: lab }, presets);
+      btn.addEventListener("click", () => { a = pa; b = pb; ia.value = a; ib.value = b; render(); });
+      return btn;
+    });
+    const ctl = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    const la = h("label", null, ctl); h("span", { text: "a =" }, la);
+    const ia = h("input", { type: "range", min: -2, max: 3, step: 0.1, value: a, "aria-label": "המקדם a" }, la);
+    const va = h("strong", { class: "num", style: "min-width:2.5em" }, la);
+    const lb = h("label", null, ctl); h("span", { text: "b =" }, lb);
+    const ib = h("input", { type: "range", min: -20, max: 40, step: 1, value: b, "aria-label": "הקבוע b" }, lb);
+    const vb = h("strong", { class: "num", style: "min-width:2.5em" }, lb);
+    const formula = h("p", { style: "margin:0 0 6px;font-weight:700;font-size:18px" }, root);
+    ia.addEventListener("input", () => { a = Math.round(parseFloat(ia.value) * 10) / 10; render(); });
+    ib.addEventListener("input", () => { b = parseFloat(ib.value); render(); });
+    const holder = h("div", null, root);
+    const tableWrap = h("div", { class: "table-wrap" }, root);
+
+    function render() {
+      va.textContent = fmt(a); vb.textContent = fmt(b);
+      const B = b < 0 ? `− ${fmt(-b)}` : `+ ${fmt(b)}`;
+      formula.innerHTML = `<span class="ltr">Y = ${fmt(a)}X ${b === 0 ? "" : B}</span>`;
+      presetBtns.forEach((btn, i) => btn.classList.toggle("primary", presetList[i][1] === a && presetList[i][2] === b));
+      const Y = X.map(x => a * x + b);
+      holder.innerHTML = "";
+      const Wd = vbW(holder), rowH = 104, pl = 30, pr = 16;
+      const Hd = rowH * 2 + 8;
+      const svg = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "התפלגות X ו-Y" }, holder);
+      const vals = X.concat(Y);
+      let lo = Math.min(...vals) - 2, hi = Math.max(...vals) + 2;
+      if (hi - lo < 12) { const c = (hi + lo) / 2; lo = c - 6; hi = c + 6; }
+      const xS = v => pl + (v - lo) / (hi - lo) * (Wd - pl - pr);
+      const unitPx = (Wd - pl - pr) / (hi - lo);
+      const maxF = 6;
+      const stp = niceStep(hi - lo, 10);
+      function panel(arr, y0, label, color, spacing) {
+        const base = y0 + rowH - 34;
+        svgEl("line", { x1: pl, x2: Wd - pr, y1: base, y2: base, stroke: "var(--rule-strong)" }, svg);
+        svgText(svg, 2, y0 + 16, label, { "font-size": 14, "font-weight": 700, fill: "var(--ink)" });
+        for (let t = Math.ceil(lo / stp) * stp; t <= hi; t += stp) {
+          svgEl("line", { x1: xS(t), x2: xS(t), y1: base, y2: base + 4, stroke: "var(--rule-strong)" }, svg);
+          svgText(svg, xS(t), base + 28, fmt(t), { "text-anchor": "middle", "font-size": 10.5, fill: "var(--muted)" });
+        }
+        const bw = spacing > 0 ? clamp(unitPx * spacing * 0.75, 2, 14) : 14;
+        const counts = new Map(); arr.forEach(v => { const k = Math.round(v * 1000) / 1000; counts.set(k, (counts.get(k) || 0) + 1); });
+        counts.forEach((f, v) => {
+          const hgt = f / maxF * (rowH - 50);
+          const r = svgEl("rect", { x: xS(v) - bw / 2, y: base - hgt, width: bw, height: hgt, rx: 2, fill: color }, svg);
+          r.addEventListener("pointermove", ev => showTip(`${fmt(v, 2)}: ${f} ימים`, ev));
+          r.addEventListener("pointerleave", hideTip);
+        });
+        const m = S.mean(arr), s = S.sd(arr, 1);
+        svgEl("line", { x1: xS(m), x2: xS(m), y1: y0 + 18, y2: base, stroke: "var(--mean)", "stroke-width": 2 }, svg);
+        svgText(svg, clamp(xS(m), pl + 44, Wd - pr - 44), y0 + 14, `ממוצע ${fmt(m)}`, { "text-anchor": "middle", "font-size": 11.5, fill: "var(--ink)", "font-weight": 600 });
+        if (s > 0) {
+          const yb = base + 9;
+          svgEl("line", { x1: xS(m - s), x2: xS(m + s), y1: yb, y2: yb, stroke: "var(--ink-2)", "stroke-width": 2.5 }, svg);
+          [m - s, m + s].forEach(e => svgEl("line", { x1: xS(e), x2: xS(e), y1: yb - 4, y2: yb + 4, stroke: "var(--ink-2)", "stroke-width": 2 }, svg));
+        }
+      }
+      panel(X, 0, "X", "var(--rule-strong)", 1);
+      panel(Y, rowH, "Y", "var(--accent)", Math.abs(a));
+
+      const A = a < 0 ? `(${fmt(a)})` : fmt(a);
+      const qx = S.quartiles(X), qy = S.quartiles(Y);
+      const rX = Math.max(...X) - Math.min(...X), rY = Math.max(...Y) - Math.min(...Y);
+      const rows = [
+        ["ממוצע", S.mean(X), S.mean(Y), `${A}·${fmt(S.mean(X))} ${B}`, "מרכז: כפל וגם חיבור"],
+        ["חציון", S.median(X), S.median(Y), `${A}·${fmt(S.median(X))} ${B}`, "מרכז: כפל וגם חיבור"],
+        ["שכיח", S.modes(X)[0], S.modes(Y)[0], `${A}·${fmt(S.modes(X)[0])} ${B}`, "מרכז: כפל וגם חיבור"],
+        ["טווח", rX, rY, `|${fmt(a)}| · ${fmt(rX)}`, "פיזור: רק הכפל"],
+        ["IQR", qx.q3 - qx.q1, qy.q3 - qy.q1, `|${fmt(a)}| · ${fmt(qx.q3 - qx.q1)}`, "פיזור: רק הכפל"],
+        ["סטיית תקן", S.sd(X, 1), S.sd(Y, 1), `|${fmt(a)}| · ${fmt(S.sd(X, 1), 3)}`, "פיזור: רק הכפל"],
+        ["שונות", S.variance(X, 1), S.variance(Y, 1), `${A}² · ${fmt(S.variance(X, 1), 3)}`, "פיזור: הכפל בריבוע"]
+      ];
+      tableWrap.innerHTML = "";
+      const t = h("table", { class: "t" }, tableWrap);
+      const hr = h("tr", null, t);
+      ["מדד", "X", "Y", "לפי הכלל", "מה משפיע"].forEach(s => h("th", { class: s === "מדד" || s === "מה משפיע" ? "" : "n", text: s }, hr));
+      rows.forEach(r => {
+        const tr = h("tr", null, t);
+        h("td", { text: r[0] }, tr);
+        h("td", { class: "n", text: fmt(r[1], 3) }, tr);
+        h("td", { class: "n", text: fmt(r[2], 3), style: "font-weight:600" }, tr);
+        h("td", { class: "n" }, tr, `<span class="num">${r[3]}</span>`);
+        h("td", { text: r[4], style: "font-size:14px;color:var(--ink-2)" }, tr);
+      });
+    }
+    render();
+  };
+
+  W.loss = function (root) {
+    let c = 4;
+    const holder = h("div", null, root);
+    const ctl = h("div", { class: "lab-row" }, root);
+    const lab = h("label", null, ctl); h("span", { text: "c =" }, lab);
+    const ic = h("input", { type: "range", min: 0, max: 30, step: 0.1, value: c, "aria-label": "הערך c", style: "width:220px" }, lab);
+    const vc = h("strong", { class: "num" }, lab);
+    const reset = h("button", { class: "btn", type: "button", text: "איפוס" }, ctl);
+    const charts = h("div", { class: "twin", style: "margin-top:10px" }, root);
+    const initial = [1, 2, 3, 10];
+    const strip = DotStrip(holder, { data: initial, min: 0, max: 30, step: 0.5, markers: { mean: true, median: true }, tickStep: 5, onChange: render, ariaLabel: "נתונים" });
+    ic.addEventListener("input", () => { c = parseFloat(ic.value); render(); });
+    reset.addEventListener("click", () => { c = 4; ic.value = 4; strip.set(initial); });
+    function curve(parent, title, fn, best, color, dash) {
+      const box = h("div", null, parent);
+      const head = h("div", { class: "tw-h" }, box);
+      h("span", { text: title }, head);
+      h("span", { text: `ערך נוכחי: ${fmt(fn(c), 1)}` }, head);
+      const Wd = 320, Hd = 170, pl = 8, pr = 8, pt = 20, pb = 22;
+      const svg = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": title }, box);
+      const N = 120; const pts = [];
+      for (let i = 0; i <= N; i++) { const x = i / N * 30; pts.push([x, fn(x)]); }
+      const maxY = Math.max(...pts.map(p => p[1])), minY = Math.min(...pts.map(p => p[1]));
+      const xS = x => pl + x / 30 * (Wd - pl - pr);
+      const yS = y => Hd - pb - (y - minY) / (maxY - minY || 1) * (Hd - pb - pt);
+      svgEl("line", { x1: pl, x2: Wd - pr, y1: Hd - pb, y2: Hd - pb, stroke: "var(--rule-strong)" }, svg);
+      [0, 10, 20, 30].forEach(t => svgText(svg, xS(t), Hd - 6, String(t), { "text-anchor": "middle", "font-size": 11, fill: "var(--muted)" }));
+      svgEl("path", { d: pts.map((p, i) => `${i ? "L" : "M"}${xS(p[0])},${yS(p[1])}`).join(""), fill: "none", stroke: "var(--ink-2)", "stroke-width": 2 }, svg);
+      const bx = xS(best);
+      const bl = svgEl("line", { x1: bx, x2: bx, y1: pt - 6, y2: Hd - pb, stroke: color, "stroke-width": 2 }, svg);
+      if (dash) bl.setAttribute("stroke-dasharray", dash);
+      svgText(svg, clamp(bx, 50, Wd - 50), pt - 9, `מינימום: ${fmt(best, 2)}`, { "text-anchor": "middle", "font-size": 11.5, fill: "var(--ink)", "font-weight": 600 });
+      svgEl("circle", { cx: xS(c), cy: yS(fn(c)), r: 6, fill: "var(--accent)", stroke: "var(--surface)", "stroke-width": 2 }, svg);
+    }
+    function render() {
+      vc.textContent = fmt(c, 1);
+      const d = strip.data;
+      charts.innerHTML = "";
+      curve(charts, "מחיר ריבועי f(c)", x => d.reduce((s, v) => s + (v - x) * (v - x), 0), S.mean(d), "var(--mean)", null);
+      curve(charts, "מחיר מוחלט g(c)", x => d.reduce((s, v) => s + Math.abs(v - x), 0), S.median(d), "var(--median)", "6 4");
+    }
+    render();
+  };
+
+  W.sim = function (root) {
+    const pops = {
+      two: { label: "{0, 2} בהסתברות שווה (σ² = 1)", s2: 1, draw: () => (Math.random() < 0.5 ? 0 : 2) },
+      die: { label: "קובייה הוגנת 1–6 (σ² ≈ 2.92)", s2: 35 / 12, draw: () => 1 + Math.floor(Math.random() * 6) },
+      norm: { label: "נורמלית μ=50, σ=10 (σ² = 100)", s2: 100, draw: () => 50 + 10 * Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(2 * Math.PI * Math.random()) }
+    };
+    let pop = "two", n = 3;
+    let runN = [], runN1 = [];
+    const ctl = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    const ls = h("label", null, ctl); h("span", { text: "אוכלוסייה:" }, ls);
+    const sel = h("select", { "aria-label": "אוכלוסייה" }, ls);
+    Object.keys(pops).forEach(k => h("option", { value: k, text: pops[k].label }, sel));
+    const ln = h("label", null, ctl); h("span", { text: "גודל מדגם n =" }, ln);
+    const inN = h("input", { type: "range", min: 2, max: 20, step: 1, value: n, "aria-label": "גודל מדגם" }, ln);
+    const vn = h("strong", { class: "num", text: String(n) }, ln);
+    const ctl2 = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    const run = h("button", { class: "btn primary", type: "button", text: "הרץ 2,000 מדגמים" }, ctl2);
+    const more = h("button", { class: "btn", type: "button", text: "הוסף עוד 2,000" }, ctl2);
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    sel.addEventListener("change", () => { pop = sel.value; clear(); });
+    inN.addEventListener("input", () => { n = parseInt(inN.value, 10); vn.textContent = String(n); clear(); });
+    run.addEventListener("click", () => { clear(); simulate(2000); });
+    more.addEventListener("click", () => simulate(2000));
+
+    let sumN = 0, sumN1 = 0, count = 0;
+    function clear() { runN = []; runN1 = []; sumN = 0; sumN1 = 0; count = 0; render(); }
+    function simulate(k) {
+      const P = pops[pop];
+      for (let r = 0; r < k; r++) {
+        const s = []; for (let i = 0; i < n; i++) s.push(P.draw());
+        const ss = S.ss(s);
+        sumN += ss / n; sumN1 += ss / (n - 1); count++;
+        runN.push(sumN / count); runN1.push(sumN1 / count);
+      }
+      render();
+    }
+    function render() {
+      const P = pops[pop];
+      holder.innerHTML = "";
+      const Wd = vbW(holder), Hd = 260, pl = 50, pr = 112, pt = 14, pb = 30;
+      const svg = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "ממוצע מצטבר של שני האומדים" }, holder);
+      const target = P.s2, biased = P.s2 * (n - 1) / n;
+      const N = runN.length;
+      let lo = Math.min(biased, target) * 0.55, hi = target * 1.45;
+      const xS = i => pl + (N > 1 ? i / (N - 1) : 0) * (Wd - pl - pr);
+      const yS = v => Hd - pb - (clamp(v, lo, hi) - lo) / (hi - lo) * (Hd - pb - pt);
+      const stp = niceStep(hi - lo, 5);
+      for (let t = Math.ceil(lo / stp) * stp; t <= hi; t += stp) {
+        svgEl("line", { x1: pl, x2: Wd - pr, y1: yS(t), y2: yS(t), stroke: "var(--rule)" }, svg);
+        svgText(svg, pl - 6, yS(t) + 4, fmt(t, 2), { "text-anchor": "end", "font-size": 11, fill: "var(--muted)" });
+      }
+      svgEl("line", { x1: pl, x2: Wd - pr, y1: yS(target), y2: yS(target), stroke: "var(--ink)", "stroke-width": 1.5, "stroke-dasharray": "6 4" }, svg);
+      svgEl("line", { x1: pl, x2: Wd - pr, y1: yS(biased), y2: yS(biased), stroke: "var(--muted)", "stroke-width": 1, "stroke-dasharray": "2 3" }, svg);
+      const labels = [
+        { y: yS(target), t: `σ² = ${fmt(target, 2)}`, c: "var(--ink)", w: 600 },
+        { y: yS(biased), t: `(n−1)/n·σ² = ${fmt(biased, 2)}`, c: "var(--muted)", w: 400 }
+      ];
+      if (N) {
+        const step = Math.max(1, Math.floor(N / 400));
+        const path = arr => { let d = ""; for (let i = 0; i < N; i += step) d += `${d ? "L" : "M"}${xS(i)},${yS(arr[i])}`; d += `L${xS(N - 1)},${yS(arr[N - 1])}`; return d; };
+        svgEl("path", { d: path(runN1), fill: "none", stroke: "var(--mean)", "stroke-width": 2 }, svg);
+        svgEl("path", { d: path(runN), fill: "none", stroke: "var(--median)", "stroke-width": 2 }, svg);
+        labels.push({ y: yS(runN1[N - 1]), t: "÷ (n−1)", c: "var(--mean)", w: 600 });
+        labels.push({ y: yS(runN[N - 1]), t: "÷ n", c: "var(--median)", w: 600 });
+        svgText(svg, pl, Hd - 8, "1", { "font-size": 11, fill: "var(--muted)" });
+        svgText(svg, Wd - pr, Hd - 8, `${N.toLocaleString("he-IL")} מדגמים`, { "text-anchor": "end", "font-size": 11, fill: "var(--muted)" });
+        // hover crosshair
+        const cross = svgEl("line", { y1: pt, y2: Hd - pb, stroke: "var(--rule-strong)", visibility: "hidden" }, svg);
+        const hit = svgEl("rect", { x: pl, y: pt, width: Wd - pl - pr, height: Hd - pb - pt, fill: "transparent" }, svg);
+        hit.addEventListener("pointermove", ev => {
+          const p = svgPoint(svg, ev);
+          const i = clamp(Math.round((p.x - pl) / (Wd - pl - pr) * (N - 1)), 0, N - 1);
+          cross.setAttribute("x1", xS(i)); cross.setAttribute("x2", xS(i)); cross.setAttribute("visibility", "visible");
+          showTip(`אחרי ${i + 1} מדגמים: ÷(n−1) = ${fmt(runN1[i], 3)}, ÷n = ${fmt(runN[i], 3)}`, ev);
+        });
+        hit.addEventListener("pointerleave", () => { cross.setAttribute("visibility", "hidden"); hideTip(); });
+      } else {
+        svgText(svg, (pl + Wd - pr) / 2, Hd / 2, "לחצו \"הרץ\" כדי להתחיל", { "text-anchor": "middle", "font-size": 14, fill: "var(--muted)" });
+      }
+      labels.sort((a, b) => a.y - b.y);
+      for (let i = 1; i < labels.length; i++) if (labels[i].y - labels[i - 1].y < 14) labels[i].y = labels[i - 1].y + 14;
+      labels.forEach(l => svgText(svg, Wd - pr + 8, l.y + 4, l.t, { "font-size": 11.5, fill: l.c, "font-weight": l.w }));
+      stats.innerHTML = "";
+      statTile(stats, "ערך אמיתי σ²", fmt(target, 3));
+      statTile(stats, "ממוצע האומד ÷(n−1)", N ? fmt(runN1[N - 1], 3) : "—");
+      statTile(stats, "ממוצע האומד ÷n", N ? fmt(runN[N - 1], 3) : "—");
+      statTile(stats, "הצפי לאומד המוטה", fmt(biased, 3));
+    }
+    render();
+  };
+
+  W.calc = function (root) {
+    const ta = h("textarea", { "aria-label": "נתונים", spellcheck: "false" }, root);
+    ta.value = "5, 7, 8, 8, 10, 22";
+    const row = h("div", { class: "lab-row" }, root);
+    const ex = [["משכורות", "5, 7, 8, 8, 10, 22"], ["עשרוניים", "2.3, 3.6, 3.6, 5.6, 7.2, 10"], ["זמני נסיעה", "8 10 10 12 55 60 60 65"], ["11 ערכים", "17 12 12 7 7 6 6 6 6 3 1"]];
+    h("span", { text: "דוגמאות:" }, row);
+    ex.forEach(([l, v]) => { const b = h("button", { class: "btn", type: "button", text: l }, row); b.addEventListener("click", () => { ta.value = v; go(); }); });
+    const err = h("p", { class: "feedback no" }, root);
+    const stats = h("div", { class: "stats" }, root);
+    const vis = h("div", { style: "margin-top:12px" }, root);
+    const ft = h("div", { class: "table-wrap" }, root);
+    ta.addEventListener("input", go);
+    function go() {
+      const nums = (ta.value.match(/-?\d+(\.\d+)?/g) || []).map(Number);
+      stats.innerHTML = ""; vis.innerHTML = ""; ft.innerHTML = "";
+      if (!nums.length) { err.textContent = "לא נמצאו מספרים. הפרידו ערכים בפסיק, ברווח או בשורה חדשה."; return; }
+      err.textContent = nums.length > 2000 ? "יותר מ-2,000 ערכים. החישוב יכול להיות איטי." : "";
+      const d = nums, n = d.length;
+      const mean = S.mean(d), mn = Math.min(...d), mx = Math.max(...d), q = S.quartiles(d);
+      statTile(stats, "n", String(n));
+      statTile(stats, "סכום", fmt(S.sum(d), 4));
+      statTile(stats, "ממוצע", fmt(mean, 4), { swatch: "mean" });
+      statTile(stats, "חציון", fmt(S.median(d), 4), { swatch: "median" });
+      statTile(stats, "שכיח", fmtList(S.modes(d)), { swatch: "mode" });
+      statTile(stats, "מינימום", fmt(mn, 4));
+      statTile(stats, "מקסימום", fmt(mx, 4));
+      statTile(stats, "טווח", fmt(mx - mn, 4));
+      statTile(stats, "שונות s² (n−1)", fmt(S.variance(d, 1), 4));
+      statTile(stats, "סטיית תקן s", fmt(S.sd(d, 1), 4));
+      statTile(stats, "שונות σ² (n)", fmt(S.variance(d, 0), 4));
+      statTile(stats, "סטיית תקן σ", fmt(S.sd(d, 0), 4));
+      if (d.every(v => v > 0)) statTile(stats, "ממוצע הנדסי", fmt(Math.exp(S.mean(d.map(Math.log))), 4));
+      statTile(stats, "Q1", fmt(q.q1, 4));
+      statTile(stats, "Q3", fmt(q.q3, 4));
+      statTile(stats, "IQR", fmt(q.q3 - q.q1, 4));
+      statTile(stats, "CV", mean > 0 && mn > 0 ? fmt(S.sd(d, 1) / mean * 100, 1) + "%" : "—", { ext: true });
+      statTile(stats, "MAD", fmt(S.mad(d), 4), { ext: true });
+      if (n <= 400) {
+        let lo = mn, hi = mx; if (hi === lo) { lo -= 1; hi += 1; }
+        const stp = niceStep(hi - lo, 8);
+        lo = Math.floor(lo / stp) * stp; hi = Math.ceil(hi / stp) * stp;
+        const step = Math.pow(10, -Math.max(0, ...d.map(v => (String(v).split(".")[1] || "").length)));
+        DotStrip(vis, { data: d, min: lo, max: hi, step: step, editable: false, box: !document.body.classList.contains("hide-ext"), tickStep: stp, ariaLabel: "הנתונים" });
+      }
+      const distinct = Array.from(new Set(d)).sort((a, b) => a - b);
+      if (distinct.length <= 15) {
+        const t = h("table", { class: "t" }, ft);
+        const hr = h("tr", null, t);
+        ["x", "f(x)", "f%", "F", "F%"].forEach(s => h("th", { class: "n", text: s }, hr));
+        let F = 0;
+        distinct.forEach(x => {
+          const f = d.filter(v => v === x).length; F += f;
+          const tr = h("tr", null, t);
+          [fmt(x, 4), String(f), fmt(f / n * 100, 1) + "%", String(F), fmt(F / n * 100, 1) + "%"].forEach(s => h("td", { class: "n", text: s }, tr));
+        });
+      }
+    }
+    go();
+    document.getElementById("toggle-ext-hide").addEventListener("change", go);
+  };
+
+  W.classify = function (root) {
+    const opts = ["שמי", "סדר", "רווח", "מנה"];
+    const items = [
+      ["הכנסה חודשית", "מנה", "כמותי, בדיד, סולם יחס/מנה. יש אפס מוחלט, כלומר אין הכנסה, ולכן אפשר לומר 'פי 2'."],
+      ["הסכמה עם היגד, כשהתשובות הן מסכים / לא מסכים", "שמי", "איכותי, בדיד, סולם שמי."],
+      ["הסכמה עם היגד בסקאלה 1–5", "סדר", "איכותי, בדיד, סולם סדר. 5 מסכים יותר מ-4, אבל לפער אין משמעות כמותית."],
+      ["נקודות במבחן אמריקאי", "מנה", "כמותי, בדיד, סולם יחס/מנה."],
+      ["סטטוס משפחתי", "שמי", "איכותי, בדיד, סולם שמי. אין סדר בין רווק לנשוי."],
+      ["טמפרטורה במעלות צלזיוס", "רווח", "יש מרווחים שווים, אבל 0°C אינו היעדר טמפרטורה."],
+      ["מיקום הסטודנט בכיתה", "סדר", "יש סדר, אבל ההפרש בין מקום 1 למקום 2 לא ידוע."],
+      ["מספר תעודת סטודנט", "שמי", "המספר הוא תווית. אין משמעות לחשב לו ממוצע."],
+      ["שנת לידה", "רווח", "תאריך: אפשר לחסר ולקבל גיל, אבל שנה 0 אינה היעדר זמן."],
+      ["משקל בק\"ג", "מנה", "יש אפס מוחלט. 80 ק\"ג הם פי 2 מ-40 ק\"ג."]
+    ];
+    const score = h("p", { class: "score", style: "margin:0 0 6px" }, root);
+    const list = h("div", { class: "classify" }, root);
+    let right = 0, answered = 0;
+    const upd = () => { score.textContent = `${right} נכונות מתוך ${answered} שנענו (סה"כ ${items.length})`; };
+    items.forEach(([q, ans, why]) => {
+      const it = h("div", { class: "cl-item" }, list);
+      h("div", { class: "cl-q", text: q }, it);
+      const o = h("div", { class: "cl-opts" }, it);
+      const w = h("div", { class: "cl-why" }, it);
+      let done = false;
+      opts.forEach(op => {
+        const b = h("button", { type: "button", text: op }, o);
+        b.addEventListener("click", () => {
+          if (done) return;
+          done = true; answered++;
+          if (op === ans) { right++; b.classList.add("right"); w.textContent = "נכון. " + why; }
+          else {
+            b.classList.add("wrong");
+            Array.from(o.children).forEach(x => { if (x.textContent === ans) x.classList.add("right"); });
+            w.textContent = `התשובה: ${ans}. ${why}`;
+          }
+          upd();
+        });
+      });
+    });
+    upd();
+  };
+
+  W.quiz = function (root) {
+    const Q = [
+      { q: "בדקו את מיקומם של 10 רצים בתחרות (1, 2, 3, …). מה סולם המדידה?", o: ["שמי", "סדר", "רווח", "מנה"], a: 1, e: "יש סדר ברור, אבל הפער בין מקום 1 למקום 2 לא אומר כמה מהר יותר רץ המנצח." },
+      { q: "חציון הנתונים {3, 6, 9, 2, 4, 7} הוא:", o: ["6", "5", "5.17", "4"], a: 1, e: "אחרי מיון: 2, 3, 4, 6, 7, 9. יש n=6, מספר זוגי, ולכן החציון הוא ממוצע המקומות 3 ו-4: <span class=\"ltr\">(4+6)/2 = 5</span>. מי שבחר 6 שכח למיין." },
+      { q: "הממוצע ההנדסי של {8, 1, 1, 2, 2} הוא:", o: ["2.8", "2", "1.6", "32"], a: 1, e: "המכפלה היא 32, והשורש החמישי של 32 הוא 2. 2.8 הוא הממוצע החשבוני." },
+      { q: "לכל עובד במפעל נוסף מענק של 500 ₪. מה קורה לסטיית התקן של השכר?", o: ["גדלה ב-500", "גדלה פי 500", "לא משתנה", "גדלה ב-500²"], a: 2, e: "הוספת קבוע מזיזה את כל הנתונים יחד, והמרחקים ביניהם לא משתנים. רק הממוצע, החציון והשכיח עולים ב-500." },
+      { q: "מחירים בשקלים הומרו לדולרים: <span class=\"ltr\">Y = 0.27X</span>. השונות של X היא 400. מה השונות של Y?", o: ["108", "29.16", "400", "5.4"], a: 1, e: "השונות מוכפלת ב-a²: <span class=\"ltr\">0.27² · 400 = 0.0729 · 400 = 29.16</span>. סטיית התקן מוכפלת ב-|a|: <span class=\"ltr\">0.27 · 20 = 5.4</span>." },
+      { q: "סקר שאל 200 אנשים מה צבע הרכב שלהם. איזה מדד מרכז מתאים?", o: ["ממוצע", "חציון", "שכיח", "ממוצע משוקלל"], a: 2, e: "צבע הוא משתנה בסולם שמי. אין לו סדר ואין משמעות לחשבון, ולכן רק השכיח מתאים." },
+      { q: "סטודנט לקח קורס של 3 נ\"ז עם ציון 90 וקורס של 5 נ\"ז עם ציון 70. מה הממוצע המשוקלל?", o: ["80", "77.5", "75", "78.8"], a: 1, e: "<span class=\"ltr\">(3·90 + 5·70) / (3+5) = 620 / 8 = 77.5</span>. 80 הוא הממוצע הלא-משוקלל." },
+      { q: "בקבוצה {2, 4, 6, 8, 100}, איזה מדד ישתנה הכי פחות אם 100 יוחלף ב-10?", o: ["ממוצע", "חציון", "טווח", "סטיית תקן"], a: 1, e: "החציון נשאר 6. הממוצע יורד מ-24 ל-6, הטווח יורד מ-98 ל-8, וסטיית התקן קורסת. החציון אינו מושפע מערכים קיצוניים." },
+      { q: "מה ה-IQR של הנתונים <span class=\"ltr\">1, 3, 5, 7, 9, 11, 13, 100</span>?", o: ["8", "99", "6", "12"], a: 0, e: "החצי התחתון הוא 1, 3, 5, 7, ולכן Q1 = 4. החצי העליון הוא 9, 11, 13, 100, ולכן Q3 = 12. IQR = 12 − 4 = 8. הערך 100 לא משפיע: גם אם היה 14, ה-IQR היה 8. מי שבחר 99 חישב את הטווח." },
+      { q: "מה סכום הסטיות מהממוצע, <span class=\"ltr\">Σ(xᵢ − x̄)</span>, בכל סט נתונים?", o: ["תמיד 0", "השונות", "n·x̄", "תלוי בנתונים"], a: 0, e: "<span class=\"ltr\">Σ(xᵢ − x̄) = Σxᵢ − n·x̄ = 0</span>. זו בדיוק הסיבה שמעלים את הסטיות בריבוע כשמחשבים שונות." },
+      { q: "בהתפלגות של משכורות יש זנב ימני ארוך. מה בדרך כלל נכון?", o: ["ממוצע < חציון", "ממוצע = חציון", "ממוצע > חציון", "אי אפשר לדעת"], a: 2, e: "הממוצע נמשך לכיוון הזנב. כמה משכורות גבוהות מאוד מושכות אותו למעלה, והחציון כמעט לא זז." },
+    ];
+    const score = h("p", { class: "score" }, root);
+    let right = 0, answered = 0;
+    const upd = () => { score.textContent = `ציון: ${right} מתוך ${answered} שנענו (${Q.length} שאלות)`; };
+    Q.forEach((it, idx) => {
+      const box = h("div", { class: "quiz-q" + (it.ext ? " ext-only" : "") }, root);
+      const qh = h("div", { class: "qh" }, box);
+      h("span", { class: "qn", text: `${idx + 1}.` }, qh);
+      h("span", null, qh, it.q);
+      if (it.ext) h("span", { class: "ext-badge", text: "הרחבה" }, qh);
+      const opts = h("div", { class: "quiz-opts" }, box);
+      const exp = h("div", { class: "quiz-exp" }, box);
+      const btns = it.o.map((t, i) => {
+        const b = h("button", { type: "button", text: t }, opts);
+        b.addEventListener("click", () => {
+          btns.forEach(x => x.disabled = true);
+          answered++;
+          if (i === it.a) { right++; b.classList.add("right"); exp.innerHTML = "<strong>נכון.</strong> " + it.e; }
+          else { b.classList.add("wrong"); btns[it.a].classList.add("right"); exp.innerHTML = "<strong>לא בדיוק.</strong> " + it.e; }
+          upd();
+        });
+        return b;
+      });
+    });
+    upd();
+  };
+
+  /* ================= boot ================= */
+  function boot() {
+    document.querySelectorAll("[data-w]").forEach(el => {
+      const fn = W[el.dataset.w];
+      if (fn) {
+        try { fn(el); } catch (e) { console.error("widget " + el.dataset.w, e); el.textContent = "שגיאה בטעינת הרכיב."; }
+      }
+    });
+
+    // theme toggle
+    const themeBtn = document.getElementById("toggle-theme");
+    const root = document.documentElement;
+    const isDark = () => root.dataset.theme ? root.dataset.theme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const syncTheme = () => { themeBtn.textContent = isDark() ? "מצב בהיר" : "מצב כהה"; themeBtn.setAttribute("aria-pressed", String(isDark())); };
+    try { const saved = localStorage.getItem("stats-guide-theme"); if (saved === "dark" || saved === "light") root.dataset.theme = saved; } catch (e) { /* storage unavailable */ }
+    themeBtn.addEventListener("click", () => {
+      root.dataset.theme = isDark() ? "light" : "dark";
+      try { localStorage.setItem("stats-guide-theme", root.dataset.theme); } catch (e) { /* storage unavailable */ }
+      syncTheme();
+    });
+    syncTheme();
+
+    // extension controls
+    const openBtn = document.getElementById("toggle-ext-open");
+    const hideBox = document.getElementById("toggle-ext-hide");
+    let allOpen = false;
+    openBtn.addEventListener("click", () => {
+      allOpen = !allOpen;
+      document.querySelectorAll("details.ext").forEach(d => { d.open = allOpen; });
+      openBtn.textContent = allOpen ? "סגור את כל ההרחבות" : "פתח את כל ההרחבות";
+    });
+    hideBox.addEventListener("change", () => { document.body.classList.toggle("hide-ext", hideBox.checked); });
+
+    // toc highlighting
+    const links = Array.from(document.querySelectorAll("nav.toc a"));
+    const map = new Map(links.map(a => [a.getAttribute("href").slice(1), a]));
+    const secs = Array.from(document.querySelectorAll("section.chapter"));
+    let lastActive = null, ticking = false;
+    function syncToc() {
+      ticking = false;
+      const line = window.innerHeight * 0.3;
+      let cur = secs[0];
+      secs.forEach(sec => { if (sec.getBoundingClientRect().top <= line) cur = sec; });
+      if (cur === lastActive) return;
+      lastActive = cur;
+      links.forEach(l => l.classList.remove("active"));
+      const a = map.get(cur.id);
+      if (a) { a.classList.add("active"); if (window.innerWidth <= 920) a.scrollIntoView({ block: "nearest", inline: "center" }); }
+    }
+    window.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(syncToc); } }, { passive: true });
+    syncToc();
+
+    // math
+    if (window.renderMathInElement) {
+      window.renderMathInElement(document.body, {
+        delimiters: [{ left: "$$", right: "$$", display: true }, { left: "\\(", right: "\\)", display: false }],
+        throwOnError: false
+      });
+    }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
+})();
+
+});
+</script>
+</body>
+</html>
