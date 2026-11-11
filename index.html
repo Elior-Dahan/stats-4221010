@@ -9,11 +9,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/site.css">
+  <script>
+    // Apply a saved light/dark choice before first paint (same key as the lecture guides).
+    try { var t = localStorage.getItem('stats-guide-theme'); if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
 </head>
 <body>
   <header class="hero">
     <div class="wrap">
-      <p class="eyebrow" id="meta">&nbsp;</p>
+      <div class="hero-top">
+        <button class="theme-btn" id="toggle-theme" type="button" aria-pressed="false">מצב כהה</button>
+      </div>
       <h1><span id="title">סטטיסטיקה</span> <span class="sub">מדריכי למידה</span></h1>
       <p class="lede">לכל הרצאה מדריך אינטראקטיבי עם הסברים, דוגמאות מחושבות ותרגול.</p>
       <label class="search">
@@ -39,6 +45,19 @@
       if (text != null) e.textContent = text;
       return e;
     };
+    // theme toggle: follows the OS until the visitor chooses; the choice is shared with the lecture guides
+    const root = document.documentElement;
+    const themeBtn = $('toggle-theme');
+    const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    const syncTheme = () => { themeBtn.textContent = isDark() ? 'מצב בהיר' : 'מצב כהה'; themeBtn.setAttribute('aria-pressed', String(isDark())); };
+    themeBtn.addEventListener('click', () => {
+      root.dataset.theme = isDark() ? 'light' : 'dark';
+      try { localStorage.setItem('stats-guide-theme', root.dataset.theme); } catch (e) { /* storage unavailable */ }
+      syncTheme();
+    });
+    matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncTheme);
+    syncTheme();
+
     let data;
     try {
       const r = await fetch('lectures.json', { cache: 'no-cache' });
@@ -56,7 +75,6 @@
     const c = data.course || {};
     $('title').textContent = c.title || 'סטטיסטיקה';
     document.title = `${c.title || 'סטטיסטיקה'} · מדריכי למידה`;
-    $('meta').textContent = [c.code, c.institution, c.lecturer, c.semester].filter(Boolean).join(' · ');
     $('foot').textContent = c.note || '';
 
     const lectures = (data.lectures || []).filter(l => l.published).sort((a, b) => a.n - b.n);
