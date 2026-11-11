@@ -814,7 +814,7 @@ select { max-width: 100%; }
     <tr><th>תכונה</th><th>נוסחה</th><th>במילים</th></tr>
     <tr><td>קבוע</td><td class="n">\(\mathrm{Var}(a) = 0\)</td><td>קבוע לא מתפזר.</td></tr>
     <tr><td>טרנספורמציה</td><td class="n">\(\mathrm{Var}(aX + b) = a^2 \cdot \mathrm{Var}(X)\)</td><td>הזזה לא משנה פיזור, כפל נכנס בריבוע. כמו בהרצאה 1.</td></tr>
-    <tr><td>סכום</td><td class="n">\(\mathrm{Var}(X \pm Y) = \mathrm{Var}(X) + \mathrm{Var}(Y) \pm 2\,Cov(X,Y)\)</td><td>כאן נכנסת השונות המשותפת, הנושא של הפרק הבא.</td></tr>
+    <tr><td>סכום</td><td class="n">\(\mathrm{Var}(X \pm Y) = \mathrm{Var}(X) + \mathrm{Var}(Y) \pm 2\,\mathrm{Cov}(X,Y)\)</td><td>כאן נכנסת השונות המשותפת, הנושא של הפרק הבא.</td></tr>
     <tr><td>סכום, בלתי תלויים</td><td class="n">\(\mathrm{Var}(X \pm Y) = \mathrm{Var}(X) + \mathrm{Var}(Y)\)</td><td>גם בהפרש מחברים את השונויות.</td></tr>
   </table></div>
   <div class="callout">
@@ -858,15 +858,15 @@ select { max-width: 100%; }
   <p>ובנוסף, ככל ששתי הסטיות גדולות יותר, המכפלה גדולה יותר. אדם שחורג הרבה בשני המשתנים תורם הרבה.</p>
   <h4>צעד 3: מספר אחד לכולם</h4>
   <p>מחשבים ממוצע של המכפלות. במדגם מחלקים ב-\(n-1\), כמו בשונות:</p>
-  <div class="math-block">$$Cov = \frac{130 + 15 + 0 + 10 + 140}{4} = \frac{295}{4} = 73.75$$</div>
+  <div class="math-block">$$\mathrm{Cov} = \frac{130 + 15 + 0 + 10 + 140}{4} = \frac{295}{4} = 73.75$$</div>
   <p><strong>זו השונות המשותפת.</strong> לסיכום, החישוב הוא שלושה צעדים. לכל אדם מחשבים בכמה הגובה שלו חורג מהגובה הממוצע, ובכמה המשקל שלו חורג מהמשקל הממוצע. כופלים את שתי החריגות. ולבסוף ממצעים את המכפלות של כל האנשים.</p>
   <p><strong>במדגם</strong> זה נכתב כך (באוכלוסייה מחלקים ב-n במקום ב-\(n-1\)):</p>
-  <div class="math-block">$$Cov(X,Y) = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{n-1}$$</div>
+  <div class="math-block">$$\mathrm{Cov}(X,Y) = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{n-1}$$</div>
   <p><strong>במשתנים מקריים</strong> הרעיון זהה. במקום ממוצע על אנשים לוקחים תוחלת, כלומר ממוצע שמשוקלל לפי ההסתברויות:</p>
-  <div class="math-block">$$Cov(X,Y) = E\left[(X-\mu_X)(Y-\mu_Y)\right]$$</div>
+  <div class="math-block">$$\mathrm{Cov}(X,Y) = E\left[(X-\mu_X)(Y-\mu_Y)\right]$$</div>
   <p>לחישוב בפועל נוחה יותר נוסחת קיצור. מקבלים אותה אם פותחים את הסוגריים שבתוך התוחלת, ומשתמשים בכך שתוחלת של סכום היא סכום התוחלות ושקבוע אפשר להוציא מהתוחלת:</p>
   <div class="math-block">$$E\left[(X-\mu_X)(Y-\mu_Y)\right] = E(XY) - \mu_X\mu_Y - \mu_X\mu_Y + \mu_X\mu_Y = E(XY) - E(X)\,E(Y)$$</div>
-  <p class="note">זה בדיוק אותו מעבר כמו בשונות, \(\mathrm{Var}(X) = E(X^2) - \mu^2\). ושימו לב ש-\(Cov(X,X) = \mathrm{Var}(X)\): שונות היא שונות משותפת של משתנה עם עצמו.</p>
+  <p class="note">זה בדיוק אותו מעבר כמו בשונות, \(\mathrm{Var}(X) = E(X^2) - \mu^2\). ושימו לב ש-\(\mathrm{Cov}(X,X) = \mathrm{Var}(X)\): שונות היא שונות משותפת של משתנה עם עצמו.</p>
 
   <h3>מה המספר אומר, ומה הוא לא אומר</h3>
   <p><strong>הסימן הוא הכיוון.</strong> כאן הוא חיובי: גובה ומשקל זזים יחד. אם רוב האנשים היו גבוהים-ורזים או נמוכים-וכבדים, רוב המכפלות היו שליליות. אם אין שום דפוס, החיוביות והשליליות מתקזזות, ויוצא בערך 0.</p>
@@ -897,14 +897,14 @@ select { max-width: 100%; }
   <h3>שתי הסתייגויות חשובות</h3>
   <p><strong>1. רק קשר לינארי.</strong> שונות משותפת ומתאם תופסים רק דפוס מסוג "כש-X עולה, Y נוטה לעלות (או לרדת)". אם הקשר מעוקל, למשל Y גבוה בשני הקצוות של X ונמוך באמצע, המכפלות מימין ומשמאל מתקזזות, ויוצא r ≈ 0 למרות שיש קשר חזק. בווידג'ט: "קשר מעוקל".</p>
   <p><strong>2. הכיוון של הגרירה.</strong> אי-תלות <strong>גוררת</strong> שונות משותפת 0:</p>
-  <div class="math-block">$$X, Y \text{ independent} \;\Longrightarrow\; Cov(X,Y) = 0$$</div>
+  <div class="math-block">$$X, Y \text{ independent} \;\Longrightarrow\; \mathrm{Cov}(X,Y) = 0$$</div>
   <p>אבל ההפך <strong>לא נכון</strong>. שונות משותפת 0 לא גוררת אי-תלות:</p>
-  <div class="math-block">$$Cov(X,Y) = 0 \;\mathrel{\Large\nRightarrow}\; X, Y \text{ independent}$$</div>
-  <p>שונות משותפת 0 אומרת רק שאין קשר <strong>לינארי</strong>. דוגמה: X מקבל −1, 0 או 1 בהסתברות שווה, ו-\(Y = X^2\). ערכו של Y נקבע לגמרי על ידי X, ובכל זאת \(Cov(X,Y) = E(X^3) - E(X)E(X^2) = 0 - 0 = 0\).</p>
+  <div class="math-block">$$\mathrm{Cov}(X,Y) = 0 \;\mathrel{\Large\nRightarrow}\; X, Y \text{ independent}$$</div>
+  <p>שונות משותפת 0 אומרת רק שאין קשר <strong>לינארי</strong>. דוגמה: X מקבל −1, 0 או 1 בהסתברות שווה, ו-\(Y = X^2\). ערכו של Y נקבע לגמרי על ידי X, ובכל זאת \(\mathrm{Cov}(X,Y) = E(X^3) - E(X)E(X^2) = 0 - 0 = 0\).</p>
   <p class="note">ועוד הערה שכדאי לזכור: מתאם הוא לא סיבתיות. מכירת גלידה ומספר הטובעים בים מתואמים חיובית, כי שניהם עולים בקיץ, לא כי גלידה גורמת לטביעה.</p>
 
   <h3>הקשר לשונות של סכום</h3>
-  <p>עכשיו אפשר להבין את הנוסחה מהפרק הקודם, \(\mathrm{Var}(X+Y) = \mathrm{Var}(X) + \mathrm{Var}(Y) + 2Cov(X,Y)\). השונות של הסכום מודדת כמה הסכום מתרחק מהממוצע שלו.</p>
+  <p>עכשיו אפשר להבין את הנוסחה מהפרק הקודם, \(\mathrm{Var}(X+Y) = \mathrm{Var}(X) + \mathrm{Var}(Y) + 2\mathrm{Cov}(X,Y)\). השונות של הסכום מודדת כמה הסכום מתרחק מהממוצע שלו.</p>
   <ul>
     <li><strong>אם X ו-Y נוטים לזוז יחד</strong> (Cov חיובית), אז כש-X מעל הממוצע שלו, גם Y נוטה להיות מעל הממוצע שלו. שתי החריגות מצטברות, והסכום מתרחק מהממוצע עוד יותר, למעלה או למטה. לכן הפיזור של הסכום גדל.</li>
     <li><strong>אם הם נוטים לזוז הפוך</strong> (Cov שלילית), אז כשאחד מעל הממוצע, השני נוטה להיות מתחתיו. החריגות מקזזות זו את זו, והסכום נשאר קרוב לממוצע. לכן הפיזור של הסכום קטן.</li>
@@ -1330,7 +1330,7 @@ select { max-width: 100%; }
   <div class="steps">
     <div class="step"><p class="step-h">פתרון</p>
       <details class="reveal"><summary>הצג</summary><div class="reveal-body">
-        <p>נגדיר \(U = 2X\). אז \(\mathrm{Var}(U) = 4\cdot4 = 16\) ו-\(Cov(U, Y) = 2\cdot Cov(X,Y) = 4\). לפי נוסחת ההפרש:</p>
+        <p>נגדיר \(U = 2X\). אז \(\mathrm{Var}(U) = 4\cdot4 = 16\) ו-\(\mathrm{Cov}(U, Y) = 2\cdot \mathrm{Cov}(X,Y) = 4\). לפי נוסחת ההפרש:</p>
         <div class="math-block">$$\mathrm{Var}(2X - Y) = 16 + 9 - 2\cdot4 = 17$$</div>
         <p>אם היו בלתי תלויים, השונות המשותפת 0, והתשובה \(16 + 9 = 25\). הקשר החיובי מקטין את השונות של ההפרש, כי X ו-Y זזים יחד ומקזזים זה את זה.</p>
       </div></details></div>
