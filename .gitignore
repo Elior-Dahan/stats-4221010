@@ -3,3 +3,7 @@ _site/
 Thumbs.db
 __pycache__/
 .vscode/
+
+# Booklet solutions stay local until the TA releases them (see CLAUDE.md, "Solutions policy").
+# To release one: git add -f lectures/NN-slug/solutions.html
+lectures/*/solutions.html

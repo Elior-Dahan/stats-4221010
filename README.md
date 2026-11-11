@@ -19,6 +19,14 @@ python -m http.server 8000 -d _site
 3. רשומה חדשה ב-`lectures.json` עם `"published": false`, ולשנות ל-`true` כשמוכן.
 4. `python tools/build.py --check`
 
+## פתרונות לחוברת
+המאגר ציבורי, ולכן כל קובץ שנכנס אליו גלוי ב-GitHub גם אם הוא לא מופיע באתר. לכן:
+- קובצי `lectures/NN-slug/solutions.html` לא נכנסים למאגר עד שמחליטים לשחרר אותם. הם מוחרגים ב-`.gitignore`, כך שאפשר להחזיק אותם מקומית.
+- עד השחרור, השדה `solutions` של ההרצאה ב-`lectures.json` נשאר `null`. אחרת ה-workflow ייכשל, כי הקובץ לא קיים במאגר.
+- שחרור קובץ פתרונות: `git add -f lectures/NN-slug/solutions.html`, לעדכן ב-`lectures.json` את `"solutions": { "path": "solutions.html", "published": true }`, להריץ `python tools/build.py --check`, ואז commit ו-push.
+
+גם הרצאה עם `"published": false` לא מופיעה באתר, אבל הקובץ שלה גלוי במאגר.
+
 ## פרסום
 `git push` ל-`main`. ה-workflow בודק את האתר, בונה רק תוכן מפורסם ומעלה אותו.
 הגדרה חד-פעמית: Settings ← Pages ← Source: **GitHub Actions**.

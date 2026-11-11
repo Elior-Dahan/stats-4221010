@@ -8,7 +8,7 @@ Static site of interactive per-lecture study guides for the Statistics course (4
 index.html                 landing page: renders a card per published lecture from lectures.json
 lectures.json              single source of truth: course info + list of lectures
 lectures/NN-slug/index.html  the study guide for lecture NN (self-contained page)
-lectures/NN-slug/solutions.html  optional: solutions to the lecturer's booklet for that lecture
+lectures/NN-slug/solutions.html  optional: solutions to the lecturer's booklet for that lecture (git-ignored until released)
 assets/site.css            landing-page styles
 assets/common.js           injected into every lecture page: top/bottom nav (prev / home / next)
 tools/build.py             validates the site and builds _site/ (published content only)
@@ -20,7 +20,17 @@ tools/build.py             validates the site and builds _site/ (published conte
 { "n": 1, "slug": "01-descriptive", "title": "…", "summary": "1–2 lines", "topics": ["…"],
   "published": true, "solutions": { "path": "solutions.html", "published": false } }
 ```
-`solutions` is `null` when there is no solutions file. Unpublished lectures/solutions stay in the repo but are NOT copied to `_site/`, so they are not on the live site.
+`solutions` is `null` when there is no released solutions file. Unpublished lectures stay in the repo but are NOT copied to `_site/`, so they are not on the live site.
+
+## Solutions policy (hard)
+
+The repo is public, so anything committed is readable on github.com even when it is not on the site. Therefore:
+
+- Solutions files are never committed until the user decides to release them. `.gitignore` has `lectures/*/solutions.html`, so they can live locally without being committed. Never `git add -f` one unless the user explicitly says to release that file.
+- Until release, the lecture's `solutions` field in `lectures.json` stays `null`. The ignored file does not exist on CI, so a non-null `solutions` entry fails the deploy ("solutions file not found").
+- To release a solutions file, only when the user says so: `git add -f lectures/NN-slug/solutions.html`, set `"solutions": { "path": "solutions.html", "published": true }`, run the check, commit.
+- A local `solutions.html` is still copied into the local `_site/` preview along with its lecture folder. That is local only.
+- The same goes for unpublished lectures: they are off the site but visible in the repo. Do not commit a draft the user wants kept private.
 
 ## Content rules (hard)
 
@@ -29,6 +39,8 @@ tools/build.py             validates the site and builds _site/ (published conte
 - No Bayesian material (students take it only in 4th year).
 - MLE: no second-derivative checks; the course does not do them.
 - Do not put the lecturer's exercise-booklet questions inside the study guides. Booklet solutions go only in `lectures/NN-slug/solutions.html`.
+- Lecture 2 (`02-probability`) is final as is: do not move, split or remove any of its content.
+- The existing guides are finished work. Do not remove or rewrite their content unless asked.
 - Material beyond the lecture slides goes in collapsible extensions (`<details>`), clearly marked as an extension.
 
 ## Technical rules
