@@ -1,5 +1,5 @@
 /*
- * Shared lecture-page navigation (prev / home / next).
+ * Shared lecture-page chrome: navigation (prev / home / next) and a back-to-top button.
  * Include in every lecture page's <head>:
  *   <script src="../../assets/common.js" defer></script>
  * Renders inside Shadow DOM so it never clashes with the page's own CSS.
@@ -43,6 +43,7 @@
     :host([data-theme="dark"]) a { color: var(--accent, #8db6ec); }
     @media print { nav { display: none; } }
     @media (max-width: 920px) { nav { padding: 10px 16px; } }
+    @media (max-width: 1320px) { .bottom { margin-bottom: 68px; } } /* room for the back-to-top button */
     @media (max-width: 520px) { .t { display: none; } }
   `;
 
@@ -97,8 +98,74 @@
     syncTheme();
   };
 
-  const run = () =>
-    fetch(new URL('lectures.json', root), { cache: 'no-cache' })
+  // Back-to-top button: fixed at the bottom-left, shown after about one screen of scrolling.
+  // Where it would sit on top of the text column (narrow screens), it shows only while the
+  // reader scrolls up, so it never covers the lines being read on the way down.
+  const TOP_CSS = `
+    :host { all: initial; }
+    button {
+      position: fixed; left: 16px; bottom: 16px; z-index: 30;
+      width: 44px; height: 44px; padding: 0; border-radius: 50%;
+      display: grid; place-items: center; cursor: pointer;
+      color: var(--accent, #1f4e8c);
+      background: var(--surface, #ffffff);
+      border: 1px solid var(--rule-strong, #b5c0cf);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
+      opacity: 0; visibility: hidden; transform: translateY(6px);
+      transition: opacity .15s, transform .15s, visibility 0s linear .15s;
+    }
+    :host([data-show]) button { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+    button:hover { background: var(--surface-2, #eef2f7); }
+    button:focus-visible { outline: 2px solid var(--accent, #1f4e8c); outline-offset: 2px; }
+    :host([data-theme="dark"]) button {
+      color: var(--accent, #8db6ec);
+      background: var(--surface, #1b2129);
+      border-color: var(--rule-strong, #46525f);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+    :host([data-theme="dark"]) button:hover { background: var(--surface-2, #232b36); }
+    @media (max-width: 520px) { button { left: 12px; bottom: 12px; } }
+    @media (prefers-reduced-motion: reduce) { button { transition: none; } }
+    @media print { button { display: none; } }
+  `;
+
+  const mountTop = () => {
+    const host = document.createElement('div');
+    host.setAttribute('data-sg-top', '');
+    const shadow = host.attachShadow({ mode: 'open' });
+    const style = document.createElement('style');
+    style.textContent = TOP_CSS;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.title = 'חזרה לראש הדף';
+    btn.setAttribute('aria-label', 'חזרה לראש הדף');
+    btn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    btn.addEventListener('click', () => {
+      const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: calm ? 'instant' : 'smooth' });
+    });
+    shadow.append(style, btn);
+    document.body.append(host);
+    hosts.push(host);
+    syncTheme();
+
+    let lastY = window.scrollY, goingUp = false;
+    const update = () => {
+      const y = window.scrollY;
+      if (y < lastY - 2) goingUp = true; else if (y > lastY + 2) goingUp = false;
+      lastY = y;
+      const main = document.querySelector('main');
+      const overText = !main || main.getBoundingClientRect().left < btn.getBoundingClientRect().right + 8;
+      host.toggleAttribute('data-show', y > window.innerHeight && (!overText || goingUp));
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  };
+
+  const run = () => {
+    mountTop();
+    return fetch(new URL('lectures.json', root), { cache: 'no-cache' })
       .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
       .then(data => {
         const list = (data.lectures || []).filter(l => l.published).sort((a, b) => a.n - b.n);
@@ -106,6 +173,7 @@
         mount(i > 0 ? list[i - 1] : null, i >= 0 && i < list.length - 1 ? list[i + 1] : null);
       })
       .catch(() => mount(null, null));
+  };
 
   document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', run) : run();
 })();
