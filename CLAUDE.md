@@ -37,7 +37,7 @@ The repo is public, so anything committed is readable on github.com even when it
 - Hebrew, `<html lang="he" dir="rtl">`. Math terms may appear in English in parentheses on first use.
 - No memory tricks / mnemonics: students get a large formula sheet in the exam.
 - No Bayesian material (students take it only in 4th year).
-- MLE: no second-derivative checks; the course does not do them.
+- MLE: the course requires the second-derivative check. Lecturer's procedure: first derivative of ln L = 0 gives the critical point; the second derivative of ln L at that point is negative, so it is a maximum; then confirm it is the absolute maximum (the only critical point in the parameter's domain). Compute the second derivative from the sum form of (ln L)', not from the combined fraction, and plug in the estimate whenever its sign depends on the parameter.
 - Do not put the lecturer's exercise-booklet questions inside the study guides. Booklet solutions go only in `lectures/NN-slug/solutions.html`.
 - Lecture 2 (`02-probability`) is final as is: do not move, split or remove any of its content.
 - The existing guides are finished work. Do not remove or rewrite their content unless asked.
