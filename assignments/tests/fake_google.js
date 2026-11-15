@@ -22,6 +22,7 @@ function makeEnv() {
     appendRow(row) { this.d[this.getLastRow()] = row.slice(); }
     clearContents() { this.d = []; } setFrozenRows() {}
     deleteRow(r) { this.d.splice(r - 1, 1); }
+    insertRowBefore(r) { this.d.splice(r - 1, 0, []); }
   }
   const ss = { getSheetByName: n => sheets[n] || null, insertSheet: n => (sheets[n] = new Sheet(n)), getSheets: () => Object.values(sheets), deleteSheet: s => delete sheets[s.n] };
   const files = {}; let fid = 0; const mail = [];
@@ -42,8 +43,10 @@ function makeEnv() {
       base64Encode: bytes => Buffer.from(bytes.map(b => (b + 256) % 256)).toString('base64'),
       newBlob: (bytes) => { const b = { bytes, setName(n) { b.name = n; return b; }, getBytes: () => bytes }; return b; },
       computeDigest: (_a, s) => Array.from(crypto.createHash('sha256').update(s, 'utf8').digest()).map(b => b > 127 ? b - 256 : b),
-      DigestAlgorithm: { SHA_256: 1 }, Charset: { UTF_8: 1 }
+      DigestAlgorithm: { SHA_256: 1 }, Charset: { UTF_8: 1 },
+      formatDate: (d) => d.toISOString().slice(0, 10)
     },
+    Session: { getScriptTimeZone: () => 'Asia/Jerusalem' },
     LockService: { getScriptLock: () => ({ tryLock: () => true, releaseLock: () => {} }) },
     ContentService: { createTextOutput: (s) => ({ s, setMimeType() { return this; } }), MimeType: { JSON: 1 } },
     MailApp: { getRemainingDailyQuota: () => 100, sendEmail: (m) => mail.push(m) }

@@ -18,13 +18,14 @@ const TABS = {
   notes: 'RankNotes',
   flags: 'Flags',
   grades: 'Grades',
+  feedback: 'Feedback',
   exportStudents: 'Export_Students',
   exportReviews: 'Export_Reviews'
 };
 
 const HEADERS = {
   Settings: ['key', 'value', 'note'],
-  Students: ['student_id', 'name', 'email', 'anon_id', 'secret_hash', 'salt', 'registered_at'],
+  Students: ['student_id', 'name', 'email', 'anon_id', 'secret_hash', 'salt', 'registered_at', 'feedback_done'],
   Questionnaire: ['student_id', 'work_mode', 'partner_id', 'gender', 'age', 'height_cm',
     'study_hours', 'screen_est_min', 'screen_actual_min', 'predicted_score', 'submitted_at'],
   Questions: ['question_id', 'uploader_id', 'partner_id', 'question_file_id', 'solution_file_id', 'created_at', 'updated_at'],
@@ -33,7 +34,9 @@ const HEADERS = {
   RankNotes: ['reviewer_id', 'justification', 'submitted_at'],
   Flags: ['question_id', 'reviewer_id', 'flag_text', 'confirmed', 'ta_note'],
   Grades: ['student_id', 'name', 'question_id', 'valid_points', 'mean_rank', 'mean_score', 'n_reviews', 'tier_points',
-    'review_complete', 'competitive_points', 'bonus', 'total', 'note']
+    'review_complete', 'competitive_points', 'bonus', 'total', 'note'],
+  // Anonymous: no student column, date without time, rows inserted at a random position.
+  Feedback: ['learned_1to5', 'fairness_1to5', 'comment', 'submitted_on']
 };
 
 const DEFAULT_SETTINGS = [
@@ -186,6 +189,32 @@ const API = {
     return { name: q.question_id + '-' + kind + '.pdf', mime: 'application/pdf', data: Utilities.base64Encode(blob.getBytes()) };
   },
 
+  submitFeedback: function (req) {
+    const me = auth_(req);
+    const s = settings_();
+    if (!phase_(s).reviewVisible) throw userError_('המשוב נפתח אחרי שלב א.');
+    const scale = function (v, label) {
+      const n = Number(v);
+      if (!(n >= 1 && n <= 5 && Math.round(n) === n)) throw userError_(label + ': בחרו ערך בין 1 ל-5.');
+      return n;
+    };
+    const learned = scale(req.learned, 'כמה למדתם');
+    const fairness = scale(req.fairness, 'הוגנות השיפוט');
+    const comment = String(req.comment || '').trim().slice(0, 2000);
+    return withLock_(function () {
+      const fresh = findStudent_(me.student_id);
+      if (truthy_(fresh.feedback_done)) throw userError_('כבר שלחתם משוב. תודה!');
+      const sh = sheet_(TABS.feedback);
+      const n = Math.max(0, sh.getLastRow() - 1);
+      const at = 2 + Math.floor(Math.random() * (n + 1));   // random row, so order says nothing about who
+      if (at <= sh.getLastRow()) sh.insertRowBefore(at);
+      const day = Utilities.formatDate(new Date(), Session.getScriptTimeZone() || 'Asia/Jerusalem', 'yyyy-MM-dd');
+      sh.getRange(at, 1, 1, 4).setValues([[learned, fairness, comment, day]]);
+      updateRow_(TABS.students, fresh._row, { feedback_done: true });
+      return { state: state_(findStudent_(me.student_id), s) };
+    });
+  },
+
   submitReview: function (req) {
     const me = auth_(req);
     const s = settings_();
@@ -281,6 +310,7 @@ function state_(me, s) {
       submitted_at: note ? iso_(note.submitted_at) : null
     };
   }
+  out.feedback = { open: ph.reviewVisible, done: truthy_(me.feedback_done) };
   if (ph.resultsPublished) {
     const g = table_(TABS.grades).find(r => r.student_id === me.student_id);
     if (g) {
@@ -369,9 +399,20 @@ function findStudent_(id) {
 function studentByName_(typed) {
   const key = nameKey_(typed);
   if (!key) throw userError_('כתבו את השם המלא של השותף/ה.');
-  const hits = table_(TABS.students).filter(r => nameKey_(r.name) === key);
+  const students = table_(TABS.students);
+  let hits = students.filter(r => nameKey_(r.name) === key);
+  if (!hits.length) {
+    // a middle name may be left out: "אלעד בראון" finds "אלעד יוסף בראון" (at least two words, one match only)
+    const words = key.split(' ');
+    if (words.length >= 2) {
+      hits = students.filter(function (r) {
+        const have = nameKey_(r.name).split(' ');
+        return words.every(w => have.indexOf(w) >= 0);
+      });
+    }
+  }
   if (!hits.length) throw userError_('אין בקורס סטודנט בשם "' + String(typed).trim() + '". כתבו שם פרטי ושם משפחה כמו שהם רשומים באוניברסיטה.');
-  if (hits.length > 1) throw userError_('יש בקורס יותר מסטודנט אחד בשם הזה. פנו למתרגל.');
+  if (hits.length > 1) throw userError_('יש בקורס יותר מסטודנט אחד שמתאים לשם הזה. כתבו את השם המלא, כולל שם אמצעי.');
   return hits[0];
 }
 
@@ -422,6 +463,12 @@ function setup() {
     if (sh.getLastRow() === 0) {
       sh.getRange(1, 1, 1, HEADERS[name].length).setValues([HEADERS[name]]).setFontWeight('bold');
       sh.setFrozenRows(1);
+    } else {
+      // after a code update: add any column the sheet does not have yet, at the end
+      const have = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0].map(String);
+      HEADERS[name].filter(h => have.indexOf(h) < 0).forEach(function (h) {
+        sh.getRange(1, sh.getLastColumn() + 1).setValue(h).setFontWeight('bold');
+      });
     }
   });
   sheet_(TABS.students).getRange('A:A').setNumberFormat('@');
@@ -633,10 +680,10 @@ function checkPairs() {
 function resetTestData() {
   const ui = SpreadsheetApp.getUi();
   const res = ui.prompt('איפוס נתוני בדיקה',
-    'נמחקים: כל ההגשות, השאלונים, ההקצאות, השיפוטים, הטעויות והציונים, כל הקבצים בתיקיית ההגשות, ' +
+    'נמחקים: כל ההגשות, השאלונים, ההקצאות, השיפוטים, הטעויות, הציונים והמשובים, כל הקבצים בתיקיית ההגשות, ' +
     'וסטודנטים שהת"ז שלהם מתחילה ב-99999. כדי לאשר, כתבו: מחק', ui.ButtonSet.OK_CANCEL);
   if (res.getSelectedButton() !== ui.Button.OK || res.getResponseText().trim() !== 'מחק') { ui.alert('בוטל.'); return; }
-  [TABS.questionnaire, TABS.questions, TABS.assignments, TABS.reviews, TABS.notes, TABS.flags, TABS.grades].forEach(function (name) {
+  [TABS.questionnaire, TABS.questions, TABS.assignments, TABS.reviews, TABS.notes, TABS.flags, TABS.grades, TABS.feedback].forEach(function (name) {
     const sh = sheet_(name);
     if (sh.getLastRow() > 1) sh.getRange(2, 1, sh.getLastRow() - 1, Math.max(1, sh.getLastColumn())).clearContent().clearDataValidations();
   });
@@ -653,6 +700,7 @@ function resetTestData() {
   const st = sheet_(TABS.students);
   const rows = table_(TABS.students).filter(r => String(r.student_id).indexOf('99999') === 0).map(r => r._row);
   rows.sort((a, b) => b - a).forEach(r => st.deleteRow(r));
+  table_(TABS.students).forEach(function (r) { if (truthy_(r.feedback_done)) updateRow_(TABS.students, r._row, { feedback_done: '' }); });
   ui.alert('האיפוס הושלם. נמחקו ' + rows.length + ' סטודנטי בדיקה ו-' + trashed + ' קבצים.\n' +
     'לפני הפתיחה: להחזיר ב-Settings את AUTH_MODE, את המועדים ואת RESULTS_PUBLISHED = FALSE.');
 }

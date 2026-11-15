@@ -11,6 +11,10 @@ const files = { question: { name: 'q.pdf', data: pdf }, solution: { name: 's.pdf
 const pdfWithAuthor = Buffer.from('%PDF-1.4\n1 0 obj << /Author (stu A) /Title (by A) >> endobj\n%%EOF').toString('base64');
 
 C.setup();
+// a sheet made by an older version lacks the newest column: running setup again adds it
+E.sheets.Students.d[0].pop(); E.sheets.Feedback.d = [];
+C.setup();
+assert.ok(E.sheets.Students.d[0].includes('feedback_done') && E.sheets.Feedback.d[0][0] === 'learned_1to5', 'setup upgrades old sheets');
 // roster: 9 students
 const names = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
 names.forEach((n, i) => E.sheets.Students.appendRow([String(100000001 + i), 'stu ' + n, n.toLowerCase() + '@x.com', '', '', '', '']));
@@ -104,6 +108,25 @@ names.filter(n => n !== 'H').forEach(n => {
 r = call(Object.assign({ action: 'submitReview', items: [], ranking: [], justification: just }, cred('H')));
 assert.ok(!r.ok, 'incomplete review rejected');
 
+// partner name without a middle name
+E.sheets.Students.appendRow(['200000001', 'אלעד יוסף בראון', 'x@y.z', 'SMID001', '', '', '']);
+E.sheets.Students.appendRow(['200000002', 'חן פרידמן', 'x2@y.z', 'SMID002', '', '', '']);
+E.sheets.Students.appendRow(['200000003', 'תכלת חן פרידמן', 'x3@y.z', 'SMID003', '', '', '']);
+assert.strictEqual(C.studentByName_('אלעד בראון').student_id, '200000001', 'middle name may be left out');
+assert.strictEqual(C.studentByName_('בראון אלעד').student_id, '200000001', 'in any order');
+assert.strictEqual(C.studentByName_('חן פרידמן').student_id, '200000002', 'exact full name wins over a partial match');
+assert.throws(() => C.studentByName_('בראון'), /אין בקורס/, 'one word is not enough');
+[200000003, 200000002, 200000001].forEach(() => E.sheets.Students.d.pop());
+// anonymous feedback: once per student, no identity in the Feedback sheet
+assert.ok(!call(Object.assign({ action: 'submitFeedback', learned: 6, fairness: 3 }, cred('A'))).ok, 'scale is 1-5');
+['A', 'B', 'C'].forEach(n => assert.ok(call(Object.assign({ action: 'submitFeedback', learned: 4, fairness: 3, comment: 'הערה של ' + n }, cred(n))).ok, 'feedback ' + n));
+assert.ok(!call(Object.assign({ action: 'submitFeedback', learned: 4, fairness: 3 }, cred('A'))).ok, 'feedback only once');
+assert.strictEqual(call(Object.assign({ action: 'state' }, cred('A'))).state.feedback.done, true);
+assert.strictEqual(call(Object.assign({ action: 'state' }, cred('D'))).state.feedback.done, false);
+const fb = C.table_('Feedback');
+assert.strictEqual(fb.length, 3);
+assert.ok(!JSON.stringify(E.sheets.Feedback.d).match(/1000000|stu /), 'feedback holds no IDs or names');
+assert.ok(fb.every(r => /^\d{4}-\d{2}-\d{2}$/.test(String(r.submitted_on))), 'date only, no time');
 C.refreshFlags();
 const flags = C.table_('Flags'); assert.strictEqual(flags.length, 1);
 E.sheets.Flags.d[1][3] = 'TRUE';
@@ -132,6 +155,8 @@ E.sheets.Students.appendRow(['999990001', 'בדיקה א', '', '', '', '', '']);
 C.resetTestData();
 assert.strictEqual(C.table_('Questions').length, 0);
 assert.strictEqual(C.table_('Reviews').length, 0);
+assert.strictEqual(C.table_('Feedback').length, 0, 'reset clears feedback');
+assert.ok(!C.table_('Students').some(r => String(r.feedback_done) === 'true'), 'reset clears feedback flags');
 assert.ok(!C.table_('Students').some(r => r.student_id.startsWith('99999')), 'test students removed');
 assert.strictEqual(C.table_('Students').length, 9, 'real students kept');
 assert.ok(Object.values(E.files).every(f => f.trashed), 'files trashed');

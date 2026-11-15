@@ -157,6 +157,8 @@ input[type="file"] { font: inherit; font-size: 15px; max-width: 100%; }
 .counter { font-size: 13.5px; color: var(--muted); text-align: left; }
 .counter.short { color: var(--bad); }
 
+.scale { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; }
+.scale .end { font-size: 14px; color: var(--muted); }
 .score-big { font-family: var(--font-head); font-size: 56px; font-weight: 900; line-height: 1; color: var(--accent); }
 .score-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 16px; }
 .score-table td { padding: 8px 4px; border-bottom: 1px solid var(--rule); }
@@ -323,6 +325,29 @@ input[type="file"] { font: inherit; font-size: 15px; max-width: 100%; }
         <span class="hint">אפשר לעדכן עד המועד האחרון.</span>
       </div>
       <div id="b-msg"></div>
+    </form>
+  </section>
+
+  <!-- feedback (optional, anonymous) -->
+  <section class="panel" id="feedback" hidden>
+    <h2>משוב על המטלה</h2>
+    <p class="sub">רשות ואנונימי: המשוב נשמר בלי שם ובלי ת"ז, ולא משפיע על הציון. אפשר לשלוח פעם אחת.</p>
+    <div id="fb-done" hidden><p class="msg ok">תודה! המשוב נשלח.</p></div>
+    <form id="fb-form" novalidate>
+      <div class="field">
+        <span class="lbl">כמה למדתם מהמטלה?</span>
+        <div class="scale" id="fb-learned"></div>
+      </div>
+      <div class="field">
+        <span class="lbl">כמה שיטת השיפוט והציון נראית לכם הוגנת?</span>
+        <div class="scale" id="fb-fairness"></div>
+      </div>
+      <div class="field">
+        <label for="fb-comment">מה היה טוב, ומה כדאי לשפר?</label>
+        <textarea id="fb-comment" maxlength="2000"></textarea>
+      </div>
+      <div class="actions"><button class="btn primary" type="submit" id="fb-submit">שליחת משוב</button></div>
+      <div id="fb-msg"></div>
     </form>
   </section>
 
@@ -494,6 +519,7 @@ const API_URL = window.ASSIGNMENT_API_URL || '';
     renderStages();
     renderStageA();
     renderStageB();
+    renderFeedback();
     renderResults();
   }
 
@@ -738,6 +764,37 @@ const API_URL = window.ASSIGNMENT_API_URL || '';
     if (!r.ok) return msg(box, 'err', r.error);
     S = r.state; render();
     msg($('b-msg'), 'ok', 'השיפוט נשמר.');
+  });
+
+  /* ---------- feedback ---------- */
+  function buildScale(id, name, low, high) {
+    const box = $(id);
+    box.append(el('span', { class: 'end', text: low }));
+    for (let v = 1; v <= 5; v++) box.append(el('label', { class: 'choice' }, el('input', { type: 'radio', name, value: String(v) }), ' ' + v));
+    box.append(el('span', { class: 'end', text: high }));
+  }
+  buildScale('fb-learned', 'fb-learned', '1 = כמעט כלום', '5 = הרבה');
+  buildScale('fb-fairness', 'fb-fairness', '1 = לא הוגנת', '5 = הוגנת מאוד');
+
+  function renderFeedback() {
+    const f = S.feedback || {};
+    const reviewed = S.review && S.review.submitted_at;
+    $('feedback').hidden = !(f.open && (reviewed || S.phase.resultsPublished || f.done));
+    $('fb-done').hidden = !f.done;
+    $('fb-form').hidden = !!f.done;
+  }
+
+  $('fb-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const box = $('fb-msg');
+    const pick = (n) => (qsa('input[name="' + n + '"]').find(i => i.checked) || {}).value;
+    const learned = pick('fb-learned'), fairness = pick('fb-fairness');
+    if (!learned || !fairness) return msg(box, 'err', 'בחרו ערך בשתי השאלות (1 עד 5).');
+    const btn = $('fb-submit'); btn.disabled = true;
+    const r = await api('submitFeedback', { learned: +learned, fairness: +fairness, comment: $('fb-comment').value.trim() });
+    btn.disabled = false;
+    if (!r.ok) return msg(box, 'err', r.error);
+    S = r.state; render();
   });
 
   /* ---------- results ---------- */

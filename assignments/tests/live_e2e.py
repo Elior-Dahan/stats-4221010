@@ -43,7 +43,8 @@ QN = {"gender": "נקבה", "age": 23, "height_cm": 170, "study_hours": 4,
 passed, failed = 0, []
 
 
-def check(cond, what):
+def check(cond, what, resp=None):
+    """resp: the server answer, so a failure shows the server's own error message."""
     global passed
     if cond:
         passed += 1
@@ -51,6 +52,8 @@ def check(cond, what):
     else:
         failed.append(what)
         print("  FAIL " + what)
+        if isinstance(resp, dict) and resp.get("error"):
+            print("       server said: " + resp["error"])
 
 
 def call(action, who=None, **kw):
@@ -105,6 +108,19 @@ def admin(step, instructions, rows=None):
     return None
 
 
+def wait_for_phase(want, hint):
+    """Ask the server which stage is open; if it is not the expected one, say which setting is off and wait."""
+    while True:
+        ph = call("config").get("phase", {})
+        bad = [k for k, v in want.items() if ph.get(k) is not v]
+        if not bad or AUTO:
+            return
+        print("\n  The server's stage is not what this step needs (%s)." % ", ".join(bad))
+        print("  " + hint)
+        print("  Tip: a date cell must be a real date (the Sheet aligns it to the right); text such as an odd format is ignored.")
+        input("  Fix it in Settings, then press Enter to check again... ")
+
+
 def submit_a(who, mode="alone", partner="", f=None, qn=None):
     return call("submitStageA", who, workMode=mode, partnerName=partner, questionnaire=qn or QN, files=f)
 
@@ -117,10 +133,14 @@ admin("prepare", "In the Sheet, tab Settings:\n"
       "  SUBMIT_DEADLINE   = a date in the future (e.g. next week)\n"
       "  REVIEW_OPEN       = empty\n"
       "  RESULTS_PUBLISHED = FALSE")
-admin("addStudents", "Tab Students: paste these 8 rows under the real ones (columns A, B; leave C empty):\n" +
-      "\n".join("  %s\t%s" % (r[0], r[1]) for r in rows) +
-      "\n(In Google Sheets: paste, then Data > Split text to columns if they land in one column.)", rows)
+admin("addStudents", "Tab Students, below the last row. Paste in two steps so each value lands in its own column:\n"
+      "  a) select the first empty cell in column A and paste these 8 IDs:\n" +
+      "\n".join("       " + r[0] for r in rows) +
+      "\n  b) select the cell next to the first ID, in column B, and paste these 8 names:\n" +
+      "\n".join("       " + r[1] for r in rows) +
+      "\n  Check: column B holds the names, column C (email) stays empty.", rows)
 
+wait_for_phase({"canSubmit": True}, "Stage A should be open: SUBMIT_DEADLINE must be a future date.")
 print("\n[1] config and registration")
 c = call("config")
 check(c.get("ok") and c.get("authMode") == "register", "config answers, AUTH_MODE is register")
@@ -149,30 +169,40 @@ check(not r.get("ok"), "gender other than male/female is refused")
 
 swapped = " ".join(reversed(S[2]["name"].split()))
 r = submit_a(1, "pair", swapped, files("AB"))
-check(r.get("ok"), "pair 1+2: student 1 uploads (partner name typed in reverse order)")
+check(r.get("ok"), "pair 1+2: student 1 uploads (partner name typed in reverse order)", r)
 r = submit_a(2, "pair", S[1]["name"])
-check(r.get("ok") and r["state"]["question"]["iAmUploader"] is False, "pair 1+2: student 2 confirms without files")
+check(r.get("ok") and r["state"]["question"]["iAmUploader"] is False, "pair 1+2: student 2 confirms without files", r)
 r = submit_a(5, "pair", S[4]["name"], files("DE"))
-check(r.get("ok"), "pair 4+5: student 5 uploads")
+check(r.get("ok"), "pair 4+5: student 5 uploads", r)
 r = submit_a(4, "pair", S[5]["name"])
-check(r.get("ok"), "pair 4+5: student 4 confirms")
+check(r.get("ok"), "pair 4+5: student 4 confirms", r)
 r = submit_a(3, f=files("C", author="Test Gimel"))
-check(r.get("ok"), "student 3 uploads a PDF whose properties hold an author name")
+check(r.get("ok"), "student 3 uploads a PDF whose properties hold an author name", r)
 for k in (6, 7, 8):
-    check(submit_a(k, f=files(str(k))).get("ok"), "student %d uploads alone" % k)
+    r = submit_a(k, f=files(str(k)))
+    check(r.get("ok"), "student %d uploads alone" % k, r)
 st = {k: call("state", k)["state"] for k in S}
 qid = {k: (st[k].get("question") or {}).get("id") for k in S}
-check(qid[1] == qid[2] and qid[4] == qid[5], "partners share one question")
-check(len(set(qid.values())) == 6, "6 questions in total")
+check(qid[1] and qid[1] == qid[2] and qid[4] and qid[4] == qid[5], "partners share one question")
+check(len(set(qid.values())) == 6 and None not in qid.values(), "6 questions in total")
 r = submit_a(1, "pair", S[2]["name"], files("AB-v2"))
-check(r.get("ok") and r["state"]["question"]["id"] == qid[1], "re-upload keeps the same question id")
+check(r.get("ok") and r["state"]["question"]["id"] == qid[1], "re-upload keeps the same question id", r)
+if len(set(qid.values())) != 6 or None in qid.values():
+    print("\nStage A did not produce the 6 questions the next stages need (two pairs + four singles).")
+    print("Fix the cause above, run the menu's reset item, set SUBMIT_DEADLINE back to the future, and start again.")
+    print("\n%d passed, %d failed" % (passed, len(failed)))
+    sys.exit(1)
 
 admin("closeAndAssign", "Close stage A and assign reviewers:\n"
       "  1. Settings: SUBMIT_DEADLINE = a time that has already passed (e.g. yesterday)\n"
       "  2. Menu 'מטלה 1' > item 3 (assign reviewers). Expect: 8 reviewers, 6 questions.")
 
+wait_for_phase({"canSubmit": False, "canReview": True},
+               "Stage B should be open: SUBMIT_DEADLINE in the past, REVIEW_DEADLINE in the future, REVIEW_OPEN empty, "
+               "and item 3 (assign reviewers) must have run.")
 print("\n[3] stage B")
-check(not submit_a(6, f=files("late")).get("ok"), "stage A is closed after the deadline")
+r = submit_a(6, f=files("late"))
+check(not r.get("ok"), "stage A is closed after the deadline")
 st = {k: call("state", k)["state"] for k in S}
 for k in S:
     items = (st[k].get("review") or {}).get("items", [])
@@ -204,7 +234,12 @@ for k in range(1, 8):  # student 8 does not review
         its[0].update(flagged=True, flagText="סעיף ב: התשובה הנכונה היא 3/7 ולא 2/7")
     r = call("submitReview", k, items=its, ranking=ranking,
              justification="הדירוג לפי בהירות, כיסוי החומר והאם צריך להבין ולא רק להציב בנוסחה. " * 2)
-    check(r.get("ok"), "student %d submits a review" % k)
+    check(r.get("ok"), "student %d submits a review" % k, r)
+
+r = call("submitFeedback", 1, learned=4, fairness=5, comment="בדיקה: משוב אנונימי")
+check(r.get("ok") and r["state"]["feedback"]["done"] is True, "student 1 sends anonymous feedback", r)
+check(not call("submitFeedback", 1, learned=3, fairness=3).get("ok"), "feedback can be sent only once")
+check(not call("submitFeedback", 2, learned=9, fairness=3).get("ok"), "feedback scale is 1-5")
 
 admin("grade", "Grade:\n"
       "  1. Menu 'מטלה 1' > item 4 (refresh flags). Expect 1 flag.\n"
@@ -212,6 +247,7 @@ admin("grade", "Grade:\n"
       "  3. Menu > item 5 (compute grades). It warns about nothing unchecked.\n"
       "  4. Settings: RESULTS_PUBLISHED = TRUE")
 
+wait_for_phase({"resultsPublished": True}, "Results should be published: RESULTS_PUBLISHED = TRUE (after item 5).")
 print("\n[4] results")
 res = {k: (call("state", k)["state"].get("results")) for k in S}
 check(all(res[k] for k in S), "every student sees a result")
@@ -228,7 +264,7 @@ if all(res[k] for k in S):
     check({res[k]["competitive"] for k in range(1, 8)} != {0}, "competitive points were handed out")
 
 out = admin("exportAndReset", "Finish:\n"
-            "  1. Menu > item 6 (export). Look at Export_Students / Export_Reviews: no IDs, no names.\n"
+            "  1. Menu > item 6 (export). Look at Export_Students / Export_Reviews and tab Feedback: no IDs, no names.\n"
             "  2. Menu > last item (reset test data), type מחק.\n"
             "  3. Settings: put back AUTH_MODE = code, the real deadlines, RESULTS_PUBLISHED = FALSE.")
 if AUTO and out is not None:

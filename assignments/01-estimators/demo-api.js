@@ -18,6 +18,7 @@
         items: ['QA1', 'QB2', 'QC3', 'QD4'].map((q, i) => ({ question: q, position: i + 1, score: '', unsolved: false, flagged: false, flagText: '', rank: '' })),
         justification: '', submitted_at: null
       },
+      feedback: { done: false },
       results: { valid: 3, competitive: 1, tier: 1, reviewComplete: true, bonus: 0.5, total: 4.5, meanScore: 71.4, nReviews: 6 }
     };
   };
@@ -39,6 +40,7 @@
   }, {
     me: st.me, questionnaire: st.questionnaire, question: st.question,
     review: phases[phase].reviewVisible ? st.review : undefined,
+    feedback: { open: phases[phase].reviewVisible, done: st.feedback.done },
     results: phases[phase].resultsPublished ? st.results : undefined
   });
 
@@ -88,6 +90,12 @@
       }
       case 'file': {
         return wait({ ok: true, name: req.question + '-' + req.kind + '.pdf', data: pdf('Demo ' + req.kind + ' ' + req.question) });
+      }
+      case 'submitFeedback': {
+        if (st.feedback.done) return fail('כבר שלחתם משוב. תודה!');
+        if (!(req.learned >= 1 && req.learned <= 5 && req.fairness >= 1 && req.fairness <= 5)) return fail('בחרו ערך בין 1 ל-5.');
+        st.feedback.done = true;
+        return wait({ ok: true, state: state() });
       }
       case 'submitReview': {
         if (!phases[phase].canReview) return fail('שלב השיפוט סגור.');
