@@ -1,0 +1,769 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מטלה 1 – אומדים · סטטיסטיקה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=IBM+Plex+Sans+Hebrew:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="robots" content="noindex">
+<script src="../../assets/common.js" defer></script>
+<script>
+  try { var t = localStorage.getItem('stats-guide-theme'); if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<style>
+:root {
+  color-scheme: light;
+  --paper: #f5f7fa;
+  --grid: rgba(31, 78, 140, 0.055);
+  --surface: #ffffff;
+  --surface-2: #eef2f7;
+  --ink: #17202d;
+  --ink-2: #445063;
+  --muted: #6a7486;
+  --rule: #d6dde7;
+  --rule-strong: #b5c0cf;
+  --accent: #1f4e8c;
+  --accent-soft: #e3ecf8;
+  --good: #0f7a3e;
+  --good-bg: #e6f4ec;
+  --bad: #b3261e;
+  --bad-bg: #fbe9e7;
+  --warn: #8a5a00;
+  --warn-bg: #fdf3dd;
+  --radius: 10px;
+  --font-body: "IBM Plex Sans Hebrew", "Segoe UI", Arial, sans-serif;
+  --font-head: "Frank Ruhl Libre", "David", Georgia, serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #13171d; --grid: rgba(140, 170, 220, 0.05); --surface: #1b2129; --surface-2: #232b36;
+    --ink: #e9edf3; --ink-2: #bcc5d2; --muted: #8f9aab; --rule: #2f3946; --rule-strong: #46525f;
+    --accent: #8db6ec; --accent-soft: #22324a; --good: #5fc98d; --good-bg: #17301f; --bad: #f08a80; --bad-bg: #3a1c1a;
+    --warn: #f0c060; --warn-bg: #352a12;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #13171d; --grid: rgba(140, 170, 220, 0.05); --surface: #1b2129; --surface-2: #232b36;
+  --ink: #e9edf3; --ink-2: #bcc5d2; --muted: #8f9aab; --rule: #2f3946; --rule-strong: #46525f;
+  --accent: #8db6ec; --accent-soft: #22324a; --good: #5fc98d; --good-bg: #17301f; --bad: #f08a80; --bad-bg: #3a1c1a;
+  --warn: #f0c060; --warn-bg: #352a12;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background-color: var(--paper); color: var(--ink);
+  font-family: var(--font-body); font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+[hidden] { display: none !important; }
+.wrap { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+
+.masthead {
+  padding: 40px 0 30px; border-bottom: 1px solid var(--rule);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.masthead-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; }
+.course-line { color: var(--muted); font-size: 15px; margin: 0; }
+.masthead h1 {
+  font-family: var(--font-head); font-weight: 900; font-size: clamp(36px, 6vw, 64px);
+  line-height: 1.02; letter-spacing: -0.01em; margin: 0;
+}
+.masthead h1 .h1-second { display: block; color: var(--ink-2); font-weight: 500; }
+.lede { max-width: 640px; font-size: 18.5px; color: var(--ink-2); margin: 16px 0 0; }
+.top-actions { display: flex; gap: 8px; }
+
+.btn {
+  font: inherit; font-size: 15px; font-weight: 500; cursor: pointer;
+  padding: 7px 16px; border-radius: 8px; border: 1px solid var(--rule-strong);
+  background: var(--surface); color: var(--ink); text-decoration: none; display: inline-block; line-height: 1.4;
+}
+.btn:hover { background: var(--surface-2); }
+.btn.primary { background: var(--accent); color: var(--surface); border-color: var(--accent); }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.small { font-size: 14px; padding: 4px 12px; }
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+
+/* timeline of the three stages */
+.stages { list-style: none; margin: 28px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.stage { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); padding: 12px 14px; }
+.stage .s-name { font-weight: 600; }
+.stage .s-when { color: var(--muted); font-size: 14px; }
+.stage.now { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.stage.done .s-name::after { content: " ✓"; color: var(--good); }
+
+main { padding: 8px 0 40px; }
+.panel {
+  background: var(--surface); border: 1px solid var(--rule); border-radius: 14px;
+  padding: 22px 24px; margin-top: 22px;
+}
+.panel h2 { font-family: var(--font-head); font-size: 27px; margin: 0 0 4px; line-height: 1.2; }
+.panel .sub { color: var(--ink-2); margin: 0 0 16px; }
+.panel h3 { font-size: 17.5px; margin: 22px 0 8px; }
+
+.field { margin: 0 0 14px; }
+.field > label, .field > .lbl { display: block; font-weight: 500; margin-bottom: 4px; }
+.hint { color: var(--muted); font-size: 14px; }
+input[type="text"], input[type="password"], input[type="number"], select, textarea {
+  font: inherit; font-size: 16px; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--rule-strong); border-radius: 8px; padding: 7px 10px;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+input[type="number"] { width: 110px; direction: ltr; text-align: right; }
+input.id-in { direction: ltr; text-align: right; width: 220px; }
+textarea { width: 100%; min-height: 96px; resize: vertical; }
+select { min-width: 240px; max-width: 100%; }
+input[type="file"] { font: inherit; font-size: 15px; max-width: 100%; }
+
+.field > label.choice, .choice { display: inline-flex; align-items: center; gap: 6px; margin-inline-end: 18px; cursor: pointer; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 24px; }
+.q-field { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+
+.msg { border-radius: 8px; padding: 10px 14px; margin: 12px 0; font-size: 15.5px; }
+.msg.ok { background: var(--good-bg); color: var(--good); }
+.msg.err { background: var(--bad-bg); color: var(--bad); }
+.msg.info { background: var(--accent-soft); color: var(--ink); }
+.msg.warn { background: var(--warn-bg); color: var(--warn); }
+
+.tabs { display: inline-flex; border: 1px solid var(--rule-strong); border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
+.tabs button { font: inherit; font-size: 15px; padding: 6px 16px; border: 0; background: var(--surface); color: var(--ink-2); cursor: pointer; }
+.tabs button + button { border-inline-start: 1px solid var(--rule-strong); }
+.tabs button[aria-pressed="true"] { background: var(--accent); color: var(--surface); }
+
+/* review cards */
+.rv { border: 1px solid var(--rule); border-radius: var(--radius); padding: 16px 18px; margin-top: 14px; background: var(--paper); }
+.rv-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.rv-title { font-family: var(--font-head); font-weight: 700; font-size: 22px; }
+.rv-files { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.file-links { font-size: 14.5px; }
+.file-links a { margin-inline-start: 8px; }
+.tag { font-size: 13px; padding: 1px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-weight: 500; }
+.tag.warn { background: var(--warn-bg); color: var(--warn); }
+
+.rank-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.rank-list li {
+  display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 10px;
+  background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 8px 12px;
+}
+.rank-list .r-num { font-family: var(--font-head); font-weight: 700; font-size: 24px; color: var(--accent); text-align: center; }
+.rank-list .r-btns { display: flex; gap: 4px; }
+.rank-list .r-btns button { width: 34px; height: 30px; padding: 0; }
+.counter { font-size: 13.5px; color: var(--muted); text-align: left; }
+.counter.short { color: var(--bad); }
+
+.score-big { font-family: var(--font-head); font-size: 56px; font-weight: 900; line-height: 1; color: var(--accent); }
+.score-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 16px; }
+.score-table td { padding: 8px 4px; border-bottom: 1px solid var(--rule); }
+.score-table td:last-child { text-align: left; font-variant-numeric: tabular-nums; font-weight: 600; }
+
+.summary-list { margin: 0; padding-inline-start: 20px; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 16px; }
+.spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--rule-strong); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; vertical-align: -3px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.demo-bar { background: var(--warn-bg); color: var(--warn); font-size: 14px; padding: 8px 0; border-bottom: 1px solid var(--rule); }
+.demo-bar .wrap { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+.foot { padding: 24px 24px 48px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--rule); }
+
+@media (max-width: 920px) { .wrap { padding: 0 16px; } .foot { padding: 24px 16px 40px; } }
+@media (max-width: 640px) {
+  .who { display: none; }
+  .stages { grid-template-columns: 1fr; }
+  .grid2 { grid-template-columns: 1fr; }
+  .panel { padding: 18px 16px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<div class="demo-bar" id="demo-bar" hidden>
+  <div class="wrap">
+    <strong>מצב הדגמה</strong> (בלי שרת, שום דבר לא נשמר). שלב:
+    <button class="btn small" data-demo="submit" type="button">שלב א</button>
+    <button class="btn small" data-demo="review" type="button">שלב ב</button>
+    <button class="btn small" data-demo="results" type="button">ציונים</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="masthead-top">
+      <span></span>
+      <div class="top-actions">
+        <button class="btn small" id="toggle-theme" type="button" aria-pressed="false">מצב כהה</button>
+        <button class="btn small" id="logout" type="button" hidden>יציאה</button>
+      </div>
+    </div>
+    <h1>מטלה 1: אומדים</h1>
+    <ol class="stages" id="stages">
+      <li class="stage" data-stage="submit"><div class="s-name">שלב א: כתיבה</div><div class="s-when" id="when-submit">—</div></li>
+      <li class="stage" data-stage="review"><div class="s-name">שלב ב: שיפוט</div><div class="s-when" id="when-review">—</div></li>
+      <li class="stage" data-stage="results"><div class="s-name">ציון</div><div class="s-when" id="when-results">אחרי בדיקת הטעויות</div></li>
+    </ol>
+  </div>
+</header>
+
+<main class="wrap" id="main">
+  <p class="msg info" id="boot"><span class="spinner"></span> טוען…</p>
+
+  <!-- login -->
+  <section class="panel" id="login" hidden>
+    <h2>כניסה</h2>
+    <div class="tabs" id="auth-tabs" hidden>
+      <button type="button" data-tab="login" aria-pressed="true">כניסה</button>
+      <button type="button" data-tab="register" aria-pressed="false">כניסה ראשונה: בחירת סיסמה</button>
+    </div>
+    <form id="login-form" novalidate>
+      <div class="field">
+        <label for="in-id">תעודת זהות</label>
+        <input class="id-in" id="in-id" type="text" inputmode="numeric" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="in-secret" id="secret-label">סיסמה</label>
+        <input class="id-in" id="in-secret" type="password" autocomplete="current-password" required>
+        <div class="hint" id="secret-hint"></div>
+      </div>
+      <div class="field" id="confirm-wrap" hidden>
+        <label for="in-secret2">שוב את הסיסמה</label>
+        <input class="id-in" id="in-secret2" type="password" autocomplete="new-password">
+      </div>
+      <div class="actions"><button class="btn primary" type="submit" id="login-btn">כניסה</button></div>
+      <div id="login-msg"></div>
+    </form>
+  </section>
+
+  <!-- stage A -->
+  <section class="panel" id="stage-a" hidden>
+    <h2>שלב א: הגשת שאלה</h2>
+    <p class="sub" id="a-sub"></p>
+    <div id="a-status"></div>
+    <form id="a-form" novalidate>
+      <h3>עבודה לבד או בזוג</h3>
+      <div class="field">
+        <label class="choice"><input type="radio" name="mode" value="alone" checked> לבד</label>
+        <label class="choice"><input type="radio" name="mode" value="pair"> בזוג</label>
+      </div>
+      <div id="pair-wrap" hidden>
+        <div class="field">
+          <label for="partner">השם המלא של השותף/ה</label>
+          <input type="text" id="partner" autocomplete="off" style="width:280px">
+          <div class="hint">שם פרטי ושם משפחה, כמו שהם רשומים באוניברסיטה.</div>
+        </div>
+        <div class="field">
+          <span class="lbl">מי מעלה את הקבצים?</span>
+          <label class="choice"><input type="radio" name="uploader" value="me" checked> אני</label>
+          <label class="choice"><input type="radio" name="uploader" value="partner"> השותף/ה (אני רק ממלא/ת את השאלון)</label>
+          <div class="hint">הגשה אחת לזוג. כל אחד מבני הזוג ממלא את השאלון בעצמו וכותב את השם של השני.</div>
+        </div>
+      </div>
+
+      <div id="files-wrap">
+        <h3>הקבצים</h3>
+        <div class="field">
+          <label for="f-question">השאלה (PDF)</label>
+          <input id="f-question" type="file" accept="application/pdf,.pdf">
+          <p class="msg warn"><strong>בלי שמות, ת"ז או כל פרט מזהה</strong>, לא בשאלה ולא בפתרון: הקבצים עוברים לשופטים כמו שהם.</p>
+        </div>
+        <div class="field">
+          <label for="f-solution">הפתרון (PDF)</label>
+          <input id="f-solution" type="file" accept="application/pdf,.pdf">
+        </div>
+        <div class="hint" id="files-hint"></div>
+      </div>
+
+      <h3>שאלון אישי</h3>
+      <p class="hint">הנתונים יעברו לכיתה בלי שמות ובלי ת"ז, לניתוח במטלה 2. ענו בכנות.</p>
+      <div class="field">
+        <span class="lbl">מגדר</span>
+        <label class="choice"><input type="radio" name="gender" value="זכר"> זכר</label>
+        <label class="choice"><input type="radio" name="gender" value="נקבה"> נקבה</label>
+        <label class="choice"><input type="radio" name="gender" value="אחר"> אחר</label>
+      </div>
+      <p class="msg warn">את הערכת זמן המסך כתבו <strong>לפני</strong> שאתם פותחים את ההגדרות בטלפון.</p>
+      <div class="grid2" id="q-fields"></div>
+      <div class="field">
+        <label for="predicted_score">איזה ציון ממוצע (מ-0 עד 100) השאלה שלכם תקבל מהשופטים, לדעתכם?</label>
+        <input id="predicted_score" type="number" min="0" max="100" step="1" inputmode="numeric">
+        <div class="hint">כל אחד מבני הזוג עונה בנפרד.</div>
+      </div>
+
+      <div class="actions">
+        <button class="btn primary" type="submit" id="a-submit">שליחה</button>
+        <span class="hint">אפשר לעדכן עד המועד האחרון.</span>
+      </div>
+      <div id="a-msg"></div>
+    </form>
+  </section>
+
+  <!-- stage B -->
+  <section class="panel" id="stage-b" hidden>
+    <h2>שלב ב: שיפוט עמיתים</h2>
+    <p class="sub" id="b-sub"></p>
+    <div id="b-status"></div>
+    <form id="b-form" novalidate>
+      <p class="hint">לכל שאלה: קודם פותרים בעצמכם, ורק אחר כך פותחים את הפתרון של הכותבים ומשווים. את הפתרון שלכם לא מגישים.</p>
+      <div id="rv-list"></div>
+
+      <h3>דירוג</h3>
+      <p class="hint">סדרו את השאלות מהטובה ביותר (1) לפחות טובה (4), בלי תיקו. הדירוג קובע את הציון התחרותי של הכותבים. קריטריונים: נכונות, ערך לימודי (כמה השאלה לימדה אתכם וחידדה הבנה), חשיבה, בהירות.</p>
+      <ol class="rank-list" id="rank-list"></ol>
+      <div class="field" style="margin-top:14px">
+        <label for="justification">נימוק לדירוג</label>
+        <textarea id="justification" placeholder="למה כל שאלה נמצאת במקום שלה, ומה הבדיל בינה לבין השאלה שמעליה."></textarea>
+        <div class="counter" id="j-counter"></div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" type="submit" id="b-submit">שליחת השיפוט</button>
+        <span class="hint">אפשר לעדכן עד המועד האחרון.</span>
+      </div>
+      <div id="b-msg"></div>
+    </form>
+  </section>
+
+  <!-- results -->
+  <section class="panel" id="results" hidden>
+    <h2>הציון שלך במטלה</h2>
+    <div id="results-body"></div>
+  </section>
+</main>
+
+
+<script>
+/* ======== configuration: paste the Apps Script web-app URL here ======== */
+const API_URL = '';
+/* ======================================================================= */
+
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const qsa = (sel, root) => Array.from((root || document).querySelectorAll(sel));
+  const el = (tag, attrs, ...kids) => {
+    const e = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (k === 'class') e.className = v;
+      else if (k === 'text') e.textContent = v;
+      else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+      else if (v === true) e.setAttribute(k, '');
+      else if (v !== false && v != null) e.setAttribute(k, v);
+    }
+    kids.flat().forEach(c => c != null && e.append(c));
+    return e;
+  };
+  const msg = (box, kind, text) => { box.replaceChildren(text ? el('p', { class: 'msg ' + kind, text }) : ''); };
+  const fmt = (iso) => iso ? new Date(iso).toLocaleString('he-IL', { timeZone: 'Asia/Jerusalem', weekday: 'short', day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' }) : null;
+
+  /* ---------- theme (shared with the study guides) ---------- */
+  const root = document.documentElement;
+  const themeBtn = $('toggle-theme');
+  const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  const syncTheme = () => { themeBtn.textContent = isDark() ? 'מצב בהיר' : 'מצב כהה'; themeBtn.setAttribute('aria-pressed', String(isDark())); };
+  themeBtn.addEventListener('click', () => {
+    root.dataset.theme = isDark() ? 'light' : 'dark';
+    try { localStorage.setItem('stats-guide-theme', root.dataset.theme); } catch (e) {}
+    syncTheme();
+  });
+  syncTheme();
+
+  /* ---------- API ---------- */
+  const demo = !API_URL || new URLSearchParams(location.search).has('demo');
+  const CRED_KEY = 'a1-cred';
+  let cred = null;
+  try { cred = JSON.parse(sessionStorage.getItem(CRED_KEY) || 'null'); } catch (e) {}
+
+  async function api(action, payload) {
+    const body = Object.assign({ action }, cred || {}, payload || {});
+    if (demo) return window.DemoAPI(body);
+    let r;
+    try {
+      r = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) });
+    } catch (e) {
+      return { ok: false, error: 'אין חיבור לשרת. בדקו את החיבור לאינטרנט ונסו שוב.' };
+    }
+    try { return await r.json(); } catch (e) { return { ok: false, error: 'תשובה לא תקינה מהשרת. נסו שוב.' }; }
+  }
+
+  let S = null;        // last state from the server
+  let config = null;
+
+  /* ---------- boot ---------- */
+  async function boot() {
+    if (demo) {
+      $('demo-bar').hidden = false;
+      await loadScript('demo-api.js');
+      qsa('[data-demo]').forEach(b => b.addEventListener('click', async () => {
+        window.DemoAPI.setPhase(b.dataset.demo);
+        config = await api('config');
+        if (S) await refresh(); else renderStages();
+      }));
+    }
+    const c = await api('config');
+    $('boot').hidden = true;
+    if (!c.ok) { $('main').prepend(el('p', { class: 'msg err', text: c.error })); return; }
+    config = c;
+    renderStages();
+    if (cred) {
+      const r = await api('state');
+      if (r.ok) { S = r.state; render(); return; }
+      cred = null; sessionStorage.removeItem(CRED_KEY);
+    }
+    showLogin();
+  }
+
+  function loadScript(src) {
+    return new Promise((res, rej) => { const s = el('script', { src }); s.onload = res; s.onerror = rej; document.head.append(s); });
+  }
+
+  async function refresh() {
+    const r = await api('state');
+    if (r.ok) { S = r.state; render(); }
+  }
+
+  /* ---------- stages strip ---------- */
+  function renderStages() {
+    const d = (S && S.deadlines) || config.deadlines || {};
+    const ph = (S && S.phase) || config.phase || {};
+    $('when-submit').textContent = d.submit ? 'עד ' + fmt(d.submit) : 'המועד יפורסם';
+    $('when-review').textContent = d.review ? (d.reviewOpen ? fmt(d.reviewOpen) + ' – ' : 'עד ') + fmt(d.review) : 'המועד יפורסם';
+    const now = ph.resultsPublished ? 'results' : (ph.reviewVisible ? 'review' : (ph.canSubmit ? 'submit' : 'review'));
+    const order = ['submit', 'review', 'results'];
+    qsa('.stage').forEach(li => {
+      const i = order.indexOf(li.dataset.stage), j = order.indexOf(now);
+      li.classList.toggle('now', i === j);
+      li.classList.toggle('done', i < j);
+    });
+  }
+
+  /* ---------- login ---------- */
+  let authTab = 'login';
+  function showLogin() {
+    ['stage-a', 'stage-b', 'results'].forEach(id => { $(id).hidden = true; });
+    $('logout').hidden = true;
+    $('login').hidden = false;
+    const reg = config.authMode === 'register';
+    $('auth-tabs').hidden = !reg;
+    setAuthTab(authTab);
+  }
+  function setAuthTab(t) {
+    authTab = t;
+    const reg = config.authMode === 'register';
+    qsa('#auth-tabs button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tab === t)));
+    $('confirm-wrap').hidden = t !== 'register';
+    $('secret-label').textContent = reg ? (t === 'register' ? 'בחירת סיסמה' : 'סיסמה') : 'קוד אישי';
+    $('secret-hint').textContent = reg
+      ? (t === 'register' ? 'לפחות 6 תווים. רק סטודנטים שרשומים לקורס יכולים להירשם.' : 'בפעם הראשונה: לשונית "כניסה ראשונה".')
+      : 'הקוד נשלח אליכם במייל. לא קיבלתם? פנו למתרגל.';
+    $('in-secret').autocomplete = t === 'register' ? 'new-password' : 'current-password';
+    $('login-btn').textContent = t === 'register' ? 'הרשמה וכניסה' : 'כניסה';
+    msg($('login-msg'));
+  }
+  qsa('#auth-tabs button').forEach(b => b.addEventListener('click', () => setAuthTab(b.dataset.tab)));
+
+  $('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = $('in-id').value.trim(), secret = $('in-secret').value.trim();
+    const box = $('login-msg');
+    if (!/^\d{5,9}$/.test(id)) return msg(box, 'err', 'תעודת זהות: ספרות בלבד.');
+    if (!secret) return msg(box, 'err', 'חסרה סיסמה.');
+    if (authTab === 'register' && secret !== $('in-secret2').value.trim()) return msg(box, 'err', 'שתי הסיסמאות לא זהות.');
+    const btn = $('login-btn'); btn.disabled = true;
+    cred = { id, secret };
+    const r = await api(authTab === 'register' ? 'register' : 'login');
+    btn.disabled = false;
+    if (!r.ok) { cred = null; return msg(box, 'err', r.error); }
+    try { sessionStorage.setItem(CRED_KEY, JSON.stringify(cred)); } catch (err) {}
+    $('in-secret').value = ''; $('in-secret2').value = '';
+    S = r.state; render();
+  });
+
+  $('logout').addEventListener('click', () => {
+    cred = null; S = null;
+    try { sessionStorage.removeItem(CRED_KEY); } catch (e) {}
+    showLogin();
+  });
+
+  /* ---------- main render ---------- */
+  function render() {
+    $('login').hidden = true;
+    $('logout').hidden = false;
+    $('logout').replaceChildren('יציאה', el('span', { class: 'who', text: ' (' + S.me.name + ')' }));
+    renderStages();
+    renderStageA();
+    renderStageB();
+    renderResults();
+  }
+
+  /* ---------- stage A ---------- */
+  const QFIELDS = [
+    { key: 'age', label: 'גיל', unit: 'שנים', min: 16, max: 90, step: 1 },
+    { key: 'height_cm', label: 'גובה', unit: 'ס"מ', min: 120, max: 230, step: 0.1 },
+    { key: 'study_year', label: 'שנת לימודים', unit: 'מ-1 עד 4', min: 1, max: 4, step: 1 },
+    { key: 'gpa', label: 'ממוצע ציונים מצטבר', unit: 'מ-0 עד 100', min: 0, max: 100, step: 0.1 },
+    { key: 'study_hours', label: 'שעות לימוד שבועיות לקורס מחוץ לשיעורים', unit: 'שעות', min: 0, max: 80, step: 0.5 },
+    { key: 'screen_est_min', label: 'זמן מסך יומי ממוצע: ההערכה שלכם', unit: 'דקות', min: 0, max: 1440, step: 1 },
+    { key: 'screen_actual_min', label: 'זמן מסך יומי ממוצע בפועל (הגדרות הטלפון, שבוע אחרון)', unit: 'דקות', min: 0, max: 1440, step: 1 }
+  ];
+  (function buildQFields() {
+    const box = $('q-fields');
+    QFIELDS.forEach(f => {
+      const num = el('input', { type: 'number', id: 'q-' + f.key, min: f.min, max: f.max, step: f.step, inputmode: 'decimal' });
+      box.append(el('div', { class: 'field' },
+        el('label', { for: 'q-' + f.key, text: f.label }),
+        el('div', { class: 'q-field' }, num, el('span', { class: 'hint', text: f.unit }))));
+    });
+  })();
+
+  const mode = () => (qsa('input[name="mode"]').find(i => i.checked) || {}).value;
+  const uploader = () => (qsa('input[name="uploader"]').find(i => i.checked) || {}).value;
+  function syncAForm() {
+    const pair = mode() === 'pair';
+    $('pair-wrap').hidden = !pair;
+    $('files-wrap').hidden = pair && uploader() === 'partner';
+  }
+  qsa('input[name="mode"], input[name="uploader"]').forEach(i => i.addEventListener('change', syncAForm));
+
+  function renderStageA() {
+    const sec = $('stage-a');
+    sec.hidden = false;
+    const ph = S.phase;
+    const d = S.deadlines.submit;
+    $('a-sub').textContent = ph.canSubmit ? (d ? 'מועד אחרון: ' + fmt(d) + '.' : '') + ' כתבו שאלה בנושא אמדים, צרפו פתרון מלא ומלאו את השאלון.'
+      : 'ההגשה לשלב א נסגרה.';
+
+    // status of what is already in
+    const st = $('a-status');
+    st.replaceChildren();
+    if (S.question) {
+      const q = S.question;
+      const who = q.partner ? 'בזוג: ' + q.uploader + ' ו' + q.partner : 'לבד';
+      const links = el('span', { class: 'file-links' },
+        el('a', { href: '#', onclick: (e) => openFile(e, q.id, 'question') , text: 'השאלה' }),
+        el('a', { href: '#', onclick: (e) => openFile(e, q.id, 'solution'), text: 'הפתרון' }));
+      st.append(el('p', { class: 'msg ok' }, 'השאלה הוגשה (' + who + '), עודכנה ' + fmt(q.updated_at) + '. ', links));
+    }
+    if (S.questionnaire) st.append(el('p', { class: 'msg ok', text: 'השאלון האישי נשלח ' + fmt(S.questionnaire.submitted_at) + '.' }));
+    if (ph.canSubmit && (!S.question || !S.questionnaire)) {
+      st.append(el('p', { class: 'msg warn', text: !S.question ? 'עוד לא הוגשה שאלה.' : 'עוד לא מילאתם את השאלון האישי.' }));
+    }
+
+    $('a-form').hidden = !ph.canSubmit;
+    if (!ph.canSubmit) return;
+
+    // prefill from saved questionnaire
+    const qn = S.questionnaire;
+    if (qn && !sec.dataset.filled) {
+      sec.dataset.filled = '1';
+      qsa('input[name="mode"]').forEach(i => { i.checked = i.value === qn.work_mode; });
+      if (qn.partner) $('partner').value = qn.partner;
+      if (S.question && !S.question.iAmUploader) qsa('input[name="uploader"]').forEach(i => { i.checked = i.value === 'partner'; });
+      qsa('input[name="gender"]').forEach(i => { i.checked = i.value === qn.gender; });
+      QFIELDS.forEach(f => {
+        const v = qn[f.key];
+        $('q-' + f.key).value = v === 'NA' || v == null ? '' : v;
+      });
+      $('predicted_score').value = qn.predicted_score ?? '';
+    }
+    $('files-hint').textContent = S.question ? 'כבר הוגשו קבצים. מעלים שוב רק כדי להחליף אותם.' : 'עד ' + S.limits.maxFileMb + 'MB לכל קובץ.';
+    syncAForm();
+  }
+
+  const toBase64 = (file) => new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(String(r.result).split(',')[1]);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+
+  $('a-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const box = $('a-msg');
+    const pair = mode() === 'pair';
+    const partner = $('partner').value.trim();
+    if (pair && partner.split(/\s+/).length < 2) return msg(box, 'err', 'כתבו את השם המלא של השותף/ה (שם פרטי ושם משפחה).');
+    const gender = (qsa('input[name="gender"]').find(i => i.checked) || {}).value;
+    if (!gender) return msg(box, 'err', 'בחרו מגדר.');
+    const questionnaire = { gender };
+    for (const f of QFIELDS) {
+      const v = $('q-' + f.key).value;
+      if (v === '') return msg(box, 'err', f.label + ': חסר ערך.');
+      questionnaire[f.key] = Number(v);
+    }
+    const pred = $('predicted_score').value;
+    if (pred === '') return msg(box, 'err', 'מלאו את הציון שאתם צופים לשאלה שלכם.');
+    questionnaire.predicted_score = Number(pred);
+
+    let files = null;
+    const uploading = !(pair && uploader() === 'partner');
+    const fq = $('f-question').files[0], fs = $('f-solution').files[0];
+    if (uploading && (fq || fs || !S.question)) {
+      if (!fq || !fs) return msg(box, 'err', 'צריך להעלות גם את השאלה וגם את הפתרון.');
+      const max = S.limits.maxFileMb * 1024 * 1024;
+      for (const f of [fq, fs]) {
+        if (!/\.pdf$/i.test(f.name) && f.type !== 'application/pdf') return msg(box, 'err', 'הקבצים צריכים להיות PDF.');
+        if (f.size > max) return msg(box, 'err', 'קובץ גדול מ-' + S.limits.maxFileMb + 'MB.');
+      }
+      files = { question: { name: fq.name, data: await toBase64(fq) }, solution: { name: fs.name, data: await toBase64(fs) } };
+    }
+    const btn = $('a-submit'); btn.disabled = true;
+    msg(box, 'info', files ? 'מעלה קבצים…' : 'שולח…');
+    const r = await api('submitStageA', { workMode: pair ? 'pair' : 'alone', partnerName: pair ? partner : '', questionnaire, files });
+    btn.disabled = false;
+    if (!r.ok) return msg(box, 'err', r.error);
+    $('f-question').value = ''; $('f-solution').value = '';
+    S = r.state; render();
+    msg($('a-msg'), 'ok', 'נשמר.');
+  });
+
+  /* ---------- files ---------- */
+  const blobCache = {};
+  async function fetchFile(qid, kind) {
+    const k = qid + '|' + kind;
+    if (blobCache[k]) return blobCache[k];
+    const r = await api('file', { question: qid, kind });
+    if (!r.ok) throw new Error(r.error);
+    const bin = atob(r.data);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return (blobCache[k] = { url: URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' })), name: r.name });
+  }
+  async function openFile(e, qid, kind) {
+    e.preventDefault();
+    const a = e.currentTarget;
+    if (demo && window.DemoAPI && window.DemoAPI.noFiles) {
+      if (!a.dataset.note) { a.dataset.note = '1'; a.after(el('span', { class: 'hint', text: ' (בהדגמה אין קובץ אמיתי)' })); }
+      return;
+    }
+    if (a.dataset.ready) return window.open(a.href, '_blank');
+    const label = a.textContent;
+    a.textContent = 'טוען…';
+    try {
+      const f = await fetchFile(qid, kind);
+      a.href = f.url; a.target = '_blank'; a.dataset.ready = '1'; a.textContent = label + ' ↗';
+      a.after(el('a', { href: f.url, download: f.name, text: 'הורדה' }));
+    } catch (err) { a.textContent = label; alert(err.message); }
+  }
+
+  /* ---------- stage B ---------- */
+  let rankOrder = [];
+  function renderStageB() {
+    const sec = $('stage-b');
+    const ph = S.phase;
+    sec.hidden = !ph.reviewVisible;
+    if (!ph.reviewVisible) return;
+    const R = S.review;
+    $('b-sub').textContent = ph.canReview ? 'מועד אחרון: ' + fmt(S.deadlines.review) + '. השיפוט אישי, גם למי שכתב בזוג.' : 'שלב השיפוט נסגר.';
+    const st = $('b-status');
+    st.replaceChildren();
+    if (!R.items.length) { st.append(el('p', { class: 'msg info', text: 'לא הוקצו לכם שאלות לשיפוט (למשל כי לא הגשתם שאלה בשלב א).' })); $('b-form').hidden = true; return; }
+    st.append(R.submitted_at ? el('p', { class: 'msg ok', text: 'השיפוט נשלח ' + fmt(R.submitted_at) + '.' })
+      : el('p', { class: 'msg warn', text: 'השיפוט עוד לא נשלח.' }));
+    $('b-form').hidden = false;
+    const disabled = !ph.canReview;
+
+    const list = $('rv-list');
+    list.replaceChildren(...R.items.map((it, i) => {
+      const n = i + 1;
+      const flagged = el('input', { type: 'checkbox', id: 'flag-' + it.question, disabled });
+      flagged.checked = !!it.flagged;
+      const flagText = el('textarea', { id: 'flagtext-' + it.question, placeholder: 'באיזה סעיף הטעות, ומה התשובה הנכונה.', disabled });
+      flagText.value = it.flagText || '';
+      const flagWrap = el('div', { class: 'field', hidden: !it.flagged }, flagText);
+      flagged.addEventListener('change', () => { flagWrap.hidden = !flagged.checked; });
+      const unsolved = el('input', { type: 'checkbox', id: 'unsolved-' + it.question, disabled });
+      unsolved.checked = !!it.unsolved;
+      const score = el('input', { type: 'number', id: 'score-' + it.question, min: 0, max: 100, step: 1, inputmode: 'numeric', disabled });
+      score.value = it.score === '' ? '' : it.score;
+      const solLink = el('a', { href: '#', onclick: (e) => openFile(e, it.question, 'solution'), text: 'פתרון הכותבים' });
+      return el('div', { class: 'rv' },
+        el('div', { class: 'rv-head' },
+          el('span', { class: 'rv-title', text: 'שאלה ' + n }),
+          el('span', { class: 'rv-files file-links' },
+            el('a', { href: '#', onclick: (e) => openFile(e, it.question, 'question'), text: 'השאלה' }), solLink)),
+        el('div', { class: 'field' }, el('label', { class: 'choice' }, unsolved, ' לא הצלחתי לפתור את השאלה')),
+        el('div', { class: 'field' }, el('label', { class: 'choice' }, flagged, ' מצאתי טעות בפתרון (או בשאלה עצמה)')),
+        flagWrap,
+        el('div', { class: 'field' }, el('label', { for: 'score-' + it.question, text: 'ציון (מ-0 עד 100): כמה השאלה טובה כשאלת מבחן, בלי קשר לשאלות האחרות' }), score));
+    }));
+
+    // ranking
+    const byQ = {};
+    R.items.forEach((it, i) => { byQ[it.question] = i + 1; });
+    if (!rankOrder.length || rankOrder.some(q => !(q in byQ))) {
+      const ranked = R.items.filter(it => it.rank).sort((a, b) => a.rank - b.rank).map(it => it.question);
+      rankOrder = ranked.length === R.items.length ? ranked : R.items.map(it => it.question);
+    }
+    const drawRank = () => {
+      $('rank-list').replaceChildren(...rankOrder.map((q, i) => el('li', {},
+        el('span', { class: 'r-num', text: String(i + 1) }),
+        el('span', { text: 'שאלה ' + byQ[q] }),
+        el('span', { class: 'r-btns' },
+          el('button', { class: 'btn small', type: 'button', disabled: disabled || i === 0, 'aria-label': 'למעלה', text: '▲', onclick: () => { [rankOrder[i - 1], rankOrder[i]] = [rankOrder[i], rankOrder[i - 1]]; drawRank(); } }),
+          el('button', { class: 'btn small', type: 'button', disabled: disabled || i === rankOrder.length - 1, 'aria-label': 'למטה', text: '▼', onclick: () => { [rankOrder[i + 1], rankOrder[i]] = [rankOrder[i], rankOrder[i + 1]]; drawRank(); } })))));
+    };
+    drawRank();
+    const j = $('justification');
+    if (!j.dataset.filled) { j.value = R.justification || ''; j.dataset.filled = '1'; }
+    j.disabled = disabled;
+    $('b-submit').disabled = disabled;
+    countJ();
+  }
+  function countJ() {
+    const n = $('justification').value.trim().length, min = S ? S.limits.minJustification : 80;
+    const c = $('j-counter');
+    c.textContent = n + ' תווים' + (n < min ? ' (לפחות ' + min + ')' : '');
+    c.classList.toggle('short', n < min);
+  }
+  $('justification').addEventListener('input', countJ);
+
+  $('b-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const box = $('b-msg');
+    const items = [];
+    for (const [i, it] of S.review.items.entries()) {
+      const score = $('score-' + it.question).value;
+      if (score === '' || +score < 0 || +score > 100 || !Number.isInteger(+score)) return msg(box, 'err', 'שאלה ' + (i + 1) + ': ציון שלם בין 0 ל-100.');
+      const flagged = $('flag-' + it.question).checked;
+      const flagText = $('flagtext-' + it.question).value.trim();
+      if (flagged && flagText.length < S.limits.minFlag) return msg(box, 'err', 'שאלה ' + (i + 1) + ': פרטו את הטעות (סעיף ותשובה נכונה).');
+      items.push({ question: it.question, score: +score, unsolved: $('unsolved-' + it.question).checked, flagged, flagText });
+    }
+    const justification = $('justification').value.trim();
+    if (justification.length < S.limits.minJustification) return msg(box, 'err', 'נימוק הדירוג קצר מדי.');
+    const btn = $('b-submit'); btn.disabled = true;
+    msg(box, 'info', 'שולח…');
+    const r = await api('submitReview', { items, ranking: rankOrder.slice(), justification });
+    btn.disabled = false;
+    if (!r.ok) return msg(box, 'err', r.error);
+    S = r.state; render();
+    msg($('b-msg'), 'ok', 'השיפוט נשמר.');
+  });
+
+  /* ---------- results ---------- */
+  function renderResults() {
+    const sec = $('results');
+    sec.hidden = !S.phase.resultsPublished;
+    if (sec.hidden) return;
+    const g = S.results;
+    const body = $('results-body');
+    if (!g) { body.replaceChildren(el('p', { class: 'msg info', text: 'עוד אין לכם ציון. פנו למתרגל.' })); return; }
+    const tierText = ['שליש תחתון', 'שליש אמצעי', 'שליש עליון'][g.tier] || '';
+    body.replaceChildren(
+      el('div', { class: 'score-big', text: String(g.total) }),
+      el('p', { class: 'hint', text: 'מתוך 5, ועוד בונוס על מציאת טעויות.' }),
+      el('table', { class: 'score-table' }, el('tbody', {},
+        el('tr', {}, el('td', { text: 'שאלה ופתרון תקינים' }), el('td', { text: g.valid + ' מתוך 3' })),
+        el('tr', {}, el('td', { text: 'ציון תחרותי' + (tierText ? ' (' + tierText + ')' : '') + (!g.reviewComplete ? ' – השיפוט שלכם לא הושלם' : '') }), el('td', { text: g.competitive + ' מתוך 2' })),
+        el('tr', {}, el('td', { text: 'בונוס מציאת טעויות' }), el('td', { text: String(g.bonus) })),
+        g.meanScore != null ? el('tr', {}, el('td', { text: 'הציון הממוצע (מ-0 עד 100) שהשאלה שלכם קיבלה מ-' + g.nReviews + ' שופטים' }), el('td', { text: String(Math.round(g.meanScore * 10) / 10) })) : null)));
+  }
+
+  boot();
+})();
+</script>
+</body>
+</html>

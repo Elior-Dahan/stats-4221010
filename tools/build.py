@@ -90,6 +90,17 @@ def check(data, drafts: bool):
             if sol.get("published") and not lec.get("published"):
                 warnings.append(f"{tag}: solutions published but lecture is not; solutions won't be deployed")
 
+    for a in data.get("assignments", []):
+        tag = f"assignment {a.get('slug')}"
+        for key in ("slug", "title", "published"):
+            if key not in a:
+                errors.append(f"{tag}: missing field '{key}'")
+        page = ROOT / "assignments" / a.get("slug", "") / "index.html"
+        if not page.exists():
+            errors.append(f"{tag}: {page.relative_to(ROOT)} not found")
+        elif a.get("published") or drafts:
+            check_page(page, errors, warnings)
+
     for d in sorted((ROOT / "lectures").glob("*/")):
         if d.name not in seen_slug:
             warnings.append(f"lectures/{d.name}/ is not listed in lectures.json (won't be deployed)")
@@ -125,9 +136,16 @@ def build(data, drafts: bool):
             lec["solutions"] = {**sol, "published": True}
         out_lectures.append(lec)
 
-    public = {**data, "lectures": out_lectures}
+    out_assignments = []
+    for a in data.get("assignments", []):
+        if not (a.get("published") or drafts):
+            continue
+        shutil.copytree(ROOT / "assignments" / a["slug"], OUT / "assignments" / a["slug"])
+        out_assignments.append({**a, "published": True})
+
+    public = {**data, "lectures": out_lectures, "assignments": out_assignments}
     (OUT / "lectures.json").write_text(json.dumps(public, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"Built _site/ with {len(out_lectures)} lecture(s){' (including drafts)' if drafts else ''}.")
+    print(f"Built _site/ with {len(out_lectures)} lecture(s) and {len(out_assignments)} assignment(s){' (including drafts)' if drafts else ''}.")
 
 
 def main():

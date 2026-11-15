@@ -9,6 +9,7 @@ index.html                 landing page: renders a card per published lecture fr
 lectures.json              single source of truth: course info + list of lectures
 lectures/NN-slug/index.html  the study guide for lecture NN (self-contained page)
 lectures/NN-slug/solutions.html  optional: solutions to the lecturer's booklet for that lecture (git-ignored until released)
+assignments/              assignment pages + Apps Script backend (see "Assignments")
 assets/site.css            landing-page styles
 assets/common.js           injected into every lecture page: top/bottom nav (prev / home / next) and the back-to-top button
 tools/build.py             validates the site and builds _site/ (published content only)
@@ -21,6 +22,10 @@ tools/build.py             validates the site and builds _site/ (published conte
   "published": true, "solutions": { "path": "solutions.html", "published": false } }
 ```
 `solutions` is `null` when there is no released solutions file. Unpublished lectures stay in the repo but are NOT copied to `_site/`, so they are not on the live site.
+
+## Assignments
+
+`assignments/NN-slug/` holds a student-facing assignment page (listed under `assignments` in `lectures.json`, same `published` rule as lectures; published ones get a card on the landing page). `assignments/apps-script/` is the Google Apps Script backend (Sheet = database + admin menu) and is never copied to `_site/`. Setup, workflow and grading rules: `assignments/README.md`. After changing `Code.gs` or `Logic.gs` run `node assignments/tests/logic.test.js` and `node assignments/tests/backend.test.js`; the code then has to be pasted into the Apps Script project and redeployed as a new version.
 
 ## Solutions policy (hard)
 

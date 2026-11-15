@@ -30,6 +30,7 @@
   </header>
 
   <main class="wrap">
+    <ol class="lectures" id="assignments" aria-label="מטלות" hidden></ol>
     <ol class="lectures" id="list"></ol>
     <p class="notice" id="notice" hidden></p>
   </main>
@@ -105,6 +106,22 @@
       li.append(body);
       list.append(li);
     }
+
+    const assignments = (data.assignments || []).filter(a => a.published);
+    for (const [i, a] of assignments.entries()) {
+      const li = el('li', 'card');
+      li.append(el('span', 'num', 'מ' + (i + 1)));
+      const body = el('div', 'body');
+      const h = el('h2');
+      const link = el('a', 'main-link', a.title);
+      link.href = `assignments/${a.slug}/`;
+      h.append(link);
+      body.append(h);
+      if (a.summary) body.append(el('p', 'summary', a.summary));
+      li.append(body);
+      $('assignments').append(li);
+    }
+    $('assignments').hidden = !assignments.length;
 
     if (!lectures.length) {
       const n = $('notice');

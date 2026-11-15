@@ -44,5 +44,13 @@
       "published": true,
       "solutions": null
     }
+  ],
+  "assignments": [
+    {
+      "slug": "01-estimators",
+      "title": "מטלה 1: אומדים",
+      "summary": "כתיבת שאלה בנושא אמדים, שיפוט עמיתים ושאלון קצר.",
+      "published": false
+    }
   ]
 }
