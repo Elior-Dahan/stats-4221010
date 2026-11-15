@@ -25,7 +25,7 @@
    - מועדים: `SUBMIT_DEADLINE` (ברירת מחדל: 21.11.2026 23:59), `REVIEW_DEADLINE` (ברירת מחדל: 28.11.2026 23:59). `REVIEW_OPEN` ריק = השיפוט נפתח כשמריצים הקצאת שופטים.
    - `SITE_URL`: כתובת עמוד המטלה. היא נכנסת למייל של הקודים.
 7. פרסום הסקריפט: **Deploy ← New deployment ← Web app**, עם Execute as: **Me** ו-Who has access: **Anyone**. להעתיק את ה-URL.
-8. להדביק את ה-URL ב-`API_URL` בראש הסקריפט בקובץ `assignments/01-estimators/index.html`.
+8. להדביק את ה-URL בקובץ `assignments/01-estimators/config.js`, בין המרכאות. עדכוני קוד לא נוגעים בקובץ הזה.
 9. כדי שהמטלה תופיע באתר: ב-`lectures.json`, תחת `assignments`, לשנות ל-`"published": true`. אחר כך `python tools/build.py --check` ו-push.
 
 ## במהלך המטלה

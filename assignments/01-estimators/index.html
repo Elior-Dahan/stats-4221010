@@ -334,10 +334,10 @@ input[type="file"] { font: inherit; font-size: 15px; max-width: 100%; }
 </main>
 
 
+<script src="config.js"></script>
 <script>
-/* ======== configuration: paste the Apps Script web-app URL here ======== */
-const API_URL = '';
-/* ======================================================================= */
+// The Apps Script web-app URL lives in config.js, so code updates never overwrite it.
+const API_URL = window.ASSIGNMENT_API_URL || '';
 
 (() => {
   const $ = (id) => document.getElementById(id);
