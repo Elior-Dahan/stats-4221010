@@ -49,7 +49,7 @@
     {
       "slug": "01-estimators",
       "title": "מטלה 1: אומדים",
-      "summary": "כתיבת שאלה בנושא אמדים, שיפוט עמיתים ושאלון קצר.",
+      "after": "04-mle",
       "published": false
     }
   ]

@@ -25,7 +25,7 @@ tools/build.py             validates the site and builds _site/ (published conte
 
 ## Assignments
 
-`assignments/NN-slug/` holds a student-facing assignment page (listed under `assignments` in `lectures.json`, same `published` rule as lectures; published ones get a card on the landing page). `assignments/apps-script/` is the Google Apps Script backend (Sheet = database + admin menu) and is never copied to `_site/`. Setup, workflow and grading rules: `assignments/README.md`. After changing `Code.gs` or `Logic.gs` run `node assignments/tests/logic.test.js` and `node assignments/tests/backend.test.js`; the code then has to be pasted into the Apps Script project and redeployed as a new version.
+`assignments/NN-slug/` holds a student-facing assignment page (listed under `assignments` in `lectures.json`, same `published` rule as lectures; published ones get a card on the landing page). `assignments/apps-script/` is the Google Apps Script backend (Sheet = database + admin menu) and is never copied to `_site/`. Setup, workflow and grading rules: `assignments/README.md`. After changing `Code.gs` or `Logic.gs` run `node assignments/tests/logic.test.js`, `node assignments/tests/backend.test.js`, and the offline dry run (`node assignments/tests/fake_server.js &` then `python assignments/tests/live_e2e.py http://localhost:8787 --auto-admin`); the code then has to be pasted into the Apps Script project and redeployed as a new version.
 
 ## Solutions policy (hard)
 

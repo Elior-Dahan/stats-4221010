@@ -1,53 +1,7 @@
 // End-to-end test of the Apps Script backend against in-memory fakes of the Google services.
 // Run: node assignments/tests/backend.test.js
-const fs = require('fs'), path = require('path'), vm = require('vm'), crypto = require('crypto'), assert = require('assert');
-const dir = path.join(__dirname, '..', 'apps-script');
-
-function makeEnv() {
-  const sheets = {};
-  class Range {
-    constructor(sh, r, c, nr, nc) { Object.assign(this, { sh, r, c, nr: nr || 1, nc: nc || 1 }); }
-    getValues() { const out = []; for (let i = 0; i < this.nr; i++) { const row = []; for (let j = 0; j < this.nc; j++) row.push(((this.sh.d[this.r - 1 + i] || [])[this.c - 1 + j]) ?? ''); out.push(row); } return out; }
-    setValues(v) { v.forEach((row, i) => row.forEach((x, j) => { const R = this.r - 1 + i; while (this.sh.d.length <= R) this.sh.d.push([]); this.sh.d[R][this.c - 1 + j] = x; })); return this; }
-    setValue(x) { return this.setValues([[x]]); }
-    clearContent() { for (let i = 0; i < this.nr; i++) for (let j = 0; j < this.nc; j++) { const row = this.sh.d[this.r - 1 + i]; if (row) row[this.c - 1 + j] = ''; } return this; }
-    clearDataValidations() { return this; } setDataValidation() { return this; } setNumberFormat() { return this; } setFontWeight() { return this; }
-  }
-  class Sheet {
-    constructor(n) { this.n = n; this.d = []; }
-    getLastRow() { let l = 0; this.d.forEach((r, i) => { if (r && r.some(v => v !== '' && v != null)) l = i + 1; }); return l; }
-    getLastColumn() { return Math.max(0, ...this.d.map(r => r ? r.length : 0)); }
-    getRange(a, b, c, d) { if (typeof a === 'string') return new Range(this, 1, 1, 1000, 1); return new Range(this, a, b, c, d); }
-    getDataRange() { return new Range(this, 1, 1, this.getLastRow(), this.getLastColumn()); }
-    appendRow(row) { this.d[this.getLastRow()] = row.slice(); }
-    clearContents() { this.d = []; } setFrozenRows() {}
-  }
-  const ss = { getSheetByName: n => sheets[n] || null, insertSheet: n => (sheets[n] = new Sheet(n)), getSheets: () => Object.values(sheets), deleteSheet: s => delete sheets[s.n] };
-  const files = {}; let fid = 0; const mail = [];
-  const ctx = {
-    console, Math, Date, JSON, String, Number, Object, Array, isFinite, isNaN, Error,
-    SpreadsheetApp: { getActive: () => ss, getUi: () => ({ alert: (m) => { ctx.lastAlert = m; return 'YES'; }, ButtonSet: {}, Button: { YES: 'YES' }, createMenu: () => ({}) }),
-      newDataValidation: () => ({ requireValueInList: () => ({ build: () => ({}) }) }) },
-    DriveApp: {
-      createFolder: () => ({ getId: () => 'FOLDER' }),
-      getFolderById: () => ({ createFile: (blob) => { const id = 'F' + (++fid); files[id] = blob; return { getId: () => id }; } }),
-      getFileById: (id) => ({ getBlob: () => files[id], setTrashed: () => { files[id].trashed = true; } })
-    },
-    Utilities: {
-      base64Decode: s => Array.from(Buffer.from(s, 'base64')).map(b => b > 127 ? b - 256 : b),
-      base64Encode: bytes => Buffer.from(bytes.map(b => (b + 256) % 256)).toString('base64'),
-      newBlob: (bytes) => { const b = { bytes, setName(n) { b.name = n; return b; }, getBytes: () => bytes }; return b; },
-      computeDigest: (_a, s) => Array.from(crypto.createHash('sha256').update(s, 'utf8').digest()).map(b => b > 127 ? b - 256 : b),
-      DigestAlgorithm: { SHA_256: 1 }, Charset: { UTF_8: 1 }
-    },
-    LockService: { getScriptLock: () => ({ tryLock: () => true, releaseLock: () => {} }) },
-    ContentService: { createTextOutput: (s) => ({ s, setMimeType() { return this; } }), MimeType: { JSON: 1 } },
-    MailApp: { getRemainingDailyQuota: () => 100, sendEmail: (m) => mail.push(m) }
-  };
-  vm.createContext(ctx);
-  ['Logic.gs', 'Code.gs'].forEach(f => vm.runInContext(fs.readFileSync(path.join(dir, f), 'utf8').replace(/^const /gm, 'var '), ctx));
-  return { ctx, sheets, files, mail };
-}
+const assert = require('assert');
+const { makeEnv } = require('./fake_google');
 
 const E = makeEnv();
 const C = E.ctx;
@@ -64,7 +18,7 @@ C.ensureAnonIds_();
 const id = (n) => String(100000001 + names.indexOf(n));
 const nm = (n) => 'stu ' + n;
 const cred = (n) => ({ id: id(n), secret: 'pass-' + n });
-const qn = { gender: 'אחר', age: 22, height_cm: 171, study_year: 2, gpa: 85, study_hours: 3, screen_est_min: 200, screen_actual_min: 250, predicted_score: 75 };
+const qn = { gender: 'נקבה', age: 22, height_cm: 171, study_hours: 3, screen_est_min: 200, screen_actual_min: 250, predicted_score: 75 };
 
 assert.strictEqual(call({ action: 'config' }).authMode, 'code');
 C.setSetting_('AUTH_MODE', 'register');
@@ -97,8 +51,10 @@ r = call(Object.assign({ action: 'submitStageA', workMode: 'pair', partnerName: 
 assert.ok(!r.ok, 'I cannot join A+B: ' + r.error);
 r = call(Object.assign({ action: 'submitStageA', workMode: 'alone', questionnaire: Object.assign({}, qn, { predicted_score: '' }), files }, cred('I')));
 assert.ok(!r.ok, 'predicted score required');
-r = call(Object.assign({ action: 'submitStageA', workMode: 'alone', questionnaire: Object.assign({}, qn, { gpa: 'NA' }), files }, cred('I')));
+r = call(Object.assign({ action: 'submitStageA', workMode: 'alone', questionnaire: Object.assign({}, qn, { height_cm: '' }), files }, cred('I')));
 assert.ok(!r.ok, 'every questionnaire field is required');
+r = call(Object.assign({ action: 'submitStageA', workMode: 'alone', questionnaire: Object.assign({}, qn, { gender: 'אחר' }), files }, cred('I')));
+assert.ok(!r.ok, 'gender is male/female only');
 r = call(Object.assign({ action: 'submitStageA', workMode: 'alone', questionnaire: qn, files: { question: { data: Buffer.from('hello').toString('base64') }, solution: files.solution } }, cred('I')));
 assert.ok(!r.ok, 'non-PDF rejected');
 r = call(Object.assign({ action: 'submitStageA', workMode: 'alone', questionnaire: qn, files }, cred('I')));
@@ -171,4 +127,12 @@ const ex = C.table_('Export_Students');
 assert.strictEqual(ex.length, 9);
 assert.ok(!JSON.stringify(E.sheets.Export_Students.d).includes('1000000'), 'no IDs in export');
 assert.ok(!JSON.stringify(E.sheets.Export_Reviews.d).includes('stu '), 'no names in export');
+// reset after a dry run: test students (99999...) and all data go, real students stay
+E.sheets.Students.appendRow(['999990001', 'בדיקה א', '', '', '', '', '']);
+C.resetTestData();
+assert.strictEqual(C.table_('Questions').length, 0);
+assert.strictEqual(C.table_('Reviews').length, 0);
+assert.ok(!C.table_('Students').some(r => r.student_id.startsWith('99999')), 'test students removed');
+assert.strictEqual(C.table_('Students').length, 9, 'real students kept');
+assert.ok(Object.values(E.files).every(f => f.trashed), 'files trashed');
 console.log('\nALL BACKEND TESTS PASSED');

@@ -30,7 +30,6 @@
   </header>
 
   <main class="wrap">
-    <ol class="lectures" id="assignments" aria-label="מטלות" hidden></ol>
     <ol class="lectures" id="list"></ol>
     <p class="notice" id="notice" hidden></p>
   </main>
@@ -83,6 +82,7 @@
 
     for (const l of lectures) {
       const li = el('li', 'card');
+      li.dataset.slug = l.slug;
       li.dataset.search = [l.title, l.summary, ...(l.topics || [])].join(' ').toLowerCase();
 
       li.append(el('span', 'num', String(l.n).padStart(2, '0')));
@@ -107,10 +107,15 @@
       list.append(li);
     }
 
-    const assignments = (data.assignments || []).filter(a => a.published);
-    for (const [i, a] of assignments.entries()) {
+    // Assignments sit in the list right after the lecture named in "after" (or at the end).
+    const ICON = '<svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><rect x="9" y="2.5" width="6" height="3" rx="1"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg>';
+    for (const a of (data.assignments || []).filter(x => x.published)) {
       const li = el('li', 'card');
-      li.append(el('span', 'num', 'מ' + (i + 1)));
+      li.dataset.search = [a.title, a.summary].join(' ').toLowerCase();
+      const icon = el('span', 'num');
+      icon.innerHTML = ICON;
+      icon.title = 'מטלה';
+      li.append(icon);
       const body = el('div', 'body');
       const h = el('h2');
       const link = el('a', 'main-link', a.title);
@@ -119,9 +124,9 @@
       body.append(h);
       if (a.summary) body.append(el('p', 'summary', a.summary));
       li.append(body);
-      $('assignments').append(li);
+      const anchor = [...list.children].find(x => x.dataset.slug === a.after);
+      if (anchor) anchor.after(li); else list.append(li);
     }
-    $('assignments').hidden = !assignments.length;
 
     if (!lectures.length) {
       const n = $('notice');

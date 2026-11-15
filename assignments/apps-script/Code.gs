@@ -25,7 +25,7 @@ const TABS = {
 const HEADERS = {
   Settings: ['key', 'value', 'note'],
   Students: ['student_id', 'name', 'email', 'anon_id', 'secret_hash', 'salt', 'registered_at'],
-  Questionnaire: ['student_id', 'work_mode', 'partner_id', 'gender', 'age', 'height_cm', 'study_year', 'gpa',
+  Questionnaire: ['student_id', 'work_mode', 'partner_id', 'gender', 'age', 'height_cm',
     'study_hours', 'screen_est_min', 'screen_actual_min', 'predicted_score', 'submitted_at'],
   Questions: ['question_id', 'uploader_id', 'partner_id', 'question_file_id', 'solution_file_id', 'created_at', 'updated_at'],
   Assignments: ['reviewer_id', 'question_id', 'position', 'solution_opened_at'],
@@ -319,7 +319,7 @@ function deadlines_(s) {
 
 function validateQuestionnaire_(q) {
   const out = {};
-  const genders = ['זכר', 'נקבה', 'אחר'];
+  const genders = ['זכר', 'נקבה'];
   if (genders.indexOf(q.gender) < 0) throw userError_('בחרו מגדר.');
   out.gender = q.gender;
   const num = function (key, label, lo, hi, intOnly) {
@@ -332,8 +332,6 @@ function validateQuestionnaire_(q) {
   };
   num('age', 'גיל', 16, 90, true);
   num('height_cm', 'גובה', 120, 230, false);
-  num('study_year', 'שנת לימודים', 1, 4, true);
-  num('gpa', 'ממוצע ציונים', 0, 100, false);
   num('study_hours', 'שעות לימוד שבועיות', 0, 80, false);
   num('screen_est_min', 'הערכת זמן מסך', 0, 1440, true);
   num('screen_actual_min', 'זמן מסך בפועל', 0, 1440, true);
@@ -411,6 +409,8 @@ function onOpen() {
     .addItem('6. ייצוא נתונים אנונימיים למטלה 2', 'exportData')
     .addSeparator()
     .addItem('בדיקת זוגות', 'checkPairs')
+    .addSeparator()
+    .addItem('איפוס נתוני בדיקה', 'resetTestData')
     .addToUi();
 }
 
@@ -471,6 +471,7 @@ function assignReviewers() {
   if (table_(TABS.reviews).length) { ui.alert('כבר יש שיפוטים שהוגשו. הקצאה מחדש תמחק אותם, ולכן היא חסומה.'); return; }
   if (table_(TABS.assignments).length &&
     ui.alert('כבר קיימת הקצאה. להחליף אותה?', ui.ButtonSet.YES_NO) !== ui.Button.YES) return;
+  ensureAnonIds_();
   const roster = {};
   table_(TABS.students).forEach(r => { roster[r.student_id] = true; });
   const questions = table_(TABS.questions).map(r => ({
@@ -558,6 +559,7 @@ function computeGrades() {
 }
 
 function exportData() {
+  ensureAnonIds_();
   const students = table_(TABS.students);
   const anon = {};
   students.forEach(r => { anon[r.student_id] = r.anon_id; });
@@ -579,14 +581,14 @@ function exportData() {
   });
   const mean = a => a && a.length ? Math.round(a.reduce((x, y) => x + y, 0) / a.length * 100) / 100 : 'NA';
 
-  const head1 = ['student', 'work_mode', 'gender', 'age', 'height_cm', 'study_year', 'gpa', 'study_hours',
+  const head1 = ['student', 'work_mode', 'gender', 'age', 'height_cm', 'study_hours',
     'screen_est_min', 'screen_actual_min', 'predicted_score', 'received_mean_score', 'received_mean_rank',
     'n_reviews_received', 'given_mean_score', 'flags_given'];
   const rows1 = shuffled_(qn, Math.random).map(function (r) {
     const q = qOf[r.student_id];
     const a = q ? agg[q] : null;
     const g = given[r.student_id];
-    return [anon[r.student_id], r.work_mode, r.gender, r.age, r.height_cm, r.study_year, r.gpa, r.study_hours,
+    return [anon[r.student_id], r.work_mode, r.gender, r.age, r.height_cm, r.study_hours,
       r.screen_est_min, r.screen_actual_min, r.predicted_score,
       a ? mean(a.scores) : 'NA', a ? mean(a.ranks) : 'NA', a ? a.scores.length : 0,
       g ? mean(g.scores) : 'NA', g ? g.flags : 0];
@@ -622,6 +624,37 @@ function checkPairs() {
     if (!ok) issues.push(nameOf[sid] + ' סימן עבודה בזוג אבל אין הגשה משותפת.');
   });
   SpreadsheetApp.getUi().alert(issues.length ? issues.join('\n') : 'אין בעיות בזוגות.');
+}
+
+/**
+ * After a dry run: delete every submission, review and grade, trash the uploaded PDFs,
+ * and remove test students (IDs starting with 99999). Real students' rows and codes stay.
+ */
+function resetTestData() {
+  const ui = SpreadsheetApp.getUi();
+  const res = ui.prompt('איפוס נתוני בדיקה',
+    'נמחקים: כל ההגשות, השאלונים, ההקצאות, השיפוטים, הטעויות והציונים, כל הקבצים בתיקיית ההגשות, ' +
+    'וסטודנטים שהת"ז שלהם מתחילה ב-99999. כדי לאשר, כתבו: מחק', ui.ButtonSet.OK_CANCEL);
+  if (res.getSelectedButton() !== ui.Button.OK || res.getResponseText().trim() !== 'מחק') { ui.alert('בוטל.'); return; }
+  [TABS.questionnaire, TABS.questions, TABS.assignments, TABS.reviews, TABS.notes, TABS.flags, TABS.grades].forEach(function (name) {
+    const sh = sheet_(name);
+    if (sh.getLastRow() > 1) sh.getRange(2, 1, sh.getLastRow() - 1, Math.max(1, sh.getLastColumn())).clearContent().clearDataValidations();
+  });
+  [TABS.exportStudents, TABS.exportReviews].forEach(function (name) {
+    const sh = SpreadsheetApp.getActive().getSheetByName(name);
+    if (sh) SpreadsheetApp.getActive().deleteSheet(sh);
+  });
+  let trashed = 0;
+  const folderId = settings_().DRIVE_FOLDER_ID;
+  if (folderId) {
+    const it = DriveApp.getFolderById(String(folderId)).getFiles();
+    while (it.hasNext()) { it.next().setTrashed(true); trashed++; }
+  }
+  const st = sheet_(TABS.students);
+  const rows = table_(TABS.students).filter(r => String(r.student_id).indexOf('99999') === 0).map(r => r._row);
+  rows.sort((a, b) => b - a).forEach(r => st.deleteRow(r));
+  ui.alert('האיפוס הושלם. נמחקו ' + rows.length + ' סטודנטי בדיקה ו-' + trashed + ' קבצים.\n' +
+    'לפני הפתיחה: להחזיר ב-Settings את AUTH_MODE, את המועדים ואת RESULTS_PUBLISHED = FALSE.');
 }
 
 /* =========================== sheet helpers =========================== */

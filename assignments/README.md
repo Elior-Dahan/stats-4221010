@@ -58,4 +58,13 @@
 ```
 node assignments/tests/logic.test.js     # חלוקת שופטים וחישוב ציונים
 node assignments/tests/backend.test.js   # כל השרת מול סימולציה של שירותי Google
+
+# הרצה מלאה של 8 סטודנטי בדיקה, בלי Google (שלבי הניהול אוטומטיים):
+node assignments/tests/fake_server.js &
+python assignments/tests/live_e2e.py http://localhost:8787 --auto-admin
+
+# אותה הרצה מול השרת האמיתי, לפני הפתיחה. הסקריפט עוצר ומסביר מה ללחוץ ב-Sheet:
+python assignments/tests/live_e2e.py https://script.google.com/macros/s/.../exec
 ```
+
+אחרי הרצה מול השרת האמיתי: בתפריט **איפוס נתוני בדיקה** (כותבים "מחק"). הוא מוחק את כל ההגשות, השיפוטים והציונים, את הקבצים בתיקיית ההגשות, ואת הסטודנטים שהת"ז שלהם מתחילה ב-99999.
