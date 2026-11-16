@@ -16,7 +16,7 @@ E.sheets.Students.d[0].pop(); E.sheets.Feedback.d = [];
 C.setup();
 assert.ok(E.sheets.Students.d[0].includes('feedback_done') && E.sheets.Feedback.d[0][0] === 'learned_1to5', 'setup upgrades old sheets');
 // roster: 9 students
-const names = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
+const names = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 names.forEach((n, i) => E.sheets.Students.appendRow([String(100000001 + i), 'stu ' + n, n.toLowerCase() + '@x.com', '', '', '', '']));
 C.ensureAnonIds_();
 const id = (n) => String(100000001 + names.indexOf(n));
@@ -34,6 +34,11 @@ names.forEach(n => assert.ok(call(Object.assign({ action: 'register' }, cred(n))
 assert.ok(!call({ action: 'register', id: id('A'), secret: 'again!' }).ok, 'double register rejected');
 assert.ok(!call({ action: 'login', id: id('A'), secret: 'wrong' }).ok, 'bad password rejected');
 assert.ok(call(Object.assign({ action: 'login' }, cred('A'))).ok);
+// an upper-case code typed in lower case still works
+E.sheets.Students.appendRow(['300000001', 'קוד בדיקה', 'k@x.y', 'SCODE01', C.hash_('salt1', 'K7P2QX'), 'salt1', '']);
+assert.ok(call({ action: 'login', id: '300000001', secret: 'k7p2qx' }).ok, 'code is case-insensitive');
+assert.ok(!call({ action: 'login', id: '300000001', secret: 'k7p2qy' }).ok, 'wrong code still refused');
+E.sheets.Students.d.pop();
 
 // pairs: A uploads with B; B confirms without files. C+D: D uploads. E,F,G,H,I alone. I tries pair with A (taken).
 let r = call(Object.assign({ action: 'submitStageA', workMode: 'pair', partnerName: '  B   stu ', questionnaire: qn, files }, cred('A')));
@@ -69,6 +74,23 @@ assert.ok(r.ok, r.error);
 const qRow = C.table_('Questions').find(q => q.uploader_id === id('A'));
 const saved = Buffer.from(E.files[qRow.question_file_id].bytes.map(b => (b + 256) % 256)).toString('latin1');
 assert.ok(!saved.includes('stu A') && saved.includes('/Author ('), 'author blanked: ' + saved);
+// approved group of three: the TA writes J's ID in extra_author_id of A's question
+r = call(Object.assign({ action: 'submitStageA', workMode: 'pair', partnerName: nm('A'), questionnaire: qn }, cred('J')));
+assert.ok(!r.ok, 'J cannot join before the TA adds them');
+{
+  const row = C.table_('Questions').find(q => q.uploader_id === id('A'));
+  C.updateRow_('Questions', row._row, { extra_author_id: id('J') });
+}
+r = call(Object.assign({ action: 'submitStageA', workMode: 'pair', partnerName: nm('A'), questionnaire: qn }, cred('J')));
+assert.ok(r.ok, 'J confirms as third member: ' + r.error);
+assert.strictEqual(r.state.question.uploader, nm('A'));
+assert.ok(r.state.question.partner.includes(nm('B')) && r.state.question.partner.includes(nm('J')), 'the group sees all three names');
+r = call(Object.assign({ action: 'submitStageA', workMode: 'pair', partnerName: nm('A'), questionnaire: qn, files }, cred('J')));
+assert.ok(!r.ok, 'the third member cannot replace the files');
+{
+  const sc = call(Object.assign({ action: 'state' }, cred('C'))).state.question;
+  assert.ok(sc.uploader === nm('D') && sc.partner === nm('C'), 'other groups are unaffected');
+}
 // A re-uploads: same question id, old files trashed
 const qA = C.table_('Questions').find(q => q.uploader_id === id('A')).question_id;
 r = call(Object.assign({ action: 'submitStageA', workMode: 'pair', partnerName: '  B   stu ', questionnaire: qn, files }, cred('A')));
@@ -76,9 +98,16 @@ assert.ok(r.ok); assert.strictEqual(r.state.question.id, qA);
 assert.strictEqual(C.table_('Questions').length, 7);
 
 // review stage: assign, then close submission
+C.checkPairs();
+assert.strictEqual(C.lastAlert, 'אין בעיות בזוגות.', 'pair check accepts the group of three: ' + C.lastAlert);
 C.assignReviewers();
 const asg = C.table_('Assignments');
-assert.strictEqual(asg.length, 9 * 4);
+assert.strictEqual(asg.length, 10 * 4);
+{
+  const qA0 = C.table_('Questions').find(q => q.uploader_id === id('A')).question_id;
+  assert.ok(!asg.some(a => a.reviewer_id === id('J') && a.question_id === qA0), 'J never reviews their own group question');
+  assert.ok(C.table_('Questions').find(q => q.uploader_id === id('A')).extra_author_id === id('J'), 're-upload keeps the third member');
+}
 const authorsOf = {}; C.table_('Questions').forEach(q => { [q.uploader_id, q.partner_id].filter(Boolean).forEach(s => { authorsOf[s] = q.question_id; }); });
 asg.forEach(a => assert.notStrictEqual(authorsOf[a.reviewer_id], a.question_id, 'own question assigned'));
 const loads = {}; asg.forEach(a => { loads[a.question_id] = (loads[a.question_id] || 0) + 1; });
@@ -138,6 +167,8 @@ assert.strictEqual(g('H').competitive_points, 0, 'H did not review');
 assert.strictEqual(String(g('H').review_complete), 'false');
 assert.strictEqual(g(names.find(n => authorsOf[id(n)] === flags[0].question_id)).valid_points, 0, 'confirmed error removes 3 points');
 assert.strictEqual(g('A').question_id, g('B').question_id);
+assert.strictEqual(g('J').question_id, g('A').question_id, 'J shares the group question');
+assert.strictEqual(Number(g('J').valid_points), Number(g('A').valid_points));
 grades.forEach(x => assert.strictEqual(Number(x.total), Number(x.valid_points) + Number(x.competitive_points) + Number(x.bonus)));
 console.log(grades.map(x => [x.name, x.question_id, x.mean_rank, x.tier_points, x.competitive_points, x.bonus, x.total].join(' | ')).join('\n'));
 
@@ -147,7 +178,7 @@ assert.strictEqual(r.state.results.total, Number(g('A').total));
 
 C.exportData();
 const ex = C.table_('Export_Students');
-assert.strictEqual(ex.length, 9);
+assert.strictEqual(ex.length, 10);
 assert.ok(!JSON.stringify(E.sheets.Export_Students.d).includes('1000000'), 'no IDs in export');
 assert.ok(!JSON.stringify(E.sheets.Export_Reviews.d).includes('stu '), 'no names in export');
 // reset after a dry run: test students (99999...) and all data go, real students stay
@@ -158,6 +189,6 @@ assert.strictEqual(C.table_('Reviews').length, 0);
 assert.strictEqual(C.table_('Feedback').length, 0, 'reset clears feedback');
 assert.ok(!C.table_('Students').some(r => String(r.feedback_done) === 'true'), 'reset clears feedback flags');
 assert.ok(!C.table_('Students').some(r => r.student_id.startsWith('99999')), 'test students removed');
-assert.strictEqual(C.table_('Students').length, 9, 'real students kept');
+assert.strictEqual(C.table_('Students').length, 10, 'real students kept');
 assert.ok(Object.values(E.files).every(f => f.trashed), 'files trashed');
 console.log('\nALL BACKEND TESTS PASSED');

@@ -28,7 +28,8 @@ const HEADERS = {
   Students: ['student_id', 'name', 'email', 'anon_id', 'secret_hash', 'salt', 'registered_at', 'feedback_done'],
   Questionnaire: ['student_id', 'work_mode', 'partner_id', 'gender', 'age', 'height_cm',
     'study_hours', 'screen_est_min', 'screen_actual_min', 'predicted_score', 'submitted_at'],
-  Questions: ['question_id', 'uploader_id', 'partner_id', 'question_file_id', 'solution_file_id', 'created_at', 'updated_at'],
+  // extra_author_id: filled by hand by the TA only, for an approved group of three (students never see this option)
+  Questions: ['question_id', 'uploader_id', 'partner_id', 'question_file_id', 'solution_file_id', 'created_at', 'updated_at', 'extra_author_id'],
   Assignments: ['reviewer_id', 'question_id', 'position', 'solution_opened_at'],
   Reviews: ['reviewer_id', 'question_id', 'position', 'score', 'unsolved', 'flagged', 'flag_text', 'rank', 'submitted_at'],
   RankNotes: ['reviewer_id', 'justification', 'submitted_at'],
@@ -123,10 +124,13 @@ const API = {
     const files = req.files || null;
     return withLock_(function () {
       const questions = table_(TABS.questions);
-      const mine = questions.find(r => r.uploader_id === me.student_id || r.partner_id === me.student_id) || null;
-      const ofPartner = partner ? questions.find(r => r.uploader_id === partner.student_id || r.partner_id === partner.student_id) || null : null;
+      const mine = questions.find(r => authorsOf_(r).indexOf(me.student_id) >= 0) || null;
+      const ofPartner = partner ? questions.find(r => authorsOf_(r).indexOf(partner.student_id) >= 0) || null : null;
 
       if (files) {
+        if (mine && mine.extra_author_id === me.student_id) {
+          throw userError_('את הקבצים של הקבוצה מעלים רק מי שהעלה אותם או השותף שלו. אם צריך שינוי, פנו למתרגל.');
+        }
         if (mine && mine.partner_id === me.student_id && (!partner || mine.uploader_id !== partner.student_id)) {
           throw userError_('אתם רשומים כשותפים בהגשה של סטודנט אחר. אם זו טעות, פנו למתרגל.');
         }
@@ -134,7 +138,7 @@ const API = {
           throw userError_('לכם ולשותף שבחרתם יש כבר הגשות נפרדות. פנו למתרגל כדי לאחד אותן.');
         }
         if (ofPartner && ofPartner !== mine) {
-          const others = [ofPartner.uploader_id, ofPartner.partner_id].filter(x => x && x !== partner.student_id);
+          const others = authorsOf_(ofPartner).filter(x => x !== partner.student_id);
           if (others.length && others[0] !== me.student_id) throw userError_('השותף שבחרתם כבר הגיש עם סטודנט אחר.');
         }
         const target = mine || ofPartner;
@@ -157,7 +161,7 @@ const API = {
         }
       } else {
         if (pair) {
-          if (!ofPartner || ofPartner.uploader_id !== partner.student_id || ofPartner.partner_id !== me.student_id) {
+          if (!ofPartner || authorsOf_(ofPartner).indexOf(me.student_id) < 0) {
             throw userError_('השותף שבחרתם עוד לא העלה את הקבצים, או שלא ציין אתכם כשותפים. אחד מבני הזוג צריך להעלות את השאלה והפתרון ולבחור את השני כשותף.');
           }
         } else if (!mine || mine.uploader_id !== me.student_id) {
@@ -179,7 +183,7 @@ const API = {
     const kind = req.kind === 'solution' ? 'solution' : 'question';
     const q = table_(TABS.questions).find(r => r.question_id === req.question);
     if (!q) throw userError_('השאלה לא נמצאה.');
-    const isAuthor = q.uploader_id === me.student_id || q.partner_id === me.student_id;
+    const isAuthor = authorsOf_(q).indexOf(me.student_id) >= 0;
     const a = table_(TABS.assignments).find(r => r.reviewer_id === me.student_id && r.question_id === q.question_id);
     if (!isAuthor && !(a && phase_(settings_()).reviewVisible)) throw userError_('אין לכם גישה לקובץ הזה.');
     if (kind === 'solution' && a && !a.solution_opened_at) {
@@ -282,12 +286,12 @@ function state_(me, s) {
     copy.submitted_at = iso_(qn.submitted_at);
     out.questionnaire = copy;
   }
-  const q = table_(TABS.questions).find(r => r.uploader_id === me.student_id || r.partner_id === me.student_id);
+  const q = table_(TABS.questions).find(r => authorsOf_(r).indexOf(me.student_id) >= 0);
   if (q) {
     out.question = {
       id: q.question_id,
       uploader: nameOf[q.uploader_id] || '',
-      partner: q.partner_id ? nameOf[q.partner_id] || '' : '',
+      partner: [q.partner_id, q.extra_author_id].filter(Boolean).map(x => nameOf[x] || '').join(' ו'),
       iAmUploader: q.uploader_id === me.student_id,
       updated_at: iso_(q.updated_at || q.created_at)
     };
@@ -385,7 +389,10 @@ function auth_(req) {
   const st = findStudent_(req.id);
   const bad = userError_('תעודת זהות או סיסמה/קוד שגויים.');
   if (!st || !st.secret_hash) throw bad;
-  if (hash_(st.salt, String(req.secret || '').trim()) !== st.secret_hash) throw bad;
+  const typed = String(req.secret || '').trim();
+  // emailed codes are upper-case; accept them typed in lower case too (phones often do that)
+  const ok = hash_(st.salt, typed) === st.secret_hash || hash_(st.salt, typed.toUpperCase()) === st.secret_hash;
+  if (!ok) throw bad;
   return st;
 }
 
@@ -522,7 +529,7 @@ function assignReviewers() {
   const roster = {};
   table_(TABS.students).forEach(r => { roster[r.student_id] = true; });
   const questions = table_(TABS.questions).map(r => ({
-    id: r.question_id, authors: [r.uploader_id, r.partner_id].filter(x => x && roster[x])
+    id: r.question_id, authors: authorsOf_(r).filter(x => roster[x])
   }));
   const reviewers = [];
   questions.forEach(q => q.authors.forEach(a => reviewers.push(a)));
@@ -580,7 +587,7 @@ function computeGrades() {
   if (unchecked.length && ui.alert(unchecked.length + ' סימוני טעות עוד לא נבדקו (confirmed ריק) ויחושבו כ-FALSE. להמשיך?', ui.ButtonSet.YES_NO) !== ui.Button.YES) return;
 
   const res = computeGrades_({
-    questions: table_(TABS.questions).map(r => ({ id: r.question_id, authors: [r.uploader_id, r.partner_id].filter(Boolean) })),
+    questions: table_(TABS.questions).map(r => ({ id: r.question_id, authors: authorsOf_(r) })),
     students: students.map(r => r.student_id),
     assignments: assignments.map(a => ({ reviewer: a.reviewer_id, question: a.question_id })),
     reviews: reviews.filter(r => completed.indexOf(r.reviewer_id) >= 0)
@@ -615,7 +622,7 @@ function exportData() {
   const reviews = table_(TABS.reviews);
   const assignments = table_(TABS.assignments);
   const qOf = {};
-  questions.forEach(q => [q.uploader_id, q.partner_id].filter(Boolean).forEach(sid => { qOf[sid] = q.question_id; }));
+  questions.forEach(q => authorsOf_(q).forEach(sid => { qOf[sid] = q.question_id; }));
   const agg = {};
   reviews.forEach(function (r) {
     const a = agg[r.question_id] = agg[r.question_id] || { scores: [], ranks: [] };
@@ -657,17 +664,24 @@ function checkPairs() {
   const qn = {};
   table_(TABS.questionnaire).forEach(r => { qn[r.student_id] = r; });
   const issues = [];
-  table_(TABS.questions).forEach(function (q) {
-    if (!q.partner_id) return;
-    const p = qn[q.partner_id];
-    if (!p) issues.push(nameOf[q.partner_id] + ' רשום כשותף של ' + nameOf[q.uploader_id] + ' אבל עוד לא מילא שאלון.');
-    else if (p.partner_id !== q.uploader_id) issues.push(nameOf[q.partner_id] + ' ציין שותף אחר מזה שציין ' + nameOf[q.uploader_id] + '.');
+  const questions = table_(TABS.questions);
+  const seen = {};
+  questions.forEach(function (q) {
+    const authors = authorsOf_(q);
+    authors.forEach(function (sid) {
+      if (seen[sid]) issues.push(nameOf[sid] + ' רשום ביותר משאלה אחת.');
+      seen[sid] = true;
+    });
+    authors.filter(sid => sid !== q.uploader_id).forEach(function (sid) {
+      const p = qn[sid];
+      if (!p) issues.push(nameOf[sid] + ' רשום בשאלה של ' + nameOf[q.uploader_id] + ' אבל עוד לא מילא שאלון.');
+      else if (authors.indexOf(p.partner_id) < 0) issues.push(nameOf[sid] + ' ציין שותף שלא שייך לשאלה של ' + nameOf[q.uploader_id] + '.');
+    });
   });
   Object.keys(qn).forEach(function (sid) {
     const r = qn[sid];
     if (r.work_mode !== 'pair') return;
-    const ok = table_(TABS.questions).some(q => (q.uploader_id === sid && q.partner_id === r.partner_id) ||
-      (q.partner_id === sid && q.uploader_id === r.partner_id));
+    const ok = questions.some(q => authorsOf_(q).indexOf(sid) >= 0 && authorsOf_(q).indexOf(r.partner_id) >= 0);
     if (!ok) issues.push(nameOf[sid] + ' סימן עבודה בזוג אבל אין הגשה משותפת.');
   });
   SpreadsheetApp.getUi().alert(issues.length ? issues.join('\n') : 'אין בעיות בזוגות.');
@@ -705,6 +719,11 @@ function resetTestData() {
     'לפני הפתיחה: להחזיר ב-Settings את AUTH_MODE, את המועדים ואת RESULTS_PUBLISHED = FALSE.');
 }
 
+/** Everyone who wrote a question: the uploader, the partner, and a TA-approved third member. */
+function authorsOf_(q) {
+  return [q.uploader_id, q.partner_id, q.extra_author_id].filter(Boolean);
+}
+
 /* =========================== sheet helpers =========================== */
 
 function sheet_(name) {
@@ -724,7 +743,7 @@ function table_(name) {
     if (row.every(v => v === '' || v == null)) continue;
     const o = { _row: i + 1 };
     head.forEach(function (h, j) { o[h] = row[j]; });
-    ['student_id', 'uploader_id', 'partner_id', 'reviewer_id'].forEach(function (k) {
+    ['student_id', 'uploader_id', 'partner_id', 'reviewer_id', 'extra_author_id'].forEach(function (k) {
       if (k in o && o[k] !== '') o[k] = normId_(o[k]);
     });
     out.push(o);
