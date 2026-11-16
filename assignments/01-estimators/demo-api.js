@@ -15,7 +15,7 @@
       me: { name: 'סטודנט/ית לדוגמה', anon: 'S999' },
       questionnaire: null, question: null,
       review: {
-        items: ['QA1', 'QB2', 'QC3', 'QD4'].map((q, i) => ({ question: q, position: i + 1, score: '', unsolved: false, flagged: false, flagText: '', rank: '' })),
+        items: ['QA1', 'QB2', 'QC3', 'QD4'].map((q, i) => ({ question: q, position: i + 1, score: '', aiLike: '', unsolved: false, flagged: false, flagText: '', rank: '' })),
         justification: '', submitted_at: null
       },
       feedback: { done: false },
@@ -101,7 +101,7 @@
         if (!phases[phase].canReview) return fail('שלב השיפוט סגור.');
         req.items.forEach(x => {
           const it = st.review.items.find(i => i.question === x.question);
-          Object.assign(it, { score: x.score, unsolved: x.unsolved, flagged: x.flagged, flagText: x.flagText, rank: req.ranking.indexOf(x.question) + 1 });
+          Object.assign(it, { score: x.score, unsolved: x.unsolved, flagged: x.flagged, flagText: x.flagText, aiLike: x.aiLike, rank: req.ranking.indexOf(x.question) + 1 });
         });
         st.review.justification = req.justification;
         st.review.submitted_at = new Date().toISOString();

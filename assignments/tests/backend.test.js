@@ -128,12 +128,18 @@ const quality = {}; Object.values(authorsOf).forEach((q, i) => { quality[q] = i;
 const just = 'x'.repeat(90);
 names.filter(n => n !== 'H').forEach(n => {
   const mine = C.table_('Assignments').filter(a => a.reviewer_id === id(n));
-  const items = mine.map(a => ({ question: a.question_id, score: 50 + quality[a.question_id], flagged: false }));
+  const items = mine.map(a => ({ question: a.question_id, score: 50 + quality[a.question_id], flagged: false, aiLike: 1 + quality[a.question_id] % 5 }));
   const ranking = mine.map(a => a.question_id).sort((x, y) => quality[y] - quality[x]);
   if (n === 'A') { items[0].flagged = true; items[0].flagText = 'סעיף ג שגוי, התשובה 3/7'; }
   const x = call(Object.assign({ action: 'submitReview', items, ranking, justification: just }, cred(n)));
   assert.ok(x.ok, n + ': ' + x.error);
 });
+{
+  const mineH = C.table_('Assignments').filter(a => a.reviewer_id === id('H'));
+  const noAi = mineH.map(a => ({ question: a.question_id, score: 50, flagged: false }));
+  const rr = call(Object.assign({ action: 'submitReview', items: noAi, ranking: mineH.map(a => a.question_id), justification: just }, cred('H')));
+  assert.ok(!rr.ok && rr.error.includes("צ'אט"), 'the chatbot-likeness rating is required');
+}
 r = call(Object.assign({ action: 'submitReview', items: [], ranking: [], justification: just }, cred('H')));
 assert.ok(!r.ok, 'incomplete review rejected');
 
@@ -170,6 +176,7 @@ assert.strictEqual(g('A').question_id, g('B').question_id);
 assert.strictEqual(g('J').question_id, g('A').question_id, 'J shares the group question');
 assert.strictEqual(Number(g('J').valid_points), Number(g('A').valid_points));
 grades.forEach(x => assert.strictEqual(Number(x.total), Number(x.valid_points) + Number(x.competitive_points) + Number(x.bonus)));
+assert.ok(C.table_('Reviews').every(r => r.ai_like >= 1 && r.ai_like <= 5), 'ai_like stored');
 console.log(grades.map(x => [x.name, x.question_id, x.mean_rank, x.tier_points, x.competitive_points, x.bonus, x.total].join(' | ')).join('\n'));
 
 C.setSetting_('RESULTS_PUBLISHED', 'TRUE');

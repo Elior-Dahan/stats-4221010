@@ -700,6 +700,15 @@ const API_URL = window.ASSIGNMENT_API_URL || '';
       const unsolved = el('input', { type: 'checkbox', id: 'unsolved-' + it.question, disabled });
       unsolved.checked = !!it.unsolved;
       const score = el('input', { type: 'number', id: 'score-' + it.question, min: 0, max: 100, step: 1, inputmode: 'numeric', disabled });
+      const aiName = 'ai-' + it.question;
+      const aiScale = el('div', { class: 'scale' },
+        el('span', { class: 'end', text: '1 = ניכר שעבדו עליה' }),
+        [1, 2, 3, 4, 5].map(v => {
+          const r = el('input', { type: 'radio', name: aiName, value: String(v), disabled });
+          r.checked = Number(it.aiLike) === v;
+          return el('label', { class: 'choice' }, r, ' ' + v);
+        }),
+        el('span', { class: 'end', text: '5 = פלט שהועתק כמו שהוא' }));
       score.value = it.score === '' ? '' : it.score;
       const solLink = el('a', { href: '#', onclick: (e) => openFile(e, it.question, 'solution'), text: 'פתרון הכותבים' });
       return el('div', { class: 'rv' },
@@ -707,10 +716,17 @@ const API_URL = window.ASSIGNMENT_API_URL || '';
           el('span', { class: 'rv-title', text: 'שאלה ' + n }),
           el('span', { class: 'rv-files file-links' },
             el('a', { href: '#', onclick: (e) => openFile(e, it.question, 'question'), text: 'השאלה' }), solLink)),
-        el('div', { class: 'field' }, el('label', { class: 'choice' }, unsolved, ' לא הצלחתי לפתור את השאלה')),
-        el('div', { class: 'field' }, el('label', { class: 'choice' }, flagged, ' מצאתי טעות בפתרון (או בשאלה עצמה)')),
+        el('div', { class: 'field' }, el('label', { class: 'choice' }, unsolved, ' לא הצלחתי לפתור את השאלה'),
+          el('div', { class: 'hint', text: 'לא משפיע על הציון. זה עוזר לנו לדעת אילו שאלות היו קשות או לא ברורות.' })),
+        el('div', { class: 'field' }, el('label', { class: 'choice' }, flagged, ' מצאתי טעות בפתרון (או בשאלה עצמה)'),
+          el('div', { class: 'hint', text: 'כל טעות שהמתרגל מאשר מזכה בחצי נקודת בונוס, עד נקודה אחת.' })),
         flagWrap,
-        el('div', { class: 'field' }, el('label', { for: 'score-' + it.question, text: 'ציון (מ-0 עד 100): כמה השאלה טובה כשאלת מבחן, בלי קשר לשאלות האחרות' }), score));
+        el('div', { class: 'field' }, el('label', { for: 'score-' + it.question, text: 'ציון (מ-0 עד 100): כמה השאלה טובה כשאלת מבחן, בלי קשר לשאלות האחרות' }), score,
+          el('div', { class: 'hint', text: 'לא משפיע על הציון. על הציון של הכותבים משפיע רק הדירוג בהמשך העמוד.' })),
+        el('div', { class: 'field' },
+          el('span', { class: 'lbl', text: 'עד כמה השאלה נראית כמו פלט של צ\'אט (כמו ChatGPT או ג\'מיני) שהועתק כמו שהוא, בלי שהכותבים עברו עליו, בדקו וערכו?' }),
+          aiScale,
+          el('div', { class: 'hint', text: 'לא משפיע על הציון של אף אחד, והכותבים לא רואים את התשובה.' })));
     }));
 
     // ranking
@@ -753,7 +769,9 @@ const API_URL = window.ASSIGNMENT_API_URL || '';
       const flagged = $('flag-' + it.question).checked;
       const flagText = $('flagtext-' + it.question).value.trim();
       if (flagged && flagText.length < S.limits.minFlag) return msg(box, 'err', 'שאלה ' + (i + 1) + ': פרטו את הטעות (סעיף ותשובה נכונה).');
-      items.push({ question: it.question, score: +score, unsolved: $('unsolved-' + it.question).checked, flagged, flagText });
+      const ai = (qsa('input[name="ai-' + it.question + '"]').find(x => x.checked) || {}).value;
+      if (!ai) return msg(box, 'err', 'שאלה ' + (i + 1) + ': סמנו עד כמה היא נראית כמו פלט של צ\'אט שלא נערך (1 עד 5).');
+      items.push({ question: it.question, score: +score, unsolved: $('unsolved-' + it.question).checked, flagged, flagText, aiLike: +ai });
     }
     const justification = $('justification').value.trim();
     if (justification.length < S.limits.minJustification) return msg(box, 'err', 'נימוק הדירוג קצר מדי.');

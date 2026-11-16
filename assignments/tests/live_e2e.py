@@ -219,9 +219,11 @@ if holder:
     raw = base64.b64decode(call("file", holder, question=qid[3], kind="question")["data"])
     check(b"Test Gimel" not in raw and b"/Author" in raw, "author name was removed from the PDF properties")
 
-bad = [{"question": q, "score": 101, "flagged": False} for q in mine1]
+bad = [{"question": q, "score": 101, "flagged": False, "aiLike": 2} for q in mine1]
 check(not call("submitReview", 1, items=bad, ranking=mine1, justification="x" * 90).get("ok"), "score above 100 is refused")
-ok_items = [{"question": q, "score": 70, "flagged": False} for q in mine1]
+ok_items = [{"question": q, "score": 70, "flagged": False, "aiLike": 2} for q in mine1]
+check(not call("submitReview", 1, items=[{"question": q, "score": 70, "flagged": False} for q in mine1], ranking=mine1,
+                justification="x" * 90).get("ok"), "the chatbot-likeness rating is required")
 check(not call("submitReview", 1, items=ok_items, ranking=mine1, justification="short").get("ok"), "short justification is refused")
 
 flagged_q = mine1[0]
@@ -229,7 +231,7 @@ for k in range(1, 8):  # student 8 does not review
     items = st[k]["review"]["items"]
     qs = [i["question"] for i in items]
     ranking = sorted(qs)  # a consistent "quality" order shared by all reviewers
-    its = [{"question": q, "score": 60 + 5 * sorted(qs).index(q), "flagged": False} for q in qs]
+    its = [{"question": q, "score": 60 + 5 * sorted(qs).index(q), "flagged": False, "aiLike": 1 + sorted(qs).index(q)} for q in qs]
     if k == 1:
         its[0].update(flagged=True, flagText="סעיף ב: התשובה הנכונה היא 3/7 ולא 2/7")
     r = call("submitReview", k, items=its, ranking=ranking,

@@ -31,7 +31,8 @@ const HEADERS = {
   // extra_author_id: filled by hand by the TA only, for an approved group of three (students never see this option)
   Questions: ['question_id', 'uploader_id', 'partner_id', 'question_file_id', 'solution_file_id', 'created_at', 'updated_at', 'extra_author_id'],
   Assignments: ['reviewer_id', 'question_id', 'position', 'solution_opened_at'],
-  Reviews: ['reviewer_id', 'question_id', 'position', 'score', 'unsolved', 'flagged', 'flag_text', 'rank', 'submitted_at'],
+  // ai_like (1-5): reviewer's impression that the question is unedited chatbot output; data only, never graded or shown to authors
+  Reviews: ['reviewer_id', 'question_id', 'position', 'score', 'unsolved', 'flagged', 'flag_text', 'rank', 'submitted_at', 'ai_like'],
   RankNotes: ['reviewer_id', 'justification', 'submitted_at'],
   Flags: ['question_id', 'reviewer_id', 'flag_text', 'confirmed', 'ta_note'],
   Grades: ['student_id', 'name', 'question_id', 'valid_points', 'mean_rank', 'mean_score', 'n_reviews', 'tier_points',
@@ -237,6 +238,10 @@ const API = {
       if (it.score === '' || it.score == null || !isFinite(sc) || sc < 0 || sc > 100 || Math.round(sc) !== sc) {
         throw userError_('ציון 0–100 חסר או לא תקין בשאלה ' + (i + 1) + '.');
       }
+      const ai = Number(it.aiLike);
+      if (!(ai >= 1 && ai <= 5 && Math.round(ai) === ai)) {
+        throw userError_('שאלה ' + (i + 1) + ': סמנו עד כמה היא נראית כמו פלט של צ\'אט שלא נערך (1 עד 5).');
+      }
       if (it.flagged && String(it.flagText || '').trim().length < minFlag) {
         throw userError_('בסימון טעות צריך לפרט באיזה סעיף הטעות ומה התשובה הנכונה.');
       }
@@ -251,7 +256,8 @@ const API = {
       const rows = items.map(it => ({
         reviewer_id: me.student_id, question_id: it.question, position: pos[it.question],
         score: Number(it.score), unsolved: !!it.unsolved, flagged: !!it.flagged,
-        flag_text: it.flagged ? String(it.flagText).trim() : '', rank: ranking.indexOf(it.question) + 1, submitted_at: now
+        flag_text: it.flagged ? String(it.flagText).trim() : '', rank: ranking.indexOf(it.question) + 1, submitted_at: now,
+        ai_like: Number(it.aiLike)
       }));
       replaceRowsWhere_(TABS.reviews, r => r.reviewer_id === me.student_id, rows);
       upsert_(TABS.notes, 'reviewer_id', me.student_id, { reviewer_id: me.student_id, justification: just, submitted_at: now });
@@ -307,6 +313,7 @@ function state_(me, s) {
         return {
           question: a.question_id, position: a.position,
           score: r ? r.score : '', unsolved: r ? truthy_(r.unsolved) : false, flagged: r ? truthy_(r.flagged) : false,
+          aiLike: r && r.ai_like !== '' && r.ai_like != null ? Number(r.ai_like) : '',
           flagText: r ? r.flag_text : '', rank: r ? r.rank : ''
         };
       }),
@@ -625,8 +632,9 @@ function exportData() {
   questions.forEach(q => authorsOf_(q).forEach(sid => { qOf[sid] = q.question_id; }));
   const agg = {};
   reviews.forEach(function (r) {
-    const a = agg[r.question_id] = agg[r.question_id] || { scores: [], ranks: [] };
+    const a = agg[r.question_id] = agg[r.question_id] || { scores: [], ranks: [], ai: [] };
     a.scores.push(Number(r.score)); a.ranks.push(Number(r.rank));
+    if (r.ai_like !== '' && r.ai_like != null) a.ai.push(Number(r.ai_like));
   });
   const given = {};
   reviews.forEach(function (r) {
@@ -637,23 +645,23 @@ function exportData() {
 
   const head1 = ['student', 'work_mode', 'gender', 'age', 'height_cm', 'study_hours',
     'screen_est_min', 'screen_actual_min', 'predicted_score', 'received_mean_score', 'received_mean_rank',
-    'n_reviews_received', 'given_mean_score', 'flags_given'];
+    'n_reviews_received', 'received_mean_ai_like', 'given_mean_score', 'flags_given'];
   const rows1 = shuffled_(qn, Math.random).map(function (r) {
     const q = qOf[r.student_id];
     const a = q ? agg[q] : null;
     const g = given[r.student_id];
     return [anon[r.student_id], r.work_mode, r.gender, r.age, r.height_cm, r.study_hours,
       r.screen_est_min, r.screen_actual_min, r.predicted_score,
-      a ? mean(a.scores) : 'NA', a ? mean(a.ranks) : 'NA', a ? a.scores.length : 0,
+      a ? mean(a.scores) : 'NA', a ? mean(a.ranks) : 'NA', a ? a.scores.length : 0, a ? mean(a.ai) : 'NA',
       g ? mean(g.scores) : 'NA', g ? g.flags : 0];
   });
   writeTable_(TABS.exportStudents, head1, rows1);
 
   const opened = {};
   assignments.forEach(a => { opened[a.reviewer_id + '|' + a.question_id] = !!a.solution_opened_at; });
-  const head2 = ['reviewer', 'question', 'position', 'score', 'rank', 'unsolved', 'flagged', 'solution_opened'];
+  const head2 = ['reviewer', 'question', 'position', 'score', 'rank', 'unsolved', 'flagged', 'solution_opened', 'ai_like'];
   const rows2 = shuffled_(reviews, Math.random).map(r => [anon[r.reviewer_id], r.question_id, r.position, r.score, r.rank,
-    truthy_(r.unsolved), truthy_(r.flagged), !!opened[r.reviewer_id + '|' + r.question_id]]);
+    truthy_(r.unsolved), truthy_(r.flagged), !!opened[r.reviewer_id + '|' + r.question_id], r.ai_like === '' ? 'NA' : r.ai_like]);
   writeTable_(TABS.exportReviews, head2, rows2);
   SpreadsheetApp.getUi().alert('נוצרו Export_Students ו-Export_Reviews. בלי ת"ז ושמות, בסדר אקראי. להוריד כ-CSV: File ← Download.');
 }
