@@ -1,0 +1,1757 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>הרצאה 5 – רווח סמך לפרופורציה ולתוחלת · סטטיסטיקה</title>
+<meta name="description" content="מדריך למידה אינטראקטיבי להרצאה 5 בקורס סטטיסטיקה 4221010: רווח סמך לפרופורציה ולתוחלת וגודל מדגם מינימלי">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=IBM+Plex+Sans+Hebrew:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<meta name="robots" content="noindex">
+<script src="../../assets/common.js" defer></script>
+<style>
+:root {
+  color-scheme: light;
+  --paper: #f5f7fa;
+  --grid: rgba(31, 78, 140, 0.055);
+  --surface: #ffffff;
+  --surface-2: #eef2f7;
+  --ink: #17202d;
+  --ink-2: #445063;
+  --muted: #6a7486;
+  --rule: #d6dde7;
+  --rule-strong: #b5c0cf;
+  --accent: #1f4e8c;
+  --accent-soft: #e3ecf8;
+  --mean: #2a78d6;
+  --median: #eb6834;
+  --mode: #1baf7a;
+  --neg: #e34948;
+  --pos: #2a78d6;
+  --ext: #5a47cf;
+  --ext-bg: #f2f0fd;
+  --ext-rule: #cfc8f5;
+  --good: #0f7a3e;
+  --good-bg: #e6f4ec;
+  --bad: #b3261e;
+  --bad-bg: #fbe9e7;
+  --radius: 10px;
+  --font-body: "IBM Plex Sans Hebrew", "Segoe UI", Arial, sans-serif;
+  --font-head: "Frank Ruhl Libre", "David", Georgia, serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #13171d;
+    --grid: rgba(140, 170, 220, 0.05);
+    --surface: #1b2129;
+    --surface-2: #232b36;
+    --ink: #e9edf3;
+    --ink-2: #bcc5d2;
+    --muted: #8f9aab;
+    --rule: #2f3946;
+    --rule-strong: #46525f;
+    --accent: #8db6ec;
+    --accent-soft: #22324a;
+    --mean: #3987e5;
+    --median: #d95926;
+    --mode: #199e70;
+    --neg: #e66767;
+    --pos: #3987e5;
+    --ext: #a397f0;
+    --ext-bg: #201d36;
+    --ext-rule: #3d3670;
+    --good: #5fc98d;
+    --good-bg: #17301f;
+    --bad: #f08a80;
+    --bad-bg: #3a1c1a;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #13171d;
+  --grid: rgba(140, 170, 220, 0.05);
+  --surface: #1b2129;
+  --surface-2: #232b36;
+  --ink: #e9edf3;
+  --ink-2: #bcc5d2;
+  --muted: #8f9aab;
+  --rule: #2f3946;
+  --rule-strong: #46525f;
+  --accent: #8db6ec;
+  --accent-soft: #22324a;
+  --mean: #3987e5;
+  --median: #d95926;
+  --mode: #199e70;
+  --neg: #e66767;
+  --pos: #3987e5;
+  --ext: #a397f0;
+  --ext-bg: #201d36;
+  --ext-rule: #3d3670;
+  --good: #5fc98d;
+  --good-bg: #17301f;
+  --bad: #f08a80;
+  --bad-bg: #3a1c1a;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+
+body {
+  margin: 0;
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+
+/* ---------- header ---------- */
+.masthead {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 48px 24px 8px;
+}
+.course-line { color: var(--muted); font-size: 15px; margin: 0 0 10px; }
+.masthead h1 {
+  font-family: var(--font-head);
+  font-weight: 900;
+  font-size: clamp(38px, 6.4vw, 72px);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.masthead h1 .h1-second { display: block; color: var(--ink-2); font-weight: 500; }
+.masthead .lede { max-width: 640px; font-size: 19px; color: var(--ink-2); margin: 18px 0 0; }
+
+.hero-lab { max-width: 1180px; margin: 28px auto 0; padding: 0 24px; }
+
+.controls-bar {
+  max-width: 1180px; margin: 24px auto 0; padding: 0 24px;
+  display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center;
+  font-size: 15px; color: var(--ink-2);
+}
+.legend-ext { display: inline-flex; align-items: center; gap: 8px; }
+
+/* ---------- layout ---------- */
+.layout {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px 24px 80px;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 48px;
+}
+nav.toc {
+  position: sticky; top: 16px; align-self: start;
+  font-size: 15px; line-height: 1.5;
+  max-height: calc(100vh - 32px); overflow: auto;
+}
+nav.toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; }
+nav.toc li { counter-increment: toc; }
+nav.toc a {
+  display: grid; grid-template-columns: 26px 1fr; gap: 4px;
+  padding: 6px 10px; border-radius: 6px; text-decoration: none; color: var(--ink-2);
+  border-inline-start: 2px solid transparent;
+}
+nav.toc a::before { content: counter(toc); color: var(--muted); font-variant-numeric: tabular-nums; }
+nav.toc a:hover { background: var(--surface-2); color: var(--ink); }
+nav.toc a.active { color: var(--ink); border-inline-start-color: var(--accent); background: var(--surface); }
+nav.toc .toc-title { font-weight: 600; color: var(--ink); margin: 0 0 8px; padding-inline-start: 10px; }
+
+main { min-width: 0; max-width: 760px; }
+
+section.chapter { padding-top: 40px; }
+section.chapter + section.chapter { border-top: 1px solid var(--rule); margin-top: 40px; }
+.chapter-num { font-family: var(--font-head); color: var(--muted); font-size: 18px; margin: 0; }
+h2 {
+  font-family: var(--font-head); font-weight: 700;
+  font-size: clamp(28px, 3.6vw, 38px); line-height: 1.15; margin: 2px 0 14px;
+}
+h3 { font-size: 21px; line-height: 1.35; margin: 34px 0 8px; font-weight: 600; }
+h4 { font-size: 17px; margin: 22px 0 4px; font-weight: 600; }
+p { margin: 0 0 14px; }
+ul, ol { margin: 0 0 14px; padding-inline-start: 22px; }
+li { margin-bottom: 4px; }
+strong { font-weight: 600; }
+
+.slide {
+  display: inline-block; font-size: 13px; line-height: 1.4; white-space: nowrap;
+  padding: 1px 8px; border-radius: 999px; vertical-align: 2px;
+  border: 1px solid var(--rule-strong); color: var(--muted); background: var(--surface);
+  margin-inline-start: 6px; font-weight: 500;
+}
+h2 .slide, h3 .slide { vertical-align: 4px; }
+
+.def {
+  border-inline-start: 3px solid var(--accent);
+  padding: 4px 16px; margin: 14px 0 18px; background: var(--surface);
+  border-radius: 0 6px 6px 0;
+}
+[dir="rtl"] .def { border-radius: 6px 0 0 6px; }
+.def p:last-child { margin-bottom: 0; }
+
+.math-block { overflow-x: auto; overflow-y: hidden; padding: 4px 0; margin: 6px 0 14px; }
+.katex { direction: ltr; unicode-bidi: isolate; font-size: 1.05em; }
+.katex-display { margin: 0.4em 0; }
+.ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+.num { font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
+
+table.t {
+  border-collapse: collapse; width: 100%; margin: 10px 0 18px; font-size: 15.5px;
+  background: var(--surface); border-radius: 8px; overflow: hidden;
+}
+.table-wrap { overflow-x: auto; margin: 10px 0 18px; position: relative; }
+.table-wrap table.t { margin: 0; }
+table.t th, table.t td { padding: 8px 12px; text-align: start; border-bottom: 1px solid var(--rule); }
+table.t th { background: var(--surface-2); font-weight: 600; color: var(--ink); }
+table.t tr:last-child td { border-bottom: 0; }
+table.t td.n, table.t th.n { text-align: center; font-variant-numeric: tabular-nums; unicode-bidi: plaintext; }
+
+.note { color: var(--ink-2); font-size: 15.5px; }
+.callout {
+  background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius);
+  padding: 14px 18px; margin: 16px 0;
+}
+.callout > :last-child { margin-bottom: 0; }
+.callout .callout-h { font-weight: 600; margin-bottom: 4px; }
+.takeaway { font-family: var(--font-head); font-size: 22px; line-height: 1.45; margin: 22px 0; color: var(--ink); }
+
+/* ---------- extension blocks ---------- */
+details.ext {
+  border: 1px solid var(--ext-rule);
+  background: var(--ext-bg);
+  border-radius: var(--radius);
+  margin: 18px 0;
+}
+details.ext > summary {
+  list-style: none; cursor: pointer;
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px;
+  padding: 12px 16px; font-weight: 600; color: var(--ink);
+}
+details.ext > summary::-webkit-details-marker { display: none; }
+details.ext > summary::after {
+  content: "+"; margin-inline-start: auto; color: var(--ext); font-weight: 400; font-size: 22px; line-height: 1;
+}
+details.ext[open] > summary::after { content: "−"; }
+.ext-badge {
+  display: inline-block; font-size: 12.5px; font-weight: 600; line-height: 1.5;
+  color: #fff; background: var(--ext); padding: 1px 9px; border-radius: 999px;
+}
+:root[data-theme="dark"] .ext-badge { color: #15122b; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .ext-badge { color: #15122b; } }
+.ext-later { font-size: 13.5px; font-weight: 400; color: var(--ext); }
+details.ext .ext-body { padding: 2px 18px 16px; border-top: 1px dashed var(--ext-rule); }
+details.ext .ext-body > :first-child { margin-top: 12px; }
+details.ext .ext-body h4:first-child { margin-top: 12px; }
+
+/* ---------- reveal ---------- */
+details.reveal { margin: 8px 0 16px; }
+details.reveal > summary {
+  cursor: pointer; display: inline-block; font-size: 15px; font-weight: 600; color: var(--accent);
+  padding: 4px 12px; border: 1px solid var(--rule-strong); border-radius: 999px; background: var(--surface);
+}
+details.reveal > summary::-webkit-details-marker { display: none; }
+details.reveal[open] > summary { margin-bottom: 10px; }
+details.reveal .reveal-body { border-inline-start: 3px solid var(--rule-strong); padding: 2px 16px; }
+
+/* ---------- widgets ---------- */
+figure.lab {
+  margin: 22px 0; padding: 18px 18px 14px; background: var(--surface);
+  border: 1px solid var(--rule); border-radius: 14px;
+}
+.lab-title { font-weight: 600; margin: 0 0 2px; font-size: 16.5px; }
+.lab-hint { color: var(--muted); font-size: 14.5px; margin: 0 0 10px; }
+figure.lab svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: none; }
+figure.lab svg text { font-family: var(--font-body); }
+.lab-row { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin: 10px 0 0; font-size: 15px; }
+.lab-row label { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); }
+.btn {
+  font: inherit; font-size: 14.5px; font-weight: 500; cursor: pointer;
+  padding: 5px 14px; border-radius: 8px; border: 1px solid var(--rule-strong);
+  background: var(--surface); color: var(--ink);
+}
+.btn:hover { background: var(--surface-2); }
+.btn.primary { background: var(--accent); color: var(--surface); border-color: var(--accent); }
+.btn.primary:hover { filter: brightness(1.08); }
+.seg { display: inline-flex; border: 1px solid var(--rule-strong); border-radius: 8px; overflow: hidden; }
+.seg button { font: inherit; font-size: 14.5px; padding: 5px 12px; border: 0; background: var(--surface); color: var(--ink-2); cursor: pointer; }
+.seg button + button { border-inline-start: 1px solid var(--rule-strong); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--surface); }
+input[type="range"] { accent-color: var(--accent); width: 160px; }
+input[type="number"], textarea, select {
+  font: inherit; font-size: 15px; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--rule-strong); border-radius: 6px; padding: 4px 8px;
+}
+input[type="number"] { width: 72px; }
+textarea { width: 100%; min-height: 72px; direction: ltr; text-align: left; font-variant-numeric: tabular-nums; }
+
+.stats {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  gap: 8px; margin-top: 12px;
+}
+.stat {
+  border: 1px solid var(--rule); border-radius: 8px; padding: 6px 10px; background: var(--paper);
+}
+.stat .k { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.stat .v { font-size: 19px; font-weight: 600; font-variant-numeric: tabular-nums; direction: ltr; text-align: right; }
+.stat.ext-stat { border-color: var(--ext-rule); background: var(--ext-bg); }
+.swatch { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+.swatch.mean { background: var(--mean); }
+.swatch.median { background: repeating-linear-gradient(90deg, var(--median) 0 4px, transparent 4px 6px); }
+.swatch.mode { background: repeating-linear-gradient(90deg, var(--mode) 0 2px, transparent 2px 4px); }
+
+.twin { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.twin > div { min-width: 0; }
+.twin .tw-h { font-weight: 600; font-size: 15px; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.twin .tw-h .num { color: var(--ink-2); font-weight: 500; }
+
+.feedback { font-size: 15px; margin-top: 8px; min-height: 1.5em; }
+.feedback.ok { color: var(--good); }
+.feedback.no { color: var(--bad); }
+
+/* classifier */
+.classify { display: grid; gap: 10px; margin-top: 8px; }
+.cl-item { border: 1px solid var(--rule); border-radius: 10px; padding: 10px 12px; background: var(--paper); }
+.cl-item .cl-q { font-weight: 500; margin-bottom: 6px; }
+.cl-opts { display: flex; flex-wrap: wrap; gap: 6px; }
+.cl-opts button {
+  font: inherit; font-size: 14px; padding: 3px 12px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--rule-strong); background: var(--surface); color: var(--ink);
+}
+.cl-opts button.right { background: var(--good-bg); border-color: var(--good); color: var(--good); font-weight: 600; }
+.cl-opts button.wrong { background: var(--bad-bg); border-color: var(--bad); color: var(--bad); }
+.cl-why { font-size: 14.5px; color: var(--ink-2); margin-top: 6px; }
+
+/* quiz */
+.quiz-q { border: 1px solid var(--rule); background: var(--surface); border-radius: 12px; padding: 14px 16px; margin: 12px 0; }
+.quiz-q .qh { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; font-weight: 600; margin-bottom: 8px; }
+.quiz-q .qn { color: var(--muted); font-variant-numeric: tabular-nums; }
+.quiz-opts { display: grid; gap: 6px; }
+.quiz-opts button {
+  font: inherit; text-align: start; padding: 8px 12px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--rule); background: var(--paper); color: var(--ink);
+}
+.quiz-opts button:hover:not(:disabled) { border-color: var(--rule-strong); }
+.quiz-opts button.right { background: var(--good-bg); border-color: var(--good); }
+.quiz-opts button.wrong { background: var(--bad-bg); border-color: var(--bad); }
+.quiz-opts button:disabled { cursor: default; }
+.quiz-exp { margin-top: 10px; font-size: 15.5px; color: var(--ink-2); }
+.score { font-weight: 600; }
+
+/* kibbutz steps */
+.steps { counter-reset: st; }
+.step { border-inline-start: 2px solid var(--rule-strong); padding: 0 16px 6px; margin: 0 0 6px; position: relative; }
+.step-h { font-weight: 600; }
+
+/* tooltips */
+.tip {
+  position: fixed; z-index: 50; pointer-events: none; background: var(--ink); color: var(--paper);
+  font-size: 13.5px; padding: 4px 8px; border-radius: 6px; opacity: 0; transition: opacity .1s;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.tip.on { opacity: 1; }
+
+footer.foot { max-width: 1180px; margin: 0 auto; padding: 24px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--rule); }
+
+/* ---------- responsive ---------- */
+@media (max-width: 920px) {
+  .layout { grid-template-columns: 1fr; gap: 0; padding: 8px 16px 64px; }
+  nav.toc {
+    position: sticky; top: 0; z-index: 20; max-height: none; overflow-x: auto; overflow-y: hidden;
+    background: var(--paper); margin: 0 -16px; padding: 8px 16px; border-bottom: 1px solid var(--rule);
+  }
+  nav.toc .toc-title { display: none; }
+  nav.toc ol { display: flex; gap: 4px; white-space: nowrap; }
+  nav.toc a { display: inline-flex; gap: 6px; padding: 4px 10px; border-inline-start: 0; border-bottom: 2px solid transparent; border-radius: 6px 6px 0 0; }
+  nav.toc a.active { border-bottom-color: var(--accent); }
+  .masthead { padding: 32px 16px 4px; }
+  .hero-lab, .controls-bar { padding: 0 16px; }
+  html { scroll-padding-top: 60px; }
+}
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  .twin { grid-template-columns: 1fr; }
+  figure.lab { padding: 14px 12px 12px; margin-left: -4px; margin-right: -4px; }
+  table.t th, table.t td { padding: 6px 8px; }
+}
+@media print {
+  body { background: #fff; }
+  nav.toc, .controls-bar { display: none; }
+  .layout { display: block; }
+  details.ext { break-inside: avoid; }
+}
+
+figure.lab svg g .ring { opacity: 0; }
+figure.lab svg g:focus .ring { opacity: 1; }
+
+/* range sliders: min on the left, max on the right, like the number line */
+input[type="range"] { direction: ltr; }
+
+input[type="number"] { direction: ltr; text-align: right; }
+/* lecture 4 additions */
+.linkbtn { font: inherit; font-weight: 600; background: none; border: 0; padding: 0; color: var(--accent); cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
+table.grid-t td.hl, table.grid-t th.hl { background: var(--accent-soft); }
+table.t td.best { font-weight: 700; color: var(--good); background: var(--good-bg); }
+table.t td.sumc { font-weight: 600; color: var(--ink-2); }
+table.grid-t tr:last-child td { border-top: 1px solid var(--rule-strong); }
+.steps .step p:last-child { margin-bottom: 8px; }
+.lab-row input[type="number"] { width: 76px; }
+table.t td.n { direction: ltr; }
+.ctl-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin: 0 0 12px; }
+.ctl-group { border-inline-start: 3px solid var(--rule-strong); border-radius: 0; padding: 4px 12px 6px; background: var(--surface-2); }
+.ctl-h { margin: 0 0 4px; font-size: 13px; font-weight: 600; }
+
+/* lecture 5 additions */
+.classify .cl-item[data-done] .cl-opts button { cursor: default; }
+.ctl-group .seg { margin-top: 2px; }
+.lab-row label input[type="checkbox"] { accent-color: var(--accent); width: 16px; height: 16px; }
+.lab-row input:disabled { opacity: 0.45; }
+details.deep {
+  border: 1px solid var(--rule-strong);
+  border-inline-start: 4px solid var(--accent);
+  background: var(--surface);
+  border-radius: var(--radius);
+  margin: 18px 0;
+}
+details.deep > summary {
+  list-style: none; cursor: pointer;
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px;
+  padding: 12px 16px; font-weight: 600; color: var(--ink);
+}
+details.deep > summary::-webkit-details-marker { display: none; }
+details.deep > summary::after { content: "+"; margin-inline-start: auto; color: var(--accent); font-weight: 400; font-size: 22px; line-height: 1; }
+details.deep[open] > summary::after { content: "−"; }
+.deep-badge {
+  display: inline-block; font-size: 12.5px; font-weight: 600; line-height: 1.5;
+  color: #fff; background: var(--accent); padding: 1px 9px; border-radius: 999px;
+}
+:root[data-theme="dark"] .deep-badge { color: #0d1626; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .deep-badge { color: #0d1626; } }
+details.deep .deep-body { padding: 2px 18px 16px; border-top: 1px dashed var(--rule-strong); }
+details.deep .deep-body > :first-child { margin-top: 12px; }
+@media print { details.deep { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<header class="masthead">
+  <h1>רווח סמך לפרופורציה ולתוחלת<span class="h1-second">לא רק ניחוש, אלא גם כמה לסמוך עליו</span></h1>
+  <p class="lede">אומד נותן מספר אחד, ואומר מעט מאוד על הדיוק שלו. רווח סמך מוסיף את מה שחסר: טווח, ורמת ביטחון שאומרת בכמה מהמדגמים הרווח שנקבל יכיל את הפרמטר. בכל גרף אפשר להזיז מחוונים, לדגום מחדש ולראות מה משתנה.</p>
+</header>
+
+<div class="controls-bar">
+  <span class="legend-ext"><span class="ext-badge">הרחבה</span> חומר שמעבר לחומר ההרצאה. מקופל כברירת מחדל.</span>
+  <button class="btn" id="toggle-theme" type="button" aria-pressed="false">מצב כהה</button>
+  <button class="btn" id="toggle-ext-open" type="button">פתח את כל ההרחבות</button>
+</div>
+
+<div class="layout">
+  <nav class="toc" aria-label="תוכן המדריך">
+    <p class="toc-title">תוכן</p>
+    <ol>
+      <li><a href="#why">מאומדן לרווח</a></li>
+      <li><a href="#where">מאיפה בא ה-±</a></li>
+      <li><a href="#width">מה קובע את הרוחב</a></li>
+      <li><a href="#prop">רווח סמך לפרופורציה</a></li>
+      <li><a href="#mean">רווח סמך לתוחלת</a></li>
+      <li><a href="#samplesize">גודל מדגם מינימלי</a></li>
+      <li><a href="#practice">תרגילים</a></li>
+      <li><a href="#quiz">בדקו את עצמכם</a></li>
+      <li><a href="#pitfalls">מלכודות נפוצות</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+<!-- ============ 1 ============ -->
+<section class="chapter" id="why">
+  <p class="chapter-num">פרק 1</p>
+  <h2>מאומדן נקודתי לרווח</h2>
+  <p>בהרצאות הקודמות למדנו לאמוד פרמטר במספר אחד: \(\bar x\) לתוחלת, \(\hat p\) לפרופורציה. המספר הזה נקרא <strong>אומדן נקודתי</strong>, ויש לו בעיה מובנית: הוא כמעט אף פעם לא שווה בדיוק לפרמטר, והוא לא אומר כמה הוא רחוק ממנו.</p>
+  <p>נניח שבסקר יצא ש-29% מהסטודנטים עובדים במהלך הסמסטר. אם ה-29% הגיעו מ-20 סטודנטים, האחוז האמיתי יכול להיות בקלות 15% או 45%. אם הם הגיעו מ-2,000 סטודנטים, הוא כנראה בין 27% ל-31%. <strong>אותו אומדן, אמינות שונה לגמרי</strong>, והמספר עצמו לא מגלה את זה.</p>
+
+  <h3>מה רווח סמך מוסיף</h3>
+  <ul>
+    <li><strong>דיוק:</strong> במקום "29%", התשובה היא "בין 22.7% ל-35.3%, ברמת ביטחון של 95%". רוחב הרווח הוא מדד ישיר לכמה האומדן אמין.</li>
+    <li><strong>החלטות:</strong> אם יצרן טוען שהסוללה מחזיקה 15 שעות בממוצע, ורווח הסמך שלנו לתוחלת הוא 12.0 עד 14.8 שעות, יש לנו סיבה טובה לפקפק בטענה. מאומדן נקודתי של 13.4 לבד אי אפשר לדעת אם 15 "רחוק".</li>
+    <li><strong>תכנון:</strong> אפשר להחליט מראש כמה לדגום כדי לקבל רווח ברוחב שאנחנו צריכים (<a href="#samplesize">פרק 6</a>).</li>
+  </ul>
+
+  <h3>מה רווח סמך עושה</h3>
+  <p>לפני ההגדרה, כדאי לראות את הרעיון. בכלי הבא אנחנו יודעים את התוחלת האמיתית \(\mu\), ומעמידים פנים שלא. בכל לחיצה נדגם מדגם חדש, ומחשבים ממנו רווח סמך לפי הנוסחה של רווח הסמך, שנלמד בפרק 2.</p>
+
+  <figure class="lab" id="w-ladder">
+    <p class="lab-title">הפרמטר עומד, הרווחים זזים</p>
+    <p class="lab-hint">הקו האנכי הוא הפרמטר האמיתי \(\mu\). כל קו אופקי הוא רווח סמך ממדגם אחר. רווחים שמפספסים את \(\mu\) צבועים באדום. דגמו הרבה פעמים, ושימו לב שאחוז הפגיעה מתקרב לרמת הביטחון.</p>
+    <div data-w="ladder"></div>
+  </figure>
+
+  <p>מה רואים בכלי:</p>
+  <ul>
+    <li><strong>הפרמטר לא זז, הרווחים זזים.</strong> \(\mu\) הוא מספר קבוע. כל מדגם נותן ממוצע אחר, ולכן גם רווח אחר, שמרוכז סביב הממוצע של המדגם שלו.</li>
+    <li><strong>רוב הרווחים מכילים את \(\mu\), אבל לא כולם.</strong> ברמת ביטחון של 95%, בערך 1 מכל 20 רווחים מפספס. זה לא באג: זה מה שאומרים 95%.</li>
+    <li><strong>רמת הביטחון קובעת את האורך.</strong> העלו ל-99%: הרווחים מתארכים ומפספסים פחות. הורידו ל-80%: הם מתקצרים ומפספסים יותר.</li>
+  </ul>
+
+  <h3>ההגדרה</h3>
+  <p>במילים: <strong>רווח סמך ברמת ביטחון של 95%</strong> הוא קטע שמחשבים מהמדגם, כך שאם נחזור על הדגימה הרבה פעמים, <strong>ב-95% מהמדגמים</strong> הקטע שנקבל יכיל את הפרמטר. בדיוק מה שראינו בכלי. ובניסוח הפורמלי:</p>
+  <div class="def">
+    <p>נתון מדגם \(X_1,\dots,X_n\) מהתפלגות שידועה, למעט ערכו של הפרמטר \(\theta\). <strong>רווח סמך</strong> לפרמטר \(\theta\) ברמת ביטחון \(1-\alpha\) הוא קטע \([\hat\theta_1,\hat\theta_2]\) ששני קצותיו הם <strong>סטטיסטים</strong> (פונקציות של המדגם שאינן תלויות בפרמטר), כך ש:</p>
+    <div class="math-block">$$P\big(\hat\theta_1 \le \theta \le \hat\theta_2\big) = 1-\alpha$$</div>
+    <p>\(1-\alpha\) נקראת <strong>רמת הביטחון</strong>, ו-\(\alpha\) נקראת <strong>רמת המובהקות</strong>.</p>
+  </div>
+  <p>שימו לב מה מקרי בהגדרה: לא \(\theta\), שהוא מספר קבוע, אלא הקצוות \(\hat\theta_1\) ו-\(\hat\theta_2\). הם <strong>אומדים</strong>, בדיוק במובן של <a href="../03-unbiased-estimators/">הרצאה 3</a>: נוסחאות שמחכות למדגם. לפני שדגמנו, אנחנו לא יודעים איזה קטע ייצא, ולכן הקצוות הם משתנים מקריים. ההסתברות בהגדרה היא ההסתברות שהקטע <strong>שעוד ייצא</strong> יכיל את \(\theta\). אם נדגום שוב ושוב, זה אחוז המדגמים שבהם הקטע שנקבל יכיל את \(\theta\), בדיוק כמו המונה בכלי למעלה.</p>
+
+  <h3>דיוקים וחידודים בהגדרה</h3>
+  <p>אחרי שדגמנו וחישבנו, למשל \(12.0 \le \mu \le 14.8\), הניסוח המקובל הוא:</p>
+  <p class="takeaway">ברמת ביטחון של 95%, התוחלת נמצאת בין 12.0 ל-14.8.</p>
+  <p>בשיעור ובדיבור היומיומי אומרים גם "ההסתברות שהפרמטר נמצא בתוך הרווח היא 95%", או "אנחנו בטוחים ב-95% שהפרמטר ייפול ברווח". זה קיצור מקובל, וכדאי רק לדעת שהוא לא מדויק:</p>
+  <ul>
+    <li><strong>הסתברות מתאימה רק למשהו שעוד לא הוכרע.</strong> לפני שמטילים מטבע, ההסתברות לעץ היא 0.5. אחרי שהטלנו וכיסינו את המטבע ביד, הוא כבר עץ או פלי, גם אם עוד לא הצצנו. אותו דבר כאן: לפני הדגימה יש הסתברות של 95% שהרווח שייצא יכיל את \(\mu\). אחרי החישוב, 12.0 ו-14.8 הם מספרים, ו-\(\mu\) הוא מספר קבוע. <strong>או ש-\(\mu\) נמצא</strong> בין 12.0 ל-14.8, או שלא. זה כבר נקבע, רק שאנחנו לא יודעים מה התשובה.</li>
+    <li><strong>אז למה קוראים לזה "ביטחון"?</strong> כי אנחנו סומכים על הרווח בגלל הדרך שבה הוא נוצר: מכל המדגמים שיכולנו לקבל, ב-95% הרווח היה מכיל את \(\mu\). אין לנו דרך לדעת אם המדגם שלנו הוא אחד מה-95% או מה-5%. המילה "ביטחון" אומרת "סומכים על זה במידה הזו", בלי לטעון שיש לרווח הספציפי הסתברות.</li>
+    <li><strong>"הפרמטר ייפול":</strong> הפרמטר לא זז ולא נופל לשום מקום. מה שמשתנה ממדגם למדגם הוא הרווח, כמו בכלי למעלה.</li>
+  </ul>
+  <p>כשכותבים רווח סמך, באמצע נמצא <strong>הפרמטר</strong> ולא האומדן: \(12.0 \le \mu \le 14.8\), ולא \(12.0 \le \bar x \le 14.8\). האומדן תמיד נמצא באמצע הרווח שלו, כי בנינו את הרווח סביבו, ולכן הגרסה השנייה היא טענה ריקה. כל המטרה היא לומר משהו על הפרמטר הלא ידוע.</p>
+
+  <details class="deep" id="deep-single">
+    <summary><span class="deep-badge">העמקה</span> רווח לפרמטר מול טווח לתצפית בודדת</summary>
+    <div class="deep-body">
+      <p>רווח סמך לתוחלת הוא טווח ל-\(\mu\), הממוצע של כל האוכלוסייה. הוא לא טווח שבו נמצאות התצפיות, ולא אומר איפה תנחת תצפית בודדת.</p>
+      <ul>
+        <li><strong>הרווח לתוחלת</strong> נשען על \(\frac{\sigma}{\sqrt n}\), ולכן הוא מתכווץ לנקודה ככל שהמדגם גדל: אנחנו לומדים את הממוצע טוב יותר ויותר.</li>
+        <li><strong>הפיזור של תצפית בודדת</strong> הוא \(\sigma\), והוא לא קטן אף פעם, לא משנה כמה נדגום. גם אם נדע את \(\mu\) בדיוק, תצפית חדשה עדיין תתפזר סביבו.</li>
+      </ul>
+      <figure class="lab" id="w-pi">
+        <p class="lab-title">רווח לממוצע מול טווח לתצפית</p>
+        <p class="lab-hint">הנקודות הן מדגם מאוכלוסייה נורמלית. הפס הכחול הוא רווח סמך של 95% ל-\(\mu\), והפס הכתום הוא הטווח שבו נופלות כ-95% מהתצפיות הבודדות. הגדילו את \(n\): רק אחד מהם מתכווץ.</p>
+        <div data-w="pi"></div>
+      </figure>
+      <p><strong>דוגמה:</strong> מדדנו את זמן הסוללה של טלפון ב-10 ימים, וקיבלנו רווח סמך של 95% לתוחלת: 12.0 עד 14.8 שעות. האם ב-95% מהימים הסוללה תחזיק בין 12.0 ל-14.8 שעות? לא. הטווח שמתאים ליום בודד (בהמשך הקורס נלמד לחשב אותו, ברווח סמך לתצפית הבאה) יוצא כאן בערך 8.9 עד 17.9 שעות, רחב פי 3.3.</p>
+    </div>
+  </details>
+
+  <details class="ext" id="ext-83">
+    <summary><span class="ext-badge">הרחבה</span> כמה מהממוצעים העתידיים ייפלו בתוך הרווח שלנו?</summary>
+    <div class="ext-body">
+      <p>ניסוח שנשמע סביר: "95% מהממוצעים של מדגמים עתידיים ייפלו בתוך רווח הסמך שחישבנו". הוא שגוי.</p>
+      <p>הוא היה נכון לרווח \(\mu\pm1.96\cdot SE\), שממורכז על הפרמטר האמיתי. אבל את הרווח הזה אי אפשר לחשב, כי \(\mu\) לא ידוע. הרווח שחישבנו ממורכז על \(\bar x\) שלנו, שהוא בעצמו רועש: גם הממוצע שלנו וגם הממוצע העתידי סטו מ-\(\mu\), כל אחד לכיוון אחר. ההפרש בין שני ממוצעים בלתי תלויים מתפזר פי \(\sqrt2\) יותר מממוצע בודד, ולכן בממוצע רק בערך <strong>83%</strong> מהממוצעים העתידיים ייפלו בתוך רווח סמך של 95%.</p>
+      <p>המספר הזה לא תלוי בנתונים: לכל רווח של 95% הוא יוצא 83%, בלי קשר ל-\(\mu\), ל-\(\sigma\) או ל-\(n\). הוא כן תלוי ברמת הביטחון: 76% ברווח של 90%, ו-93% ברווח של 99%. והוא ממוצע, כי בפועל זה תלוי במזל של המדגם שלנו. אם \(\bar x\) יצא בדיוק על \(\mu\), ‏95% מהממוצעים העתידיים ייפלו בתוך הרווח. אם הוא יצא בקצה הרצועה (1.96 טעויות תקן מ-\(\mu\)), רק 50%.</p>
+    </div>
+  </details>
+  <h3>נכון או לא נכון?</h3>
+  <p>בכל אחד מהניסוחים הבאים, הניחו שחישבנו מתוך מדגם רווח סמך של 95% לתוחלת, ויצא \(12.0 \le \mu \le 14.8\). סמנו אם הניסוח נכון.</p>
+  <div data-w="tf"></div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section class="chapter" id="where">
+  <p class="chapter-num">פרק 2</p>
+  <h2>מאיפה בא "אומד ± מרווח"</h2>
+  <p>כמעט כל רווח בהרצאה בנוי באותה צורה:</p>
+  <div class="math-block">$$\hat\theta \;\pm\; Z_{1-\frac{\alpha}{2}}\cdot SE$$</div>
+  <p>לפני הנוסחה, ההיגיון.</p>
+
+  <h3>ההיגיון: מרחק הוא סימטרי</h3>
+  <p>את \(\mu\) אנחנו לא יודעים, אבל אנחנו יודעים איך \(\bar X\) מתנהג סביבו. <a href="../03-unbiased-estimators/#se">בהרצאה 3</a> ראינו שהוא מתפזר סביב \(\mu\) עם סטיית תקן \(SE=\sigma/\sqrt n\) (טעות התקן). אם הפיזור נורמלי, אז ב-95% מהמדגמים \(\bar X\) נוחת במרחק של לכל היותר \(1.96\cdot SE\) מ-\(\mu\).</p>
+  <p>עכשיו ההיפוך: אם \(\bar X\) קרוב ל-\(\mu\), אז גם \(\mu\) קרוב ל-\(\bar X\), באותו מרחק. "אני במרחק עשר דקות ממך" זה אותו משפט כמו "אתה במרחק עשר דקות ממני". לכן אם נמתח מ-\(\bar x\) את אותו מרחק לשני הכיוונים, נתפוס את \(\mu\) <strong>בכל מדגם שבו \(\bar X\) נחת קרוב</strong>, כלומר ב-95% מהמדגמים.</p>
+  <details class="deep">
+    <summary><span class="deep-badge">העמקה</span> למה דווקא 1.96?</summary>
+    <div class="deep-body">
+      <p>כי בכל התפלגות נורמלית, 95% מהשטח נמצא בטווח של 1.96 סטיות תקן מהמרכז, לכל כיוון. זה המספר שמוצאים בטבלה: \(\Phi(1.96)=0.975\), כלומר 2.5% בכל זנב. ההתפלגות כאן היא של \(\bar X\), המרכז שלה הוא \(\mu\), וסטיית התקן שלה היא \(SE\). לכן "1.96 סטיות תקן מהמרכז" הוא \(1.96\cdot SE\) מ-\(\mu\).</p>
+    </div>
+  </details>
+  <div class="callout"><p class="callout-h">חזרה לקשתים מהרצאה 3, עם מטרה שלא רואים</p>
+    <p><a href="../03-unbiased-estimators/#unbiased">בהרצאה 3</a> ראינו ארבעה קשתים: כל חץ הוא אומדן ממדגם אחר, ומרכז המטרה הוא הפרמטר. אומד חסר הטיה הוא קשת שהחיצים שלו מתרכזים סביב מרכז המטרה, וטעות התקן היא כמה הם מפוזרים סביבו.</p>
+    <p>עכשיו אותו קשת, חסר הטיה, אבל המטרה שקופה: לא רואים איפה המרכז. רואים רק חץ אחד, האומדן שלנו. מה שכן יודעים הוא איך הקשת יורה: 95% מהחצים שלו נוחתים עד 1.96 טעויות תקן מהמרכז. אז מציירים עיגול ברדיוס הזה סביב החץ. העיגול מכיל את מרכז המטרה, אלא אם החץ הזה היה אחד מ-5% החצים הרחוקים. העיגול הזה הוא רווח הסמך.</p>
+  </div>
+
+  <figure class="lab" id="w-sym">
+    <p class="lab-title">הרצועה סביב \(\mu\) והרווח סביב \(\bar x\)</p>
+    <p class="lab-hint">הפעמון הוא ההתפלגות של \(\bar X\), והרצועה הצבועה היא \(\mu \pm Z\cdot SE\). גררו את \(\bar x\) (או לחצו "דגום"). הרווח מתחת מכיל את \(\mu\) בדיוק כאשר \(\bar x\) נמצא בתוך הרצועה.</p>
+    <div data-w="sym"></div>
+  </figure>
+
+  <h3>אותו היגיון בנוסחאות: שלושה צעדים</h3>
+  <p>בצעדים 1 ו-2 כותבים בנוסחה "\(\bar X\) קרוב ל-\(\mu\) ב-95% מהמדגמים". בצעד 3 הופכים את זה ל-"\(\mu\) קרוב ל-\(\bar X\)", וזה רווח הסמך.</p>
+  <div class="steps">
+    <div class="step"><p class="step-h">צעד 1: סטטיסטי שההתפלגות שלו ידועה</p>
+      <p>אם \(\bar X\) מתפלג נורמלית, התקנון שלו מתפלג נורמלית סטנדרטית, בלי תלות ב-\(\mu\). \(Z\) הוא בעצם המרחק בין \(\bar X\) ל-\(\mu\), ביחידות של טעות תקן: \(Z=1\) פירושו ש-\(\bar X\) רחוק טעות תקן אחת מעל \(\mu\).</p>
+      <div class="math-block">$$Z = \frac{\bar X - \mu}{\sigma/\sqrt n} \sim N(0,1)$$</div></div>
+    <div class="step"><p class="step-h">צעד 2: קטע מרכזי שמכיל \(1-\alpha\)</p>
+      <p>חותכים \(\frac{\alpha}{2}\) מכל זנב. האחוזון שמשאיר \(\frac{\alpha}{2}\) בזנב הימני הוא \(Z_{1-\frac{\alpha}{2}}\):</p>
+      <div class="math-block">$$P\Big(-Z_{1-\frac{\alpha}{2}} \le \frac{\bar X - \mu}{\sigma/\sqrt n} \le Z_{1-\frac{\alpha}{2}}\Big) = 1-\alpha$$</div>
+      <p>במילים: הביטוי באמצע הוא המרחק בין \(\bar X\) ל-\(\mu\) בטעויות תקן. אי-השוויון אומר שהמרחק הזה, לכל כיוון, הוא לכל היותר \(Z_{1-\frac{\alpha}{2}}\) טעויות תקן (1.96 ברמה של 95%), כלומר ש-\(\bar X\) קרוב ל-\(\mu\). וההסתברות \(1-\alpha\) אומרת שזה קורה ב-95% מהמדגמים.</p></div>
+    <div class="step"><p class="step-h">צעד 3: מבודדים את \(\mu\)</p>
+      <p>כופלים ב-\(\sigma/\sqrt n\), מחסרים \(\bar X\) וכופלים ב-\((-1)\), מה שהופך את כיווני אי-השוויון:</p>
+      <div class="math-block">$$P\Big(\bar X - Z_{1-\frac{\alpha}{2}}\frac{\sigma}{\sqrt n} \le \mu \le \bar X + Z_{1-\frac{\alpha}{2}}\frac{\sigma}{\sqrt n}\Big) = 1-\alpha$$</div></div>
+  </div>
+  <p>למה ההסתברות לא השתנתה בצעד 3? כי לא שינינו את המאורע, רק את הניסוח שלו. המשפט "\(\bar X\) רחוק מ-\(\mu\) לכל היותר \(1.96\cdot SE\)" והמשפט "\(\mu\) רחוק מ-\(\bar X\) לכל היותר \(1.96\cdot SE\)" נכונים בדיוק באותם מדגמים, כי מרחק הוא אותו מרחק משני הצדדים. אותם מדגמים, אותה הסתברות.</p>
+
+  <h3>גודל צעד כפול מספר צעדים</h3>
+  <p>כדאי לקרוא את המרווח \(Z_{1-\frac{\alpha}{2}}\cdot SE\) כך:</p>
+  <ul>
+    <li><strong>\(SE\) הוא גודל הצעד:</strong> סטיית התקן של <strong>האומד</strong>, כמה הוא "מקפץ" ממדגם למדגם. בתוחלת זה \(\sigma/\sqrt n\), ולא \(\sigma\), שהיא הפיזור של תצפית בודדת.</li>
+    <li><strong>\(Z_{1-\frac{\alpha}{2}}\) הוא מספר הצעדים:</strong> כמה יחידות \(SE\) צריך ללכת לכל צד כדי לתפוס \(1-\alpha\) מההתפלגות של האומד. הוא לא חייב להיות שלם. בשקפים הוא נקרא <strong>ערך התקן</strong>, ובהמשך נקרא לו כך.</li>
+  </ul>
+  <div class="table-wrap"><table class="t">
+    <tr><th>רמת ביטחון \(1-\alpha\)</th><th class="n">\(\alpha\)</th><th class="n">\(1-\frac{\alpha}{2}\)</th><th class="n">\(Z_{1-\frac{\alpha}{2}}\)</th></tr>
+    <tr><td>90%</td><td class="n">0.10</td><td class="n">0.95</td><td class="n">1.645</td></tr>
+    <tr><td>95%</td><td class="n">0.05</td><td class="n">0.975</td><td class="n">1.96</td></tr>
+    <tr><td>98%</td><td class="n">0.02</td><td class="n">0.99</td><td class="n">2.33</td></tr>
+    <tr><td>99%</td><td class="n">0.01</td><td class="n">0.995</td><td class="n">2.58</td></tr>
+  </table></div>
+  <p>קיצור דרך למציאת \(1-\frac{\alpha}{2}\): זה הממוצע בין רמת הביטחון ל-100%. ל-95% זה 97.5%, ל-98% זה 99%.</p>
+
+  <h3 id="error">טעות האמידה</h3>
+  <p>המרווח \(Z_{1-\frac{\alpha}{2}}\cdot SE\) עונה גם על השאלה "בכמה האומדן שלנו טועה?". <strong>טעות האמידה</strong> היא הטעות בפועל: המרחק בין האומדן לפרמטר, \(|\hat\theta-\theta|\). היא משתנה ממדגם למדגם, ואת הערך שלה במדגם שלנו אי אפשר לדעת, כי \(\theta\) לא ידוע.</p>
+  <p>המרווח הוא <strong>טעות האמידה המקסימלית שאנחנו מבטיחים ברמת הביטחון</strong>: ב-95% מהמדגמים הטעות בפועל לא עוברת אותו, כמו 95% מהחצים שנוחתים במרחק הזה ממרכז המטרה. ב-5% הנותרים היא עוברת אותו, ואלה בדיוק המדגמים שבהם הרווח מפספס את הפרמטר. המרווח הוא חצי מאורך הרווח, ולכן בפרק הבא, כשנסמן את האורך ב-\(d\), טעות האמידה המקסימלית תהיה \(\frac{d}{2}\).</p>
+
+  <h3>התנאי: האומד צריך להתפלג נורמלית</h3>
+  <p>כל הבנייה נשענת על צעד 1: ש-\(\bar X\) (או \(\hat p\)) מתפלג נורמלית. בלי זה, אין סיבה ש-\(1.96\) יתפוס בדיוק 95%. יש שני מקורות לנורמליות הזו:</p>
+  <ul>
+    <li><strong>האוכלוסייה עצמה נורמלית.</strong> אז \(\bar X\) נורמלי בדיוק, בכל גודל מדגם.</li>
+    <li><strong>משפט הגבול המרכזי.</strong> במדגם גדול \(\bar X\) נורמלי בקירוב, כמעט לכל אוכלוסייה (<a href="../02-probability/#clt">הרצאה 2</a>). בקורס הכלל הוא \(n \ge 30\). בפרופורציה, הגרסה של המשפט היא הקירוב הנורמלי לבינומית, עם התנאים \(np\ge5\) ו-\(n(1-p)\ge5\).</li>
+  </ul>
+  <p>אם אף אחד מהשניים לא מתקיים, למשל מדגם של 8 תצפיות מאוכלוסייה שאין סיבה להניח שהיא נורמלית, הנוסחה לא מוצדקת. בפרק <a href="#mean">5</a> נראה מה קורה אז בפועל.</p>
+
+  <h3>תזכורת: משפט הגבול המרכזי VS חוק המספרים הגדולים</h3>
+  <p>שני המשפטים מדברים על \(\bar X\) כשהמדגם גדל, אבל עונים על שאלות שונות:</p>
+  <div class="table-wrap"><table class="t">
+    <tr><th></th><th>חוק המספרים הגדולים</th><th>משפט הגבול המרכזי</th></tr>
+    <tr><td><strong>מה הוא אומר</strong></td><td>\(\bar X\) מתקרב ל-\(\mu\)</td><td>הטעות \(\bar X-\mu\) מתפלגת בקירוב נורמלית, עם סטיית תקן \(\sigma/\sqrt n\)</td></tr>
+    <tr><td><strong>על איזו שאלה הוא עונה</strong></td><td>לאן האומד הולך</td><td>כמה הוא טועה, ובאיזו הסתברות</td></tr>
+    <tr><td><strong>מספיק לרווח סמך?</strong></td><td>לא: אין ממנו מספר שתופס בדיוק 95%</td><td>כן: ממנו מגיע \(Z_{1-\frac{\alpha}{2}}\)</td></tr>
+  </table></div>
+  <p>לחוק המספרים הגדולים יש בכל זאת תפקיד: הוא זה שמצדיק להציב \(S\) במקום \(\sigma\), או \(\hat p\) בתוך \(SE\), כשהמדגם גדול, כי \(S\) מתקרבת ל-\(\sigma\). את ההשוואה המלאה בין המשפטים אפשר למצוא <a href="../02-probability/#clt">בהרצאה 2</a>.</p>
+
+  <details class="ext">
+    <summary><span class="ext-badge">הרחבה</span> רווח סמך בלי משפט הגבול המרכזי: אי-שוויון צ'בישב</summary>
+    <div class="ext-body">
+      <p>אפשר לבנות רווח בלי שום הנחה על צורת ההתפלגות. אי-שוויון צ'בישב, הכלי שמוכיחים בו את חוק המספרים הגדולים, אומר שלכל התפלגות עם שונות סופית:</p>
+      <div class="math-block">$$P\Big(|\bar X-\mu| \ge k\cdot\frac{\sigma}{\sqrt n}\Big) \le \frac{1}{k^2}$$</div>
+      <p>כדי שההסתברות לפספס תהיה לכל היותר 5%, צריך \(1/k^2 = 0.05\), כלומר \(k=\sqrt{20}\approx 4.47\). הרווח \(\bar x \pm 4.47\cdot\frac{\sigma}{\sqrt n}\) מבטיח כיסוי של 95% <strong>לפחות</strong>, לכל התפלגות שהיא.</p>
+      <p>המחיר: הוא רחב פי 2.3 מהרווח עם 1.96. משפט הגבול המרכזי חוסך את זה, כי הוא אומר בדיוק איך הטעות מתפלגת, ולא רק חוסם אותה.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============ 3 ============ -->
+<section class="chapter" id="width">
+  <p class="chapter-num">פרק 3</p>
+  <h2>מה קובע את רוחב הרווח</h2>
+  <p>אורך הרווח, שמסמנים ב-\(d\), הוא פעמיים המרווח:</p>
+  <div class="math-block">$$d = 2\cdot Z_{1-\frac{\alpha}{2}}\cdot SE = 2\cdot Z_{1-\frac{\alpha}{2}}\cdot\frac{\sigma}{\sqrt n}$$</div>
+  <p>יש בנוסחה שלושה גורמים שמשפיעים על אורך רווח הסמך:</p>
+  <ul>
+    <li><strong>רמת הביטחון, דרך \(Z\).</strong> ביטחון גבוה יותר דורש יותר צעדים, ולכן רווח רחב יותר.</li>
+    <li><strong>הפיזור באוכלוסייה, \(\sigma\).</strong> אוכלוסייה מפוזרת יותר נותנת אומדים רועשים יותר. את זה אי אפשר לשנות.</li>
+    <li><strong>גודל המדגם, \(n\).</strong> מדגם גדול יותר נותן רווח צר יותר, אבל דרך \(\sqrt n\): כדי לחצות את הרוחב צריך פי 4 תצפיות.</li>
+  </ul>
+
+  <figure class="lab" id="w-width">
+    <p class="lab-title">שלושה כפתורים, רווח אחד</p>
+    <p class="lab-hint">הפס הכחול הוא הרווח עם הערכים שבחרתם. הפס האפור הוא נקודת ההתחלה להשוואה: \(n=25\), \(\sigma=10\) ורמת ביטחון של 95%. נסו ללחוץ על ×4 ליד \(n\).</p>
+    <div data-w="width"></div>
+  </figure>
+
+  <h3>אין ארוחות חינם</h3>
+  <p>בגודל מדגם קבוע יש פשרה בין דיוק לביטחון. רוצים 100% ביטחון? הרווח יהיה אינסופי, כי רק הוא מכיל את הפרמטר בוודאות. רוצים רווח ברוחב 0? רמת הביטחון תהיה 0%. הדרך היחידה לקבל גם רווח צר וגם ביטחון גבוה היא להגדיל את המדגם.</p>
+
+  <h3>הכיוון ההפוך: מהרווח לרמת הביטחון</h3>
+  <p>לפעמים נותנים רווח מוכן ושואלים באיזו רמת ביטחון הוא חושב. ההיגיון הוא אותו "גודל צעד כפול מספר צעדים", רק בכיוון ההפוך: אם יודעים את חצי הרוחב ואת גודל הצעד, יודעים כמה צעדים לקחו, ומהטבלה מקבלים את רמת הביטחון.</p>
+  <div class="callout"><p class="callout-h">דוגמה</p>
+    <p>זמן ההגעה לקמפוס, כלומר כמה דקות לוקח לסטודנט להגיע לאוניברסיטה, מתפלג עם \(\sigma=12\) דקות. חוקר דגם 64 סטודנטים ודיווח על הרווח \(35.53 \le \mu \le 40.47\). באיזו רמת ביטחון הוא עבד?</p>
+    <div class="steps">
+      <div class="step"><p class="step-h">הממוצע: מרכז הרווח</p>
+        <div class="math-block">$$\bar x=\frac{35.53+40.47}{2}=38$$</div>
+        <p>אם המרכז לא היה הממוצע של המדגם, היינו יודעים שהרווח לא חושב מהנתונים האלה.</p></div>
+      <div class="step"><p class="step-h">חצי הרוחב</p>
+        <div class="math-block">$$40.47-38=2.47$$</div></div>
+      <div class="step"><p class="step-h">גודל הצעד</p>
+        <div class="math-block">$$SE=\frac{12}{\sqrt{64}}=1.5$$</div></div>
+      <div class="step"><p class="step-h">מספר הצעדים, כלומר ערך התקן</p>
+        <div class="math-block">$$Z_{1-\frac{\alpha}{2}}=\frac{2.47}{1.5}\approx1.645$$</div></div>
+      <div class="step"><p class="step-h">מהטבלה לרמת הביטחון</p>
+        <div class="math-block">$$\Phi(1.645)=0.95 \;\Rightarrow\; 1-\tfrac{\alpha}{2}=0.95 \;\Rightarrow\; \alpha=0.10$$</div>
+        <p>החוקר עבד ברמת ביטחון של 90%.</p></div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============ 4 ============ -->
+<section class="chapter" id="prop">
+  <p class="chapter-num">פרק 4</p>
+  <h2>רווח סמך לפרופורציה</h2>
+  <p>הפרמטר הוא \(p\), שיעור ה"הצלחות" באוכלוסייה, והאומד הוא הפרופורציה המדגמית \(\hat p = x/n\). <a href="../03-unbiased-estimators/#prop">בהרצאה 3</a> ראינו ש-\(\hat p\) חסר הטיה, עם שונות \(\frac{p(1-p)}{n}\). מכאן הנוסחה:</p>
+  <div class="math-block">$$\hat p - Z_{1-\frac{\alpha}{2}}\cdot SE \;\le\; p \;\le\; \hat p + Z_{1-\frac{\alpha}{2}}\cdot SE, \qquad SE \approx \sqrt{\frac{\hat p(1-\hat p)}{n}}$$</div>
+  <p>למה \(\hat p\) בתוך \(SE\) ולא \(p\)? כי \(p\) לא ידוע, וזה בדיוק מה שאנחנו מחפשים. מציבים את האומדן במקומו, ולכן הסימן הוא \(\approx\). במדגם גדול ההצבה הזו כמעט לא משנה, כי \(\hat p\) קרוב ל-\(p\).</p>
+
+  <h3>התנאי: מתי מותר להשתמש בנוסחה של רווח הסמך</h3>
+  <p>מספר ההצלחות במדגם מתפלג בינומית. הנוסחה של רווח הסמך נשענת על כך שאפשר לקרב את הבינומית בנורמלית, ולכן התנאי הוא:</p>
+  <div class="math-block">$$np \ge 5 \qquad\text{וגם}\qquad n(1-p) \ge 5$$</div>
+  <p>בפועל בודקים עם \(\hat p\), כי \(p\) לא ידוע. שימו לב שבפרופורציה האוכלוסייה היא תמיד 0 או 1 לכל פרט, כלומר אף פעם לא נורמלית. ההצדקה היחידה לנוסחה היא הקירוב הנורמלי לבינומית.</p>
+
+  <figure class="lab" id="w-binom">
+    <p class="lab-title">בינומית מול הקירוב הנורמלי</p>
+    <p class="lab-hint">העמודות הן ההתפלגות של מספר ההצלחות, והעקומה היא הקירוב הנורמלי. השוו בין שני הכפתורים הראשונים: בשניהם \(np\) קרוב ל-5, אבל רק אחד מהם סימטרי.</p>
+    <div data-w="binom"></div>
+  </figure>
+
+  <p>מה כדאי לראות:</p>
+  <ul>
+    <li><strong>התנאי הוא כלל אצבע, לא חוק.</strong> שום דבר לא קורה ב-5 בדיוק. הקירוב משתפר בהדרגה ככל ש-\(np\) ו-\(n(1-p)\) גדלים. עמידה "בקושי" בתנאי אומרת שהקירוב בינוני.</li>
+    <li><strong>התנאי מגן בעיקר מפני חוסר סימטריה.</strong> כש-\(p\) קרוב ל-0.5, הבינומית סימטרית, והקירוב טוב כבר במדגם קטן. כש-\(p\) קרוב ל-0 או ל-1, ההתפלגות נדחסת לקצה ונמתחת לצד אחד, והקירוב הנורמלי, שהוא תמיד סימטרי, לא מתאים לה.</li>
+    <li><strong>זו גם התשובה לשאלה "למה כאן מותר במדגם קטן, ובתוחלת דורשים 30?"</strong> בבינומית עם \(p\) באזור 0.5 ההתפלגות כבר סימטרית. הכלל של 30 נועד לאוכלוסייה כלשהי, שאנחנו לא יודעים עליה כלום.</li>
+  </ul>
+
+  <p><strong>אם התנאי לא מתקיים</strong>, לא בונים רווח סמך לפי הנוסחה. מקרה כזה שייך כבר למבחני השערה, שנלמד בהמשך הקורס.</p>
+
+  <h3>דוגמה</h3>
+  <p>בסקר בקרב 200 סטודנטים, 58 ענו שהם עובדים במהלך הסמסטר. נבנה רווח סמך של 95% לשיעור הסטודנטים העובדים.</p>
+  <div class="steps">
+    <div class="step"><p class="step-h">האומדן</p><p>\(\hat p = 58/200 = 0.29\).</p></div>
+    <div class="step"><p class="step-h">בדיקת התנאי</p><p>\(n\hat p = 58 \ge 5\) ו-\(n(1-\hat p) = 142 \ge 5\). מותר.</p></div>
+    <div class="step"><p class="step-h">ערך התקן</p><p>\(1-\alpha=0.95\), ולכן \(Z_{0.975}=1.96\).</p></div>
+    <div class="step"><p class="step-h">טעות התקן</p><p>\(SE \approx \sqrt{\frac{0.29\cdot0.71}{200}} = 0.0321\).</p></div>
+    <div class="step"><p class="step-h">הרווח</p>
+      <div class="math-block">$$0.29 - 1.96\cdot0.0321 \le p \le 0.29 + 1.96\cdot0.0321 \;\Rightarrow\; 0.227 \le p \le 0.353$$</div></div>
+  </div>
+  <p>ברמת ביטחון של 95%, בין 22.7% ל-35.3% מהסטודנטים עובדים. שני שינויים, כל אחד בנפרד:</p>
+  <ul>
+    <li><strong>רמת ביטחון של 99%</strong> (\(Z=2.58\)): הרווח מתרחב ל-\(0.207 \le p \le 0.373\).</li>
+    <li><strong>מדגם של 800 עם אותה פרופורציה:</strong> \(SE\) קטן פי 2, והרווח מצטמצם לחצי, \(0.259 \le p \le 0.321\).</li>
+  </ul>
+
+  <h3 id="negative">כשהרווח יוצא מחוץ לטווח האפשרי</h3>
+  <p>לכל פרמטר יש טווח של ערכים שהגיוניים לו: פרופורציה היא בין 0 ל-1, ותוחלת של זמן, משקל או מספר תקלות לא יכולה להיות שלילית. הנוסחה לא יודעת את זה. היא פשוט הולכת אותו מרחק לשני הצדדים של האומדן, ולכן כשהאומדן קרוב לקצה הטווח, הרווח יכול לחרוג ממנו, גם כשהתנאי מתקיים.</p>
+  <p>דוגמה: בבדיקה של 100 מוצרים נמצאו 5 פגומים. \(n\hat p=5\) ו-\(n(1-\hat p)=95\), כלומר התנאי מתקיים. ברווח של 99%:</p>
+  <div class="math-block">$$0.05 \pm 2.58\cdot\sqrt{\frac{0.05\cdot0.95}{100}} = 0.05\pm0.056 \;\Rightarrow\; -0.006\le p\le0.106$$</div>
+  <p>המתמטיקה לא טועה, אבל ההיגיון של הבעיה לא מאפשר שיעור שלילי. לכן מחילים את ההיגיון של הבעיה על התוצאה וחותכים את החלק שמחוץ לטווח: \(0\le p\le0.106\).</p>
+  <p>אותו דבר קורה בקצה השני. אם 195 מתוך 200 מוצרים תקינים, \(\hat p=0.975\), והרווח של 99% לשיעור התקינים יוצא \(0.947\le p\le1.003\). שיעור לא יכול לעלות על 1, ולכן חותכים: \(0.947\le p\le1\). הכלל זהה גם בתוחלת (<a href="#mean-range">פרק 5</a>): כל חלק של הרווח שנופל מחוץ לטווח האפשרי של הפרמטר נחתך.</p>
+
+  <div class="callout"><p class="callout-h">על מי הרווח מדבר?</p>
+    <p>דוגמה: דגמנו 100 זריקות עונשין בליגה, ו-85 נכנסו. הרווח \(0.78\le p\le0.92\) הוא על \(p\), אחוז הקליעה <strong>הכללי</strong> של כל הזריקות בליגה. הוא <strong>לא</strong> אומר ש-95% מהשחקנים קולעים בין 78% ל-92%. יש שחקנים שקולעים 60% ויש שקולעים 95%.</p>
+    <p>הדרך הכי קלה לראות את זה: אם נדגום 10,000 זריקות ונקבל אותה פרופורציה, הרווח יתכווץ ל-\(0.843\le p\le0.857\). ברור שלא 95% מהשחקנים נמצאים בטווח הזה. הרווח מתכווץ ככל שהמדגם גדל, כי אנחנו לומדים את הממוצע הכללי טוב יותר. הפיזור בין השחקנים לא מתכווץ אף פעם. ראו גם את <a href="#deep-single">ההעמקה בפרק 1</a>.</p>
+  </div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section class="chapter" id="mean">
+  <p class="chapter-num">פרק 5</p>
+  <h2>רווח סמך לתוחלת</h2>
+  <p>הצורה זהה: \(\bar x\) פלוס מינוס מספר צעדים כפול גודל צעד. מה שמשתנה בין המקרים הוא אם \(\sigma\) ידועה, ומאיפה מגיעה הנורמליות.</p>
+
+  <div class="table-wrap"><table class="t">
+    <tr><th></th><th>מדגם גדול (\(n\ge30\))</th><th>מדגם קטן (\(n&lt;30\))</th></tr>
+    <tr><td><strong>\(\sigma\) ידועה</strong></td>
+      <td>לפי משפט הגבול המרכזי \(\bar X\) נורמלי.<br>\(\bar x \pm Z_{1-\frac{\alpha}{2}}\cdot\frac{\sigma}{\sqrt n}\)</td>
+      <td>מניחים שהאוכלוסייה נורמלית.<br>\(\bar x \pm Z_{1-\frac{\alpha}{2}}\cdot\frac{\sigma}{\sqrt n}\)</td></tr>
+    <tr><td><strong>\(\sigma\) לא ידועה</strong></td>
+      <td>לפי משפט הגבול המרכזי \(\bar X\) נורמלי.<br>\(\bar x \pm t^{(n-1)}_{1-\frac{\alpha}{2}}\cdot\frac{S}{\sqrt n}\)</td>
+      <td>מניחים שהאוכלוסייה נורמלית.<br>\(\bar x \pm t^{(n-1)}_{1-\frac{\alpha}{2}}\cdot\frac{S}{\sqrt n}\)</td></tr>
+  </table></div>
+  <p><strong>הכלל בקורס:</strong> כש-\(\sigma\) לא ידועה – משתמשים ב-\(S\) ובהתפלגות \(t\) עם \(n-1\) דרגות חופש, <strong>בכל גודל מדגם</strong>. במדגם גדול \(t\) ו-\(Z\) כמעט זהים, אז זה לא משנה הרבה, אבל בבחינה כותבים \(t\).</p>
+
+  <h3>שלוש דוגמאות</h3>
+  <p>זמן ההגעה לקמפוס: כמה דקות לוקח לסטודנט להגיע לאוניברסיטה. נבנה רווח של 95% לתוחלת בשלושה מצבים שונים:</p>
+  <div class="table-wrap"><table class="t">
+    <tr><th>מצב</th><th class="n">\(n\)</th><th class="n">\(\bar x\)</th><th class="n">פיזור</th><th class="n">ערך מהטבלה</th><th class="n">\(SE\)</th><th class="n">רווח של 95%</th></tr>
+    <tr><td>\(\sigma\) ידועה</td><td class="n">64</td><td class="n">38</td><td class="n">\(\sigma=12\)</td><td class="n">\(Z_{0.975}=1.96\)</td><td class="n">1.5</td><td class="n">\(35.06\le\mu\le40.94\)</td></tr>
+    <tr><td>\(\sigma\) לא ידועה, מדגם גדול</td><td class="n">50</td><td class="n">38</td><td class="n">\(S=11\)</td><td class="n">\(t^{(49)}_{0.975}=2.010\)</td><td class="n">1.556</td><td class="n">\(34.87\le\mu\le41.13\)</td></tr>
+    <tr><td>\(\sigma\) לא ידועה, מדגם קטן</td><td class="n">8</td><td class="n">39</td><td class="n">\(S=8.45\)</td><td class="n">\(t^{(7)}_{0.975}=2.365\)</td><td class="n">2.99</td><td class="n">\(31.93\le\mu\le46.07\)</td></tr>
+  </table></div>
+  <ul>
+    <li><strong>המדגם הקטן</strong> הוא 31, 45, 28, 52, 40, 36, 47, 33 (\(S^2=71.43\)). כדי להשתמש בנוסחה <strong>חייבים להניח</strong> שזמני ההגעה מתפלגים נורמלית. הרווח רחב מאוד: 8 תצפיות לא מלמדות הרבה.</li>
+    <li><strong>במדגם הגדול עם \(S\)</strong>, עם 1.96 במקום 2.010 היה יוצא \(34.95\) עד \(41.05\): הבדל זניח.</li>
+  </ul>
+
+  <p id="mean-range"><strong>גם רווח לתוחלת יכול לצאת מחוץ לטווח האפשרי.</strong> למשל, זמן ההמתנה למעלית: ב-40 מדידות הממוצע היה 1.2 דקות, עם \(S=4.1\) (רוב הזמן אין המתנה בכלל, ולפעמים יש המתנה ארוכה). עם \(t^{(39)}_{0.975}=2.023\) ו-\(SE=0.648\), הרווח של 95% יוצא \(-0.11\le\mu\le2.51\). תוחלת של זמן לא יכולה להיות שלילית, ולכן, כמו בפרופורציה (<a href="#negative">פרק 4</a>), חותכים: \(0\le\mu\le2.51\).</p>
+
+  <h3>למה \(t\), ולמה הוא רחב יותר</h3>
+  <p>כשמציבים \(S\) במקום \(\sigma\), נכנס עוד מקור של מקריות: \(S\) עצמה משתנה ממדגם למדגם. לפעמים היא יוצאת קטנה מ-\(\sigma\), ואז רווח שמבוסס עליה צר מדי ומפספס. כדי שבממוצע, על פני כל המדגמים, עדיין נפספס רק 5%, צריך לקחת מהטבלה ערך גדול יותר מ-1.96. לכן להתפלגות \(t\) יש זנבות עבים יותר משל הנורמלית.</p>
+  <ul>
+    <li><strong>דרגות החופש</strong> הן \(n-1\), כמו במכנה של \(S^2\).</li>
+    <li><strong>ככל ש-\(n\) גדל</strong>, \(S\) מתייצבת סביב \(\sigma\), ו-\(t\) מתקרבת ל-\(Z\). ברמת ביטחון של 95%, ערך ה-\(t\) ב-\(n=10\) הוא 2.262, ב-\(n=30\) הוא 2.045, וב-\(n=100\) כבר 1.984, לעומת \(Z_{0.975}=1.96\) באותה רמה.</li>
+    <li><strong>ערך ה-\(t\) תמיד גדול מ-\(Z\), אבל הרווח לא תמיד רחב יותר.</strong> במדגם שבו \(S\) יצאה קטנה מ-\(\sigma\), הרווח עם \(t\) יכול לצאת צר יותר מרווח עם \(Z\) ו-\(\sigma\) האמיתית.</li>
+  </ul>
+
+  <figure class="lab" id="w-tz">
+    <p class="lab-title">\(t\) מול \(Z\)</p>
+    <p class="lab-hint">העקומה הכחולה היא \(t\) עם מספר דרגות החופש שבחרתם, והמקווקו היא הנורמלית הסטנדרטית. האזור הצבוע הוא 2.5% בכל זנב. ככל שיש פחות דרגות חופש, צריך ללכת רחוק יותר כדי להשאיר 2.5% בחוץ.</p>
+    <div data-w="tz"></div>
+  </figure>
+
+  <h3>מה הנורמליות קובעת</h3>
+  <p>שני דברים נפרדים קורים כאן, וכדאי לא לערבב ביניהם:</p>
+  <ul>
+    <li><strong>נורמליות</strong> קובעת אם הנוסחה עובדת בכלל, כלומר אם הכיסוי האמיתי שווה לרמת הביטחון שכתבנו.</li>
+    <li><strong>\(t\) מול \(Z\)</strong> קובע כמה להרחיב את הרווח כי אמדנו את \(\sigma\). התיקון הזה מדויק רק כשהאוכלוסייה נורמלית.</li>
+  </ul>
+
+  <figure class="lab" id="w-cover">
+    <p class="lab-title">מכונת הכיסוי</p>
+    <p class="lab-hint">כמו בפרק 1, אבל עכשיו \(\sigma\) לא ידועה ואפשר לבחור את צורת האוכלוסייה. בחרו אוכלוסייה מוטה ומדגם קטן, והחליפו בין \(t\) ל-\(Z\). שימו לב גם לצד שבו קורים הפספוסים.</p>
+    <div data-w="cover"></div>
+  </figure>
+
+  <p>אותו ניסוי, עם 200,000 מדגמים לכל שורה (רווח של 95%, \(\sigma\) לא ידועה):</p>
+  <div class="table-wrap"><table class="t">
+    <tr><th>אוכלוסייה</th><th class="n">\(n\)</th><th class="n">כיסוי עם \(t\)</th><th class="n">כיסוי עם \(Z\)</th><th class="n">עם \(t\): הרווח כולו מתחת ל-\(\mu\)</th><th class="n">עם \(t\): הרווח כולו מעל \(\mu\)</th></tr>
+    <tr><td>נורמלית</td><td class="n">10</td><td class="n">95.0%</td><td class="n">91.8%</td><td class="n">2.4%</td><td class="n">2.5%</td></tr>
+    <tr><td>נורמלית</td><td class="n">30</td><td class="n">95.0%</td><td class="n">94.0%</td><td class="n">2.5%</td><td class="n">2.5%</td></tr>
+    <tr><td>מוטה (מעריכית)</td><td class="n">10</td><td class="n">90.1%</td><td class="n">87.0%</td><td class="n">9.5%</td><td class="n">0.4%</td></tr>
+    <tr><td>מוטה (מעריכית)</td><td class="n">30</td><td class="n">92.6%</td><td class="n">91.7%</td><td class="n">6.6%</td><td class="n">0.7%</td></tr>
+    <tr><td>מוטה (מעריכית)</td><td class="n">100</td><td class="n">94.2%</td><td class="n">93.9%</td><td class="n">4.5%</td><td class="n">1.3%</td></tr>
+  </table></div>
+  <ul>
+    <li><strong>באוכלוסייה נורמלית</strong> \(t\) נותן בדיוק 95% בכל גודל מדגם, ו-\(Z\) צר מדי במדגם קטן. כאן ההבחנה בין \(t\) ל-\(Z\) היא כל הסיפור.</li>
+    <li><strong>באוכלוסייה מוטה ובמדגם קטן</strong> גם \(t\) לא עומד בהבטחה: 90% במקום 95%. \(t\) עדיף על \(Z\), אבל שניהם שגויים, כי הבעיה היא לא הפיצוי על \(S\) אלא ש-\(\bar X\) עצמו עדיין לא נורמלי.</li>
+    <li><strong>הפספוסים לא סימטריים.</strong> הרווח סימטרי סביב \(\bar x\), אבל ההתפלגות מוטה, ולכן כמעט כל הפספוסים מצד אחד.</li>
+    <li><strong>\(n\ge30\) הוא כלל אצבע, לא משפט.</strong> באוכלוסייה מוטה מאוד, גם ב-\(n=30\) הכיסוי רק 92.6%.</li>
+  </ul>
+
+  <details class="ext">
+    <summary><span class="ext-badge">הרחבה</span> כשאין נורמליות ואין מדגם גדול: bootstrap</summary>
+    <div class="ext-body">
+      <p>כדי לבנות רווח סמך צריך לדעת איך האומד מתפזר ממדגם למדגם. עד עכשיו קיבלנו את זה מתיאוריה. כשהתיאוריה לא חלה, למשל במדגם קטן מאוכלוסייה מוטה, או באומד כמו חציון שאין לו נוסחה פשוטה, יש שיטה אחרת.</p>
+      <p><strong>הרעיון:</strong> המדגם הוא התמונה הכי טובה שיש לנו של האוכלוסייה, אז משתמשים בו כתחליף לה:</p>
+      <ol>
+        <li>מגרילים מהמדגם עצמו \(n\) תצפיות <strong>עם החזרה</strong>. בלי החזרה היינו מקבלים את אותו מדגם בדיוק.</li>
+        <li>מחשבים את האומד על המדגם החדש.</li>
+        <li>חוזרים על זה אלפי פעמים, במחשב.</li>
+        <li>הפיזור של אלפי האומדים מחקה את הפיזור האמיתי של האומד. רווח של 95% הוא האחוזון ה-2.5 והאחוזון ה-97.5 שלהם.</li>
+      </ol>
+      <p>היתרון: לא צריך להניח נורמליות, וזה עובד כמעט לכל אומד. המגבלה: הכל נשען על כך שהמדגם מייצג את האוכלוסייה. במדגם קטן מאוד או מוטה, bootstrap רק משכפל את הבעיה.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============ 6 ============ -->
+<section class="chapter" id="samplesize">
+  <p class="chapter-num">פרק 6</p>
+  <h2>גודל מדגם מינימלי</h2>
+  <p>לפני שעורכים סקר או ניסוי, רוצים לדעת כמה לדגום כדי שאורך הרווח לא יעלה על \(d\). בשני המקרים, פרופורציה ותוחלת, הדרך זהה: מתחילים מהנוסחה לאורך הרווח ומבודדים את \(n\).</p>
+  <p>לפעמים הדרישה מנוסחת דרך טעות האמידה ולא דרך האורך, למשל "טעות אמידה של לכל היותר 0.03". הכוונה היא לטעות האמידה המקסימלית (<a href="#error">פרק 2</a>), שהיא חצי האורך: \(\frac{d}{2}\le0.03\), כלומר רווח באורך 0.06 לכל היותר.</p>
+
+  <h3>פרופורציה</h3>
+  <div class="math-block">$$d = 2\cdot Z_{1-\frac{\alpha}{2}}\sqrt{\frac{\hat p(1-\hat p)}{n}} \quad\Longrightarrow\quad n = \frac{4\,Z_{1-\frac{\alpha}{2}}^2\,\hat p(1-\hat p)}{d^2}$$</div>
+
+  <h4>הבעיה: את \(\hat p\) עוד לא יודעים</h4>
+  <p>את גודל המדגם בוחרים <strong>לפני</strong> הדגימה, אבל הנוסחה תלויה ב-\(\hat p\), שייצא רק מהמדגם. איך מבטיחים מראש שהרווח לא יעלה על \(d\)?</p>
+  <p>שואלים: <strong>מה הרווח הכי ארוך שיכול לצאת</strong> עם \(n\) מסוים? ודורשים שגם הוא יהיה לכל היותר \(d\). כלומר, במקום לנחש איזה \(\hat p\) ייצא, מתכוננים לגרוע מכולם: לוקחים את ה-\(\hat p\) שנותן את הרווח הארוך ביותר, ובוחרים \(n\) כך שאפילו הרווח הזה לא יעלה על \(d\). כל \(\hat p\) אחר ייתן רווח קצר יותר, ולכן הדרישה תתקיים בכל מקרה.</p>
+  <p>הביטוי \(\hat p(1-\hat p)\) מקבל את הערך הגדול ביותר, 0.25, כש-\(\hat p=0.5\). מציבים 0.25, ומקבלים:</p>
+  <div class="math-block">$$n \ge \left(\frac{Z_{1-\frac{\alpha}{2}}}{d}\right)^2$$</div>
+  <p>אם המדגם עומד בדרישה גם ברווח הארוך ביותר שיכול לצאת, הוא עומד בה לכל \(\hat p\) שייצא. כש-\(\hat p\) יוצא 0.5 הרוחב יהיה בדיוק \(d\), ובכל ערך אחר הוא יהיה צר יותר. כמו גשר: מתכננים אותו לפי המשאית הכבדה ביותר שעלולה לעבור עליו, לא לפי משאית ממוצעת.</p>
+
+  <figure class="lab" id="w-plan">
+    <p class="lab-title">הרווח הארוך ביותר שיכול לצאת</p>
+    <p class="lab-hint">העקומה היא \(\hat p(1-\hat p)\). בלי מידע מוקדם, המקרה הגרוע הוא השיא ב-0.5. אם ידוע ש-\(p\) לא עולה על ערך מסוים, הזיזו את החסם וראו איך המקרה הגרוע, וגודל המדגם, יורדים.</p>
+    <div data-w="plan"></div>
+  </figure>
+
+  <h4>דוגמה</h4>
+  <p>רוצים רווח סמך של 95% לשיעור הסטודנטים שמשתמשים ברכבת, שאורכו לא יעלה על 0.06.</p>
+  <div class="math-block">$$n \ge \left(\frac{1.96}{0.06}\right)^2 = 1067.1 \quad\Rightarrow\quad n = 1068$$</div>
+  <ul>
+    <li><strong>תמיד מעגלים כלפי מעלה.</strong> 1067 סטודנטים לא מספיקים כדי לעמוד בדרישה.</li>
+    <li><strong>אורך מול טעות אמידה.</strong> "טעות אמידה של לכל היותר 0.03" היא אותה דרישה בדיוק, כמו שראינו בפתיחת הפרק. צריך לשים לב בכל שאלה אם נתון \(d\) או \(\frac d2\).</li>
+    <li><strong>מידע מוקדם.</strong> אם ידוע מסקרים קודמים ש-\(p\le0.2\), אז בתחום \([0,\,0.2]\) הביטוי \(p(1-p)\) עולה ככל ש-\(p\) עולה, והמקרה הגרוע הוא \(p=0.2\), כלומר \(0.16\) במקום \(0.25\):
+      <div class="math-block">$$n \ge \frac{4\cdot1.96^2\cdot0.16}{0.06^2} = 682.95 \quad\Rightarrow\quad n=683$$</div>
+      חסכנו כמעט 400 סטודנטים, רק בזכות ידיעה שהשיעור לא גבוה.</li>
+  </ul>
+
+  <details class="ext">
+    <summary><span class="ext-badge">הרחבה</span> תכנון נכון לא מבטיח נוסחה תקפה: כש-\(p\) קטן</summary>
+    <div class="ext-body">
+      <p>חישוב גודל המדגם מבטיח את <strong>אורך</strong> הרווח. הוא לא מבטיח שהקירוב הנורמלי יעבוד. כשמצפים ל-\(p\) קטן, \(np\) יוצא קטן מלכתחילה.</p>
+      <p>למשל, תכננו מדגם של 150 מוצרים ומצאנו 2 פגומים: \(n\hat p=2\), והתנאי לא מתקיים. גודל המדגם הבטיח רווח קצר מספיק, אבל את הנוסחה עצמה אסור להפעיל כאן.</p>
+      <p>ומה לגבי החיתוך ב-0 (<a href="#negative">פרק 4</a>)? הוא מתקן את הגבול התחתון, אבל לא את העליון. כש-\(p\) קרוב ל-0, הבינומית מוטה ימינה, ולכן הרווח האמיתי צריך להיות לא סימטרי: צמוד ל-0 מלמטה, ומתוח יותר למעלה. קיים רווח מדויק לבינומית (Clopper–Pearson) שלא נשען על קירוב. עבור 5 פגומים מתוך 100, ברמת ביטחון של 99%, הוא יוצא \(0.011\le p\le0.135\), לעומת \(0\le p\le0.106\) אחרי החיתוך. הנוסחה "אומד ±" כופה סימטריה, ולכן מקצרת מדי את הצד העליון.</p>
+    </div>
+  </details>
+
+  <h3>תוחלת</h3>
+  <p>אותו רעיון, רק שכאן \(SE=\sigma/\sqrt n\), ואין רווח "הכי ארוך" לחפש, כי \(SE\) תלוי ב-\(\sigma\) ולא באומדן שעוד לא ידוע. אם \(\sigma\) ידועה, מציבים אותה. אם לא, אומדים אותה מראש בסטיית התקן המדגמית \(S\), למשל ממדגם מקדים קטן, ומציבים את \(S\) במקומה.</p>
+  <div class="math-block">$$d = 2\cdot Z_{1-\frac{\alpha}{2}}\cdot\frac{\sigma}{\sqrt n} \quad\Longrightarrow\quad n \ge \left(\frac{2\cdot Z_{1-\frac{\alpha}{2}}\cdot\sigma}{d}\right)^2$$</div>
+  <p><strong>דוגמה:</strong> זמן ההגעה לקמפוס (כמה דקות לוקח לסטודנט להגיע לאוניברסיטה), \(\sigma=12\). כמה סטודנטים צריך לדגום כדי שרווח של 95% יהיה באורך 4 דקות לכל היותר?</p>
+  <div class="math-block">$$n \ge \left(\frac{2\cdot1.96\cdot12}{4}\right)^2 = 138.3 \quad\Rightarrow\quad n=139$$</div>
+  <ul>
+    <li><strong>פקטור 2 בדרישה הוא פקטור 4 ב-\(n\).</strong> אורך של 2 דקות במקום 4 ידרוש 554 סטודנטים, פי 4 בערך.</li>
+    <li><strong>טעות אמידה של 2 דקות</strong> היא אותה דרישה כמו אורך של 4.</li>
+  </ul>
+
+  <details class="ext">
+    <summary><span class="ext-badge">הרחבה</span> הבעיה המעגלית של \(t\)</summary>
+    <div class="ext-body">
+      <p>הנוסחה משתמשת ב-\(Z\). אבל אם \(\sigma\) לא ידועה, הרווח שנבנה בפועל יהיה עם \(t^{(n-1)}\), וערך ה-\(t\) תלוי ב-\(n\), שהוא בדיוק מה שאנחנו מחפשים. בעיה מעגלית.</p>
+      <p>במדגם גדול זה לא משנה, כי \(t\approx Z\). במדגם קטן, הנוסחה עם \(Z\) אופטימית מדי. דוגמה: \(S=1.91\), ורוצים רווח של 95% באורך 2 לכל היותר. הנוסחה עם \(Z\) נותנת \(n=15\). אבל עם \(t^{(14)}_{0.975}=2.145\) הרווח ב-\(n=15\) יוצא באורך 2.12, יותר מ-2. בדיקה של כל \(n\) בתורו מראה שצריך \(n=17\).</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============ 7 ============ -->
+<section class="chapter" id="practice">
+  <p class="chapter-num">פרק 7</p>
+  <h2>תרגילים פתורים</h2>
+  <p>נסו לפתור כל סעיף לבד לפני שאתם פותחים את הפתרון.</p>
+
+  <h3>תרגיל 1: זמן סוללה</h3>
+  <p>מדדו את זמן הסוללה (בשעות) של טלפון חדש ב-10 ימים אקראיים:</p>
+  <p class="num" style="display:block;text-align:center">14.2, 11.8, 16.5, 13.1, 12.4, 15.0, 9.6, 13.8, 14.7, 12.9</p>
+  <p>הניחו שזמן הסוללה מתפלג נורמלית.</p>
+
+  <p><strong>א.</strong> בנו רווח סמך של 95% לתוחלת זמן הסוללה.</p>
+  <details class="reveal"><summary>פתרון</summary><div class="reveal-body">
+    <p>\(\sigma\) לא ידועה והמדגם קטן, ולכן \(t\) עם 9 דרגות חופש, בהנחה שהאוכלוסייה נורמלית.</p>
+    <ul>
+      <li>\(\sum x_i=134\), ולכן \(\bar x=13.4\).</li>
+      <li>\(\sum x_i^2=1828.6\), ולכן \(S^2=\frac{1828.6-10\cdot13.4^2}{9}=3.667\) ו-\(S=1.915\).</li>
+      <li>\(SE=\frac{1.915}{\sqrt{10}}=0.6055\), ו-\(t^{(9)}_{0.975}=2.262\).</li>
+    </ul>
+    <div class="math-block">$$13.4-2.262\cdot0.6055 \le \mu \le 13.4+2.262\cdot0.6055 \;\Rightarrow\; 12.03\le\mu\le14.77$$</div>
+  </div></details>
+
+  <p><strong>ב.</strong> חשבו את הרווח גם ברמות ביטחון של 90% ושל 99%.</p>
+  <details class="reveal"><summary>פתרון</summary><div class="reveal-body">
+    <div class="table-wrap"><table class="t">
+      <tr><th>רמת ביטחון</th><th class="n">\(t^{(9)}\)</th><th class="n">חצי רוחב</th><th class="n">הרווח</th></tr>
+      <tr><td>90%</td><td class="n">1.833</td><td class="n">1.11</td><td class="n">12.29 עד 14.51</td></tr>
+      <tr><td>95%</td><td class="n">2.262</td><td class="n">1.37</td><td class="n">12.03 עד 14.77</td></tr>
+      <tr><td>99%</td><td class="n">3.250</td><td class="n">1.97</td><td class="n">11.43 עד 15.37</td></tr>
+    </table></div>
+    <p>המעבר מ-95% ל-99% מרחיב את הרווח ב-44%. המרכז נשאר 13.4.</p>
+  </div></details>
+
+  <p><strong>ג.</strong> היצרן טוען שהסוללה מחזיקה 15 שעות בממוצע. מה אפשר לומר?</p>
+  <details class="reveal"><summary>פתרון</summary><div class="reveal-body">
+    <p>15 מחוץ לרווח של 95% (וגם של 90%), אבל בתוך הרווח של 99%. כלומר ברמת ביטחון של 95% הנתונים לא מתיישבים עם הטענה, וברמת ביטחון של 99% אי אפשר לפסול אותה. ככל שדורשים ביטחון גבוה יותר, קשה יותר לפסול טענה. בהמשך הקורס, בבדיקת השערות, נראה שזה אותו רעיון בשפה אחרת.</p>
+  </div></details>
+
+  <p><strong>ד.</strong> התברר שבמדידה של 9.6 שעות הטלפון נשאר בטעות עם מסך דולק. מוציאים אותה. מה הרווח של 95% עכשיו?</p>
+  <details class="reveal"><summary>פתרון</summary><div class="reveal-body">
+    <p>9 תצפיות: \(\bar x=13.82\), \(S=1.456\), \(t^{(8)}_{0.975}=2.306\). הרווח: \(12.70\le\mu\le14.94\).</p>
+    <p>תצפית אחת הזיזה גם את המרכז (13.4 ל-13.82) וגם את הרוחב (2.74 ל-2.24). במדגם קטן כל תצפית קיצונית משפיעה מאוד. שימו לב ש-15 עדיין מחוץ לרווח, אבל בקושי.</p>
+  </div></details>
+
+  <p><strong>ה.</strong> מה הרווח מסעיף א' בדקות?</p>
+  <details class="reveal"><summary>פתרון</summary><div class="reveal-body">
+    <p>כופלים את שני הקצוות ב-60: \(721.8\le\mu\le886.2\) דקות. בטרנספורמציה לינארית הקצוות עוברים ישירות. הרוחב מוכפל ב-60, ורמת הביטחון לא משתנה, כי זה אותו מאורע בדיוק.</p>
+  </div></details>
+
+  <p><strong>ו.</strong> חבר חישב מאותם נתונים רווח באורך 2 שעות בדיוק. באיזו רמת ביטחון?</p>
+  <details class="reveal"><summary>פתרון</summary><div class="reveal-body">
+    <p>חצי הרוחב הוא 1, וגודל הצעד \(SE=0.6055\). מספר הצעדים: \(1/0.6055=1.651\). זה ערך \(t\) עם 9 דרגות חופש.</p>
+    <p>בטבלה, 1.651 נמצא בין \(t^{(9)}_{0.90}=1.383\) לבין \(t^{(9)}_{0.95}=1.833\). כלומר \(1-\frac{\alpha}{2}\) בין 0.90 ל-0.95, ורמת הביטחון בין 80% ל-90% (בתוכנה: 86.7%). טבלת \(t\) מאפשרת רק לתחום את התשובה.</p>
+  </div></details>
+
+  <details class="ext">
+    <summary><span class="ext-badge">הרחבה</span> ז. רווח חד-צדדי: "לפחות כמה שעות?"</summary>
+    <div class="ext-body">
+      <p>לפעמים מעניין רק כיוון אחד. לקוח שקונה טלפון שואל "לפחות כמה שעות הסוללה מחזיקה בממוצע?", ולא אכפת לו מחסם עליון. במקרה כזה שמים את כל ה-\(\alpha\) בזנב אחד, ומשתמשים ב-\(t_{0.95}\) במקום \(t_{0.975}\):</p>
+      <div class="math-block">$$\mu \ge 13.4 - 1.833\cdot0.6055 = 12.29$$</div>
+      <p>ברמת ביטחון של 95%, התוחלת היא לפחות 12.29 שעות. החסם הדוק יותר מהגבול התחתון של הרווח הדו-צדדי (12.03), כי לא "בזבזנו" 2.5% על הצד העליון.</p>
+    </div>
+  </details>
+
+  <h3>תרגיל 2: סקר שביעות רצון</h3>
+  <p>האוניברסיטה רוצה לאמוד את שיעור הסטודנטים שמרוצים מהמעונות, ברמת ביטחון של 98% ועם טעות אמידה של 4% לכל היותר.</p>
+
+  <p><strong>א.</strong> כמה סטודנטים צריך לדגום?</p>
+  <details class="reveal"><summary>פתרון</summary><div class="reveal-body">
+    <p>טעות אמידה של 0.04 היא אורך של \(d=0.08\). ל-98%, \(Z_{0.99}=2.33\). אין מידע מוקדם על \(p\), ולכן המקרה הגרוע ביותר:</p>
+    <div class="math-block">$$n \ge \left(\frac{2.33}{0.08}\right)^2 = 848.3 \quad\Rightarrow\quad n=849$$</div>
+  </div></details>
+
+  <p><strong>ב.</strong> דגמו 849 סטודנטים, ו-612 מהם מרוצים. בנו את הרווח.</p>
+  <details class="reveal"><summary>פתרון</summary><div class="reveal-body">
+    <p>\(\hat p=612/849=0.721\). התנאי: \(n\hat p=612\) ו-\(n(1-\hat p)=237\), שניהם מעל 5. \(SE=\sqrt{\frac{0.721\cdot0.279}{849}}=0.0154\).</p>
+    <div class="math-block">$$0.721\pm2.33\cdot0.0154 \;\Rightarrow\; 0.685\le p\le0.757$$</div>
+  </div></details>
+
+  <p><strong>ג.</strong> אורך הרווח יצא 0.072, פחות מ-0.08. האם טעינו בחישוב גודל המדגם?</p>
+  <details class="reveal"><summary>פתרון</summary><div class="reveal-body">
+    <p>לא. גודל המדגם חושב לפי המקרה הגרוע ביותר, \(\hat p=0.5\). בפועל יצא \(\hat p=0.721\), ו-\(0.721\cdot0.279=0.201\), פחות מ-0.25. לכן הרווח יצא צר יותר מהמקסימום. זה בדיוק מה שהמקרה הגרוע מבטיח: לכל היותר \(d\), ובדרך כלל פחות.</p>
+  </div></details>
+</section>
+
+<!-- ============ 8 ============ -->
+<section class="chapter" id="quiz">
+  <p class="chapter-num">פרק 8</p>
+  <h2>בדקו את עצמכם</h2>
+  <p>לחצו על תשובה כדי לקבל משוב והסבר.</p>
+  <div data-w="quiz"></div>
+</section>
+
+<!-- ============ 9 ============ -->
+<section class="chapter" id="pitfalls">
+  <p class="chapter-num">פרק 9</p>
+  <h2>מלכודות נפוצות</h2>
+  <ul>
+    <li><strong>\(\bar x\) באמצע אי-השוויון.</strong> באמצע כותבים את הפרמטר: \(\mu\), \(p\).</li>
+    <li><strong>לקרוא רווח לתוחלת כטווח לתצפיות.</strong> הרווח הוא על הממוצע של האוכלוסייה. תצפית בודדת מתפזרת הרבה יותר.</li>
+    <li><strong>\(\alpha\) במקום \(\frac{\alpha}{2}\).</strong> ברווח דו-צדדי מחפשים בטבלה את \(1-\frac{\alpha}{2}\): ל-95% זה 0.975, לא 0.95.</li>
+    <li><strong>\(Z\) במקום \(t\) כש-\(\sigma\) לא ידועה.</strong> בקורס: \(S\) במקום \(\sigma\) פירושו \(t\) עם \(n-1\) דרגות חופש.</li>
+    <li><strong>לשכוח את הנחת הנורמליות במדגם קטן.</strong> במדגם של פחות מ-30 תצפיות, הנוסחה לתוחלת מוצדקת רק אם האוכלוסייה נורמלית. כותבים את ההנחה במפורש.</li>
+    <li><strong>\(\sigma\) במקום \(\frac{\sigma}{\sqrt n}\).</strong> גודל הצעד הוא טעות התקן, סטיית התקן של האומד, ולא סטיית התקן של תצפית.</li>
+    <li><strong>לבלבל בין \(d\) ל-\(\frac d2\).</strong> אורך הרווח הוא \(d\), ודרישה על טעות האמידה היא דרישה על \(\frac d2\). קראו בכל שאלה מה נתון.</li>
+    <li><strong>לעגל את \(n\) כלפי מטה.</strong> גודל מדגם מעגלים תמיד כלפי מעלה, גם 1067.1 הופך ל-1068.</li>
+    <li><strong>לדלג על בדיקת \(n\hat p\ge5\) ו-\(n(1-\hat p)\ge5\).</strong> אם התנאי לא מתקיים, לא בונים רווח לפי הנוסחה.</li>
+    <li><strong>להשאיר רווח שחורג מהטווח האפשרי.</strong> פרופורציה מחוץ ל-0 עד 1, או תוחלת שלילית של זמן או משקל, לא הגיוניות. חותכים את הרווח לטווח האפשרי של הפרמטר.</li>
+    <li><strong>"רווח של 99% מדויק יותר".</strong> הוא בטוח יותר, אבל רחב יותר, כלומר פחות מדויק. דיוק וביטחון באים על חשבון זה של זה, אלא אם מגדילים את המדגם.</li>
+    <li><strong>להכפיל את \(n\) ולצפות לרווח בחצי.</strong> הרוחב תלוי ב-\(\sqrt n\): כדי לחצות אותו צריך פי 4 תצפיות.</li>
+  </ul>
+</section>
+
+  </main>
+</div>
+
+<footer class="foot">
+  מדריך למידה לקורס סטטיסטיקה 4221010, אוניברסיטת אריאל. חומר שמסומן "הרחבה" הוא מעבר לחומר ההרצאה.
+</footer>
+<div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+
+<script>
+window.addEventListener("DOMContentLoaded", function () {
+(function () {
+  "use strict";
+
+  /* ================= utilities ================= */
+  const NS = "http://www.w3.org/2000/svg";
+  function svgEl(tag, attrs, parent) {
+    const e = document.createElementNS(NS, tag);
+    if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function h(tag, attrs, parent, html) {
+    const e = document.createElement(tag);
+    if (attrs) for (const k in attrs) {
+      if (k === "class") e.className = attrs[k];
+      else if (k === "text") e.textContent = attrs[k];
+      else e.setAttribute(k, attrs[k]);
+    }
+    if (html !== undefined) e.innerHTML = html;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function svgText(parent, x, y, str, attrs) {
+    const t = svgEl("text", Object.assign({ x: x, y: y }, attrs || {}), parent);
+    t.textContent = /[\u0590-\u05FF]/.test(str) ? "\u2067" + str.replace(/[−-]?\d[\d.,]*%?/g, m => "\u2066" + m + "\u2069") + "\u2069" : str;
+    return t;
+  }
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const vbW = el => clamp(Math.round((el && el.clientWidth) || 640), 340, 640);
+
+  function fmt(x, d) {
+    if (x === null || x === undefined || Number.isNaN(x)) return "—";
+    if (!Number.isFinite(x)) return "∞";
+    if (d === undefined) d = 2;
+    const r = Number(x.toFixed(d));
+    return (Object.is(r, -0) ? 0 : r).toString();
+  }
+  function fmtList(arr) { return arr.length ? arr.map(v => fmt(v)).join(", ") : "אין"; }
+
+  const S = {
+    sum: a => a.reduce((s, v) => s + v, 0),
+    mean: a => a.length ? S.sum(a) / a.length : NaN,
+    sorted: a => a.slice().sort((x, y) => x - y),
+    median(a) {
+      if (!a.length) return NaN;
+      const s = S.sorted(a), n = s.length, m = Math.floor(n / 2);
+      return n % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+    },
+    modes(a) {
+      if (!a.length) return [];
+      const c = new Map();
+      a.forEach(v => c.set(v, (c.get(v) || 0) + 1));
+      if (c.size === 1) return [a[0]];
+      let mx = 0; c.forEach(v => { if (v > mx) mx = v; });
+      const top = []; c.forEach((v, k) => { if (v === mx) top.push(k); });
+      if (top.length === c.size) return []; // every value equally frequent: no mode (slide 51)
+      return top.sort((x, y) => x - y);
+    },
+    ss(a) { const m = S.mean(a); return a.reduce((s, v) => s + (v - m) * (v - m), 0); },
+    variance(a, ddof) { const n = a.length; return n - ddof > 0 ? S.ss(a) / (n - ddof) : NaN; },
+    sd(a, ddof) { return Math.sqrt(S.variance(a, ddof)); },
+    quartiles(a) {
+      const s = S.sorted(a), n = s.length;
+      if (n < 2) return { q1: NaN, q3: NaN };
+      const half = Math.floor(n / 2);
+      const lower = s.slice(0, half), upper = s.slice(n % 2 ? half + 1 : half);
+      return { q1: S.median(lower), q3: S.median(upper) };
+    },
+    mad(a) { const m = S.mean(a); return S.mean(a.map(v => Math.abs(v - m))); },
+    skew(a) {
+      const n = a.length, m = S.mean(a), s = S.sd(a, 1);
+      if (n < 3 || !(s > 0)) return NaN;
+      return a.reduce((t, v) => t + Math.pow(v - m, 3), 0) / (n * s * s * s);
+    }
+  };
+
+  function niceStep(span, target) {
+    const raw = span / (target || 8);
+    const p = Math.pow(10, Math.floor(Math.log10(raw)));
+    const f = raw / p;
+    return (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * p;
+  }
+
+  /* tooltip */
+  const tip = document.getElementById("tip");
+  function showTip(text, ev) {
+    if (!tip) return;
+    tip.textContent = text;
+    tip.classList.add("on");
+    const x = ev.clientX, y = ev.clientY;
+    const r = tip.getBoundingClientRect();
+    tip.style.left = clamp(x - r.width / 2, 8, window.innerWidth - r.width - 8) + "px";
+    tip.style.top = Math.max(8, y - r.height - 14) + "px";
+  }
+  function hideTip() { if (tip) tip.classList.remove("on"); }
+
+  function svgPoint(svg, ev) {
+    const pt = svg.createSVGPoint();
+    pt.x = ev.clientX; pt.y = ev.clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
+  }
+
+  function statTile(parent, key, value, opts) {
+    opts = opts || {};
+    const d = h("div", { class: "stat" + (opts.ext ? " ext-stat ext-only" : "") }, parent);
+    const k = h("div", { class: "k" }, d);
+    if (opts.swatch) h("span", { class: "swatch " + opts.swatch }, k);
+    h("span", { text: key }, k);
+    h("div", { class: "v", text: value }, d);
+    return d;
+  }
+
+  function seg(parent, options, value, onChange) {
+    const wrap = h("div", { class: "seg", role: "group" }, parent);
+    const btns = options.map(o => {
+      const b = h("button", { type: "button", "aria-pressed": String(o.value === value), text: o.label }, wrap);
+      b.addEventListener("click", () => {
+        btns.forEach(x => x.setAttribute("aria-pressed", "false"));
+        b.setAttribute("aria-pressed", "true");
+        onChange(o.value);
+      });
+      return b;
+    });
+    return wrap;
+  }
+
+  const W = {};
+  function fmtP(x) {
+    if (!Number.isFinite(x)) return "—";
+    if (x === 0) return "0";
+    if (Math.abs(x) >= 0.001) return fmt(x, 4);
+    if (Math.abs(x) >= 1e-6) return Number(x.toPrecision(3)).toString();
+    return "\u2066" + x.toExponential(2) + "\u2069";
+  }
+  function slider(parent, label, min, max, step, value, onInput, digits) {
+    const l = h("label", null, parent);
+    h("span", null, l, label);
+    const inp = h("input", { type: "range", min: min, max: max, step: step, value: value, "aria-label": label.replace(/<[^>]+>/g, "") }, l);
+    const out = h("strong", { class: "num", text: fmt(value, digits === undefined ? 2 : digits) }, l);
+    inp.addEventListener("input", () => { const v = parseFloat(inp.value); out.textContent = fmt(v, digits === undefined ? 2 : digits); onInput(v); });
+    return { inp: inp, out: out, set(v) { inp.value = v; out.textContent = fmt(v, digits === undefined ? 2 : digits); } };
+  }
+  function axes(svg, o) {
+    const { L, R, T, B, xmin, xmax, ymin, ymax } = o;
+    const X = v => L + (v - xmin) / (xmax - xmin) * (R - L);
+    const Y = v => B - (clamp(v, ymin, ymax) - ymin) / (ymax - ymin) * (B - T);
+    svgEl("line", { x1: L, x2: R, y1: B, y2: B, stroke: "var(--rule-strong)" }, svg);
+    svgEl("line", { x1: L, x2: L, y1: T, y2: B, stroke: "var(--rule-strong)" }, svg);
+    const st = o.xstep || niceStep(xmax - xmin, 5);
+    for (let t = Math.ceil(xmin / st - 1e-9) * st; t <= xmax + 1e-9; t += st) {
+      svgEl("line", { x1: X(t), x2: X(t), y1: B, y2: B + 4, stroke: "var(--rule-strong)" }, svg);
+      svgText(svg, X(t), B + 16, fmt(t, 2), { "text-anchor": "middle", "font-size": 11, fill: "var(--muted)" });
+    }
+    if (o.xlabel) svgText(svg, (L + R) / 2, B + 32, o.xlabel, { "text-anchor": "middle", "font-size": 12, fill: "var(--ink-2)" });
+    if (o.ylabel) svgText(svg, L, T - 6, o.ylabel, { "text-anchor": "start", "font-size": 11.5, fill: "var(--ink-2)" });
+    return { X, Y };
+  }
+  function curvePath(f, X, Y, a, b, N) {
+    let d = "";
+    for (let i = 0; i <= N; i++) {
+      const t = a + (b - a) * i / N, v = f(t);
+      if (!Number.isFinite(v)) continue;
+      d += (d ? "L" : "M") + X(t).toFixed(1) + "," + Y(v).toFixed(1);
+    }
+    return d;
+  }
+
+  /* ================= distributions ================= */
+  const D = {
+    erf(x) { // Abramowitz-Stegun 7.1.26
+      const s = x < 0 ? -1 : 1; x = Math.abs(x);
+      const t = 1 / (1 + 0.3275911 * x);
+      const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+      return s * y;
+    },
+    npdf: x => Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI),
+    ncdf(x) { return 0.5 * (1 + D.erf(x / Math.SQRT2)); },
+    ninv(p) { let lo = -10, hi = 10; for (let i = 0; i < 80; i++) { const m = (lo + hi) / 2; if (D.ncdf(m) < p) lo = m; else hi = m; } return (lo + hi) / 2; },
+    lgamma(z) {
+      const g = 7, c = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+      if (z < 0.5) return Math.log(Math.PI / Math.abs(Math.sin(Math.PI * z))) - D.lgamma(1 - z);
+      z -= 1; let x = c[0];
+      for (let i = 1; i < g + 2; i++) x += c[i] / (z + i);
+      const t = z + g + 0.5;
+      return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
+    },
+    betacf(a, b, x) {
+      const MAXIT = 200, EPS = 3e-14, FPMIN = 1e-300;
+      let qab = a + b, qap = a + 1, qam = a - 1, c = 1, d = 1 - qab * x / qap;
+      if (Math.abs(d) < FPMIN) d = FPMIN; d = 1 / d; let hh = d;
+      for (let m = 1; m <= MAXIT; m++) {
+        const m2 = 2 * m;
+        let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+        d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN; c = 1 + aa / c; if (Math.abs(c) < FPMIN) c = FPMIN; d = 1 / d; hh *= d * c;
+        aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+        d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN; c = 1 + aa / c; if (Math.abs(c) < FPMIN) c = FPMIN; d = 1 / d;
+        const del = d * c; hh *= del; if (Math.abs(del - 1) < EPS) break;
+      }
+      return hh;
+    },
+    ibeta(x, a, b) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      const bt = Math.exp(D.lgamma(a + b) - D.lgamma(a) - D.lgamma(b) + a * Math.log(x) + b * Math.log(1 - x));
+      return x < (a + 1) / (a + b + 2) ? bt * D.betacf(a, b, x) / a : 1 - bt * D.betacf(b, a, 1 - x) / b;
+    },
+    tpdf(t, df) { return Math.exp(D.lgamma((df + 1) / 2) - D.lgamma(df / 2) - 0.5 * Math.log(df * Math.PI) - (df + 1) / 2 * Math.log(1 + t * t / df)); },
+    tcdf(t, df) { const x = df / (df + t * t), p = 0.5 * D.ibeta(x, df / 2, 0.5); return t > 0 ? 1 - p : p; },
+    tinv(p, df) { let lo = -200, hi = 200; for (let i = 0; i < 90; i++) { const m = (lo + hi) / 2; if (D.tcdf(m, df) < p) lo = m; else hi = m; } return (lo + hi) / 2; },
+    binpmf(n, k, p) {
+      if (p <= 0) return k === 0 ? 1 : 0; if (p >= 1) return k === n ? 1 : 0;
+      return Math.exp(D.lgamma(n + 1) - D.lgamma(k + 1) - D.lgamma(n - k + 1) + k * Math.log(p) + (n - k) * Math.log(1 - p));
+    }
+  };
+  const R = {
+    _spare: null,
+    norm() { if (R._spare !== null) { const s = R._spare; R._spare = null; return s; } let u = 0, v = 0; while (u === 0) u = Math.random(); v = Math.random(); const r = Math.sqrt(-2 * Math.log(u)); R._spare = r * Math.sin(2 * Math.PI * v); return r * Math.cos(2 * Math.PI * v); },
+    expo() { let u = 0; while (u === 0) u = Math.random(); return -Math.log(u); }
+  };
+  const LEVELS = [{ value: 0.8, label: "80%" }, { value: 0.9, label: "90%" }, { value: 0.95, label: "95%" }, { value: 0.99, label: "99%" }];
+  const zOf = c => D.ninv(1 - (1 - c) / 2);
+
+  /* ---------- coverage ladder (chapter 1 simple / chapter 6 full) ---------- */
+  function coverage(root, full) {
+    const MU = 50, SIG = 10, ROWS = 40;
+    let level = 0.95, n = full ? 10 : 25, pop = "normal", method = "t";
+    let rows = [], total = 0, hit = 0, below = 0, above = 0;
+    const ctl = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+    const lvL = h("label", null, ctl); h("span", { text: "רמת ביטחון:" }, lvL);
+    seg(lvL, LEVELS, level, v => { level = v; resample(); });
+    let nS;
+    if (full) {
+      const ctl2 = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+      const pL = h("label", null, ctl2); h("span", { text: "אוכלוסייה:" }, pL);
+      seg(pL, [{ value: "normal", label: "נורמלית" }, { value: "skew", label: "מוטה ימינה" }], pop, v => { pop = v; resample(); });
+      const mL = h("label", null, ctl2); h("span", { text: "ערך מטבלת:" }, mL);
+      seg(mL, [{ value: "t", label: "t" }, { value: "z", label: "Z" }], method, v => { method = v; resample(); });
+      const ctl3 = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+      nS = slider(ctl3, "גודל מדגם \u2066n\u2069:", 5, 100, 1, n, v => { n = v; resample(); }, 0);
+    }
+    const btns = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    const b1 = h("button", { class: "btn primary", type: "button", text: "דגום מדגם אחד" }, btns);
+    const b20 = h("button", { class: "btn", type: "button", text: "דגום 20" }, btns);
+    const b100 = h("button", { class: "btn", type: "button", text: "דגום 1,000" }, btns);
+    const bR = h("button", { class: "btn", type: "button", text: "אפס" }, btns);
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    const note = h("p", { class: "note", style: "margin:8px 0 0" }, root);
+    b1.addEventListener("click", () => { draw(1); });
+    b20.addEventListener("click", () => { draw(20); });
+    b100.addEventListener("click", () => { draw(1000); });
+    bR.addEventListener("click", reset);
+
+    function mult() { return full && method === "t" ? D.tinv(1 - (1 - level) / 2, n - 1) : zOf(level); }
+    function one() {
+      const xs = [];
+      for (let i = 0; i < n; i++) xs.push(pop === "normal" || !full ? MU + SIG * R.norm() : MU - SIG + SIG * R.expo());
+      const m = S.mean(xs);
+      const se = full ? S.sd(xs, 1) / Math.sqrt(n) : SIG / Math.sqrt(n);
+      const k = mult();
+      return { m: m, lo: m - k * se, hi: m + k * se };
+    }
+    function draw(k) {
+      for (let i = 0; i < k; i++) {
+        const r = one(); total++;
+        if (r.lo <= MU && MU <= r.hi) { hit++; r.ok = true; } else if (r.hi < MU) below++; else above++;
+        rows.unshift(r);
+      }
+      if (rows.length > ROWS) rows.length = ROWS;
+      render();
+    }
+    function reset() { rows = []; total = hit = below = above = 0; render(); }
+    function resample() { const k = Math.min(total, 2000); rows = []; total = hit = below = above = 0; if (k) draw(k); else render(); }
+    function render() {
+      holder.innerHTML = "";
+      const Wd = vbW(root), rowH = 7, T = 26, Hd = T + ROWS * rowH + 34;
+      const se0 = SIG / Math.sqrt(n);
+      const xr = full ? (3 + D.tinv(0.975, n - 1)) * se0 * 1.25 : 2.6 * 2.576 * se0;
+      const L = 14, Rr = Wd - 14, B = T + ROWS * rowH + 6;
+      const X = v => L + (v - (MU - xr)) / (2 * xr) * (Rr - L);
+      const sv = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "רווחי סמך ממדגמים חוזרים" }, holder);
+      svgEl("line", { x1: L, x2: Rr, y1: B, y2: B, stroke: "var(--rule-strong)" }, sv);
+      const st = niceStep(2 * xr, 6);
+      for (let t = Math.ceil((MU - xr) / st) * st; t <= MU + xr + 1e-9; t += st) {
+        svgEl("line", { x1: X(t), x2: X(t), y1: B, y2: B + 4, stroke: "var(--rule-strong)" }, sv);
+        svgText(sv, X(t), B + 16, fmt(t, 1), { "text-anchor": "middle", "font-size": 11, fill: "var(--muted)" });
+      }
+      svgEl("line", { x1: X(MU), x2: X(MU), y1: T - 8, y2: B, stroke: "var(--ink)", "stroke-width": 2 }, sv);
+      svgText(sv, X(MU), T - 12, "μ = " + MU, { "text-anchor": "middle", "font-size": 12, fill: "var(--ink)", "font-weight": 600 });
+      rows.forEach((r, i) => {
+        const y = T + i * rowH + rowH / 2;
+        const a = clamp(r.lo, MU - xr, MU + xr), b = clamp(r.hi, MU - xr, MU + xr);
+        const col = r.ok ? "var(--mean)" : "var(--bad)";
+        svgEl("line", { x1: X(a), x2: X(b), y1: y, y2: y, stroke: col, "stroke-width": r.ok ? 2.4 : 3, "stroke-linecap": "round", opacity: i === 0 ? 1 : 0.85 }, sv);
+        if (r.m >= MU - xr && r.m <= MU + xr) svgEl("circle", { cx: X(r.m), cy: y, r: 2.2, fill: col }, sv);
+      });
+      if (!rows.length) svgText(sv, (L + X(MU)) / 2, T + ROWS * rowH / 2, "לחצו \"דגום\" כדי להתחיל", { "text-anchor": "middle", "font-size": 14, fill: "var(--muted)" });
+      stats.innerHTML = "";
+      statTile(stats, "רווחים שנבנו", total.toLocaleString("en-US"));
+      statTile(stats, "מכילים את μ", hit.toLocaleString("en-US"));
+      statTile(stats, "אחוז כיסוי", total ? fmt(100 * hit / total, 1) + "%" : "—");
+      if (full) {
+        statTile(stats, "כולו מתחת ל-μ", total ? fmt(100 * below / total, 1) + "%" : "—");
+        statTile(stats, "כולו מעל μ", total ? fmt(100 * above / total, 1) + "%" : "—");
+        statTile(stats, method === "t" ? "ערך t מהטבלה" : "ערך Z מהטבלה", fmt(mult(), 3));
+      } else {
+        statTile(stats, "רמת הביטחון", fmt(100 * level, 0) + "%");
+      }
+      note.textContent = full
+        ? "בכל מדגם σ לא ידועה: חצי הרוחב הוא הערך מהטבלה כפול S/√n, ולכן גם הרוחב משתנה ממדגם למדגם. שינוי של הגדרה דוגם מחדש את אותו מספר מדגמים. מוצגים 40 הרווחים האחרונים."
+        : "σ = " + SIG + " ידועה ו-n = " + n + ", ולכן לכל הרווחים אותו אורך. מוצגים 40 הרווחים האחרונים, החדש ביותר למעלה.";
+    }
+    render();
+  }
+  W.ladder = root => coverage(root, false);
+  W.cover = root => coverage(root, true);
+
+  /* ---------- true / false classifier ---------- */
+  W.tf = function (root) {
+    const Q = [
+      { s: "ברמת ביטחון של 95%, התוחלת נמצאת בין 12.0 ל-14.8.", a: true, e: "זה הניסוח המקובל. המשמעות: הרווח חושב כך שב-95% מהמדגמים האפשריים, הרווח שמתקבל מכיל את \\(\\mu\\)." },
+      { s: "אם נחזור על הדגימה הרבה פעמים ונבנה בכל פעם רווח באותה נוסחה, כ-95% מהרווחים יכילו את \\(\\mu\\).", a: true, e: "זו בדיוק המשמעות של רמת ביטחון, וזה מה שראינו בכלי: אחוז הרווחים שמכילים את הפרמטר, על פני הרבה מדגמים." },
+      { s: "לפני שדגמנו, ההסתברות שהרווח שנקבל יכיל את \\(\\mu\\) הייתה 0.95.", a: true, e: "לפני הדגימה הקצוות הם משתנים מקריים, ולכן יש הסתברות. זה המשפט שבהגדרה." },
+      { s: "95% מהתצפיות במדגם נמצאות בין 12.0 ל-14.8.", a: false, e: "הרווח הוא על התוחלת \\(\\mu\\), לא על התצפיות. התצפיות מתפזרות הרבה יותר (פרק 8)." },
+      { s: "95% מהממוצעים של מדגמים עתידיים ייפלו בין 12.0 ל-14.8.", a: false, e: "זה היה נכון לרווח שממורכז על \\(\\mu\\) האמיתי. הרווח שלנו ממורכז על \\(\\bar x\\), שהוא בעצמו רועש, ולכן החלק קטן יותר: בערך 83%. ההסבר המלא <a href=\"#ext-83\">בהרחבה למעלה</a>." },
+      { s: "הקצוות של רווח סמך הם סטטיסטים: הם תלויים במדגם, ולא תלויים בפרמטר.", a: true, e: "זה תנאי בהגדרה. אילו הקצוות היו תלויים ב-\\(\\mu\\), לא היה אפשר לחשב אותם." },
+      { s: "רמת המובהקות \\(\\alpha=0.05\\) היא ההסתברות, לפני הדגימה, שהרווח לא יכיל את הפרמטר.", a: true, e: "\\(\\alpha\\) היא ההסתברות המשלימה לרמת הביטחון: לפני הדגימה, יש הסתברות של 5% שהרווח שייצא יפספס את הפרמטר. אחרי שדגמנו וחישבנו, הרווח הספציפי כבר מכיל את הפרמטר או שלא. מה שנשאר מ-\\(\\alpha\\) הוא התיאור של כמה מהמדגמים האפשריים נותנים רווח שמפספס." },
+      { s: "רווח של 99% מאותו מדגם יהיה צר יותר, כי הוא מדויק יותר.", a: false, e: "כדי לתפוס את \\(\\mu\\) ביותר מדגמים צריך רווח רחב יותר: ב-99% הולכים 2.58 טעויות תקן לכל צד במקום 1.96 (ערך התקן מהטבלה, פרק 2). ביטחון ודיוק באים על חשבון זה של זה." },
+      { s: "אפשר לכתוב את התשובה כך: \\(12.0 \\le \\bar x \\le 14.8\\).", a: false, e: "באמצע כותבים את הפרמטר, \\(\\mu\\). \\(\\bar x\\) תמיד נמצא באמצע הרווח שלו, ולכן הטענה ריקה." },
+      { s: "\\(\\mu\\) נמצא בין 12.0 ל-14.8, כי הוא נופל לתוך הרווח ב-95% מהפעמים.", a: false, e: "\\(\\mu\\) לא נופל לשום מקום, הוא קבוע. מה שמשתנה ממדגם למדגם הוא הרווח. ב-95% מהמדגמים <strong>הרווח</strong> מכסה את \\(\\mu\\)." }
+    ];
+    const wrap = h("div", { class: "classify" }, root);
+    const score = h("p", { class: "score", style: "margin:10px 0 0" }, root);
+    let done = 0, right = 0;
+    const upd = () => { score.textContent = done ? `${right} נכונות מתוך ${done}` : ""; };
+    Q.forEach(q => {
+      const it = h("div", { class: "cl-item" }, wrap);
+      h("div", { class: "cl-q" }, it, q.s);
+      const opts = h("div", { class: "cl-opts" }, it);
+      const why = h("div", { class: "cl-why" }, it);
+      const bs = [true, false].map(v => {
+        const b = h("button", { type: "button", text: v ? "נכון" : "לא נכון" }, opts);
+        b.addEventListener("click", () => {
+          if (it.dataset.done) return;
+          it.dataset.done = "1"; done++;
+          const ok = v === q.a; if (ok) right++;
+          bs.forEach((x, i) => { if ([true, false][i] === q.a) x.classList.add("right"); });
+          if (!ok) b.classList.add("wrong");
+          why.innerHTML = "<strong>" + (ok ? "צדקתם." : "לא בדיוק.") + "</strong> " + q.e;
+          if (window.renderMathInElement) window.renderMathInElement(why, { delimiters: [{ left: "\\(", right: "\\)", display: false }], throwOnError: false });
+          upd();
+        });
+        return b;
+      });
+    });
+    const again = h("button", { class: "btn", type: "button", text: "התחל מחדש", style: "margin-top:8px" }, root);
+    again.addEventListener("click", () => {
+      done = right = 0; upd();
+      wrap.querySelectorAll(".cl-item").forEach(it => { delete it.dataset.done; it.querySelector(".cl-why").innerHTML = ""; it.querySelectorAll("button").forEach(b => b.classList.remove("right", "wrong")); });
+    });
+  };
+
+  /* ---------- symmetry: band around mu, interval around xbar ---------- */
+  W.sym = function (root) {
+    const MU = 50, SE = 2;
+    let level = 0.95, xb = 52.4;
+    const row = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    const lvL = h("label", null, row); h("span", { text: "רמת ביטחון:" }, lvL);
+    seg(lvL, LEVELS.slice(1), level, v => { level = v; render(); });
+    const bS = h("button", { class: "btn primary", type: "button", text: "דגום \u2066x̄\u2069 חדש" }, row);
+    bS.addEventListener("click", () => { xb = MU + SE * R.norm(); render(); });
+    const holder = h("div", null, root);
+    const status = h("p", { class: "feedback", style: "margin:8px 0 0" }, root);
+    const Wd = vbW(root), Hd = 250, L = 14, Rr = Wd - 14, xmin = MU - 4.2 * SE, xmax = MU + 4.2 * SE;
+    const X = v => L + (v - xmin) / (xmax - xmin) * (Rr - L);
+    const Xinv = px => xmin + (px - L) / (Rr - L) * (xmax - xmin);
+    const sv = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "התפלגות הממוצע והרווח סביבו" }, holder);
+    const gBase = svgEl("g", null, sv), gDyn = svgEl("g", null, sv);
+    const B1 = 150, Tp = 20;
+    const Y = d => B1 - d / D.npdf(0) * (B1 - Tp);
+    // static
+    svgEl("line", { x1: L, x2: Rr, y1: B1, y2: B1, stroke: "var(--rule-strong)" }, gBase);
+    for (let k = -4; k <= 4; k++) {
+      svgEl("line", { x1: X(MU + k * SE), x2: X(MU + k * SE), y1: B1, y2: B1 + 4, stroke: "var(--rule-strong)" }, gBase);
+      if (Wd < 480 && Math.abs(k) % 2 === 1) continue;
+      svgText(gBase, X(MU + k * SE), B1 + 16, k === 0 ? "μ" : (k > 0 ? "+" : "−") + Math.abs(k) + "SE", { "text-anchor": "middle", "font-size": 11, fill: "var(--muted)" });
+    }
+    let dragging = false;
+    function setFromEvent(ev) { const p = svgPoint(sv, ev); xb = clamp(Xinv(p.x), xmin + 0.05, xmax - 0.05); render(); }
+    sv.addEventListener("pointerdown", ev => { dragging = true; sv.setPointerCapture(ev.pointerId); setFromEvent(ev); });
+    sv.addEventListener("pointermove", ev => { if (dragging) setFromEvent(ev); });
+    sv.addEventListener("pointerup", () => { dragging = false; });
+    sv.addEventListener("pointercancel", () => { dragging = false; });
+    function render() {
+      gDyn.innerHTML = "";
+      const z = zOf(level), a = MU - z * SE, b = MU + z * SE;
+      // band
+      let d = `M${X(a)},${B1}`;
+      for (let i = 0; i <= 80; i++) { const v = a + (b - a) * i / 80; d += `L${X(v).toFixed(1)},${Y(D.npdf((v - MU) / SE)).toFixed(1)}`; }
+      d += `L${X(b)},${B1}Z`;
+      svgEl("path", { d: d, fill: "var(--accent-soft)" }, gDyn);
+      svgEl("path", { d: curvePath(v => D.npdf((v - MU) / SE), X, Y, xmin, xmax, 200), fill: "none", stroke: "var(--mean)", "stroke-width": 2 }, gDyn);
+      svgText(gDyn, Rr, Tp + 2, fmt(100 * level, 0) + "% מהממוצעים בתוך הרצועה", { "text-anchor": "end", "font-size": 11.5, fill: "var(--accent)" });
+      svgEl("line", { x1: X(MU), x2: X(MU), y1: Tp - 6, y2: 222, stroke: "var(--ink)", "stroke-dasharray": "4 3", "stroke-width": 1.5 }, gDyn);
+      // xbar marker
+      const inside = Math.abs(xb - MU) <= z * SE;
+      const col = inside ? "var(--good)" : "var(--bad)";
+      svgEl("line", { x1: X(xb), x2: X(xb), y1: B1 - 8, y2: 200, stroke: col, "stroke-width": 1.5 }, gDyn);
+      const g = svgEl("g", { style: "cursor:grab" }, gDyn);
+      svgEl("circle", { cx: X(xb), cy: B1, r: 9, fill: col, stroke: "var(--surface)", "stroke-width": 2 }, g);
+      svgText(gDyn, X(xb), B1 - 14, "x̄", { "text-anchor": "middle", "font-size": 13, "font-weight": 600, fill: col });
+      // interval
+      const yI = 200, lo = xb - z * SE, hi = xb + z * SE;
+      svgEl("line", { x1: X(clamp(lo, xmin, xmax)), x2: X(clamp(hi, xmin, xmax)), y1: yI, y2: yI, stroke: col, "stroke-width": 5, "stroke-linecap": "round" }, gDyn);
+      svgText(gDyn, (L + Rr) / 2, 240, "הרווח: \u2066x̄ ± " + fmt(z, 3) + "·SE\u2069", { "text-anchor": "middle", "font-size": 12, fill: "var(--ink-2)" });
+      const dist = Math.abs(xb - MU) / SE;
+      status.className = "feedback " + (inside ? "ok" : "no");
+      status.textContent = "x̄ במרחק \u2066" + fmt(dist, 2) + " SE\u2069 מ-μ. " + (inside
+        ? "זה פחות מ-" + fmt(z, 2) + ", כלומר x̄ בתוך הרצועה, ולכן הרווח סביבו מכיל את μ."
+        : "זה יותר מ-" + fmt(z, 2) + ", כלומר x̄ מחוץ לרצועה, ולכן הרווח סביבו מפספס את μ.");
+    }
+    render();
+  };
+
+  /* ---------- width explorer ---------- */
+  W.width = function (root) {
+    let n = 25, sig = 10, level = 0.95;
+    const groups = h("div", { class: "ctl-groups" }, root);
+    const g1 = h("div", { class: "ctl-group" }, groups); h("p", { class: "ctl-h", text: "גודל מדגם" }, g1);
+    const r1 = h("div", { class: "lab-row", style: "margin:0" }, g1);
+    const nS = slider(r1, "\u2066n\u2069", 4, 400, 1, n, v => { n = v; render(); }, 0);
+    const b4 = h("button", { class: "btn", type: "button", text: "×4" }, r1);
+    b4.addEventListener("click", () => { n = Math.min(400, n * 4); nS.set(n); render(); });
+    const g2 = h("div", { class: "ctl-group" }, groups); h("p", { class: "ctl-h", text: "פיזור באוכלוסייה" }, g2);
+    const r2 = h("div", { class: "lab-row", style: "margin:0" }, g2);
+    slider(r2, "\u2066σ\u2069", 2, 30, 1, sig, v => { sig = v; render(); }, 0);
+    const g3 = h("div", { class: "ctl-group" }, groups); h("p", { class: "ctl-h", text: "רמת ביטחון" }, g3);
+    seg(g3, LEVELS, level, v => { level = v; render(); });
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    const base = 1.96 * 10 / 5;
+    function render() {
+      holder.innerHTML = "";
+      const z = zOf(level), se = sig / Math.sqrt(n), hw = z * se;
+      const sc = Math.max(hw, base) * 1.15;
+      const Wd = vbW(root), Hd = 132, L = 14, Rr = Wd - 14, cx = Wd / 2;
+      const X = v => cx + v / sc * (Rr - L) / 2;
+      const sv = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "רוחב הרווח" }, holder);
+      svgEl("line", { x1: cx, x2: cx, y1: 22, y2: 104, stroke: "var(--rule-strong)", "stroke-dasharray": "3 3" }, sv);
+      svgText(sv, cx, 122, "x̄", { "text-anchor": "middle", "font-size": 13, fill: "var(--ink-2)" });
+      svgText(sv, cx, 16, "התחלה: \u2066x̄ ± " + fmt(base, 2) + "\u2069", { "text-anchor": "middle", "font-size": 12, fill: "var(--muted)" });
+      svgEl("line", { x1: X(-base), x2: X(base), y1: 30, y2: 30, stroke: "var(--rule-strong)", "stroke-width": 10, "stroke-linecap": "round" }, sv);
+      svgText(sv, cx, 66, "עכשיו: \u2066x̄ ± " + fmt(hw, 2) + "\u2069", { "text-anchor": "middle", "font-size": 12, fill: "var(--mean)", "font-weight": 600 });
+      svgEl("line", { x1: X(-hw), x2: X(hw), y1: 82, y2: 82, stroke: "var(--mean)", "stroke-width": 12, "stroke-linecap": "round" }, sv);
+      stats.innerHTML = "";
+      statTile(stats, "ערך התקן Z", fmt(z, 3));
+      statTile(stats, "SE = σ/√n", fmt(se, 3));
+      statTile(stats, "חצי הרוחב d/2", fmt(hw, 2));
+      statTile(stats, "אורך הרווח d", fmt(2 * hw, 2));
+      statTile(stats, "יחס להתחלה", "×" + fmt(hw / base, 2));
+    }
+    render();
+  };
+
+  /* ---------- binomial vs normal ---------- */
+  W.binom = function (root) {
+    let n = 12, p = 0.5;
+    const row = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+    const nS = slider(row, "\u2066n\u2069", 5, 200, 1, n, v => { n = v; render(); }, 0);
+    const pS = slider(row, "\u2066p\u2069", 0.01, 0.99, 0.01, p, v => { p = v; render(); }, 2);
+    const row2 = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    [[12, 0.5], [100, 0.05], [100, 0.5], [30, 0.1]].forEach(([nn, pp]) => {
+      const b = h("button", { class: "btn", type: "button", text: "\u2066n=" + nn + ", p=" + pp + "\u2069" }, row2);
+      b.addEventListener("click", () => { n = nn; p = pp; nS.set(n); pS.set(p); render(); });
+    });
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    const verdict = h("p", { class: "feedback", style: "margin:8px 0 0" }, root);
+    function render() {
+      holder.innerHTML = "";
+      const mu = n * p, sd = Math.sqrt(n * p * (1 - p));
+      const k0 = Math.max(0, Math.floor(mu - 4.5 * sd - 1)), k1 = Math.min(n, Math.ceil(mu + 4.5 * sd + 1));
+      let ymax = 0; for (let k = k0; k <= k1; k++) ymax = Math.max(ymax, D.binpmf(n, k, p));
+      ymax = Math.max(ymax, D.npdf(0) / sd) * 1.12;
+      const Wd = vbW(root);
+      const sv = svgEl("svg", { viewBox: `0 0 ${Wd} 250`, style: "direction:ltr", role: "img", "aria-label": "התפלגות בינומית וקירוב נורמלי" }, holder);
+      const A = axes(sv, { L: 44, R: Wd - 16, T: 16, B: 214, xmin: k0 - 0.5, xmax: k1 + 0.5, ymin: 0, ymax: ymax, xstep: Math.max(1, Math.round(niceStep(k1 - k0 + 1, 8))), xlabel: "מספר ההצלחות" });
+      const bw = Math.max(1, (A.X(1) - A.X(0)) * 0.8);
+      for (let k = k0; k <= k1; k++) {
+        const v = D.binpmf(n, k, p);
+        svgEl("rect", { x: A.X(k) - bw / 2, y: A.Y(v), width: bw, height: Math.max(0, 214 - A.Y(v)), fill: "var(--accent-soft)", stroke: "var(--accent)", "stroke-width": 0.8 }, sv);
+      }
+      svgEl("path", { d: curvePath(x => D.npdf((x - mu) / sd) / sd, A.X, A.Y, k0 - 0.5, k1 + 0.5, 300), fill: "none", stroke: "var(--median)", "stroke-width": 2.2 }, sv);
+      if (k0 <= 0) { svgEl("line", { x1: A.X(-0.5), x2: A.X(-0.5), y1: 16, y2: 214, stroke: "var(--bad)", "stroke-dasharray": "3 3" }, sv); }
+      const below0 = D.ncdf((-0.5 - mu) / sd);
+      stats.innerHTML = "";
+      statTile(stats, "np", fmt(mu, 2));
+      statTile(stats, "n(1−p)", fmt(n - mu, 2));
+      statTile(stats, "תנאי (שניהם ≥ 5)", mu >= 5 && n - mu >= 5 ? "מתקיים" : "לא מתקיים");
+      const ok = mu >= 5 && n - mu >= 5;
+      verdict.className = "feedback " + (ok ? "ok" : "no");
+      verdict.textContent = ok
+        ? (Math.abs(p - 0.5) < 0.15 ? "p קרוב ל-0.5: הבינומית כמעט סימטרית, והעקומה הנורמלית מתאימה לה היטב." : "התנאי מתקיים, אבל ההתפלגות עדיין קצת מוטה. ככל ש-np ו-n(1−p) גדלים, היא נעשית סימטרית יותר.")
+        : "התנאי לא מתקיים: ההתפלגות נדחסת לקצה ומוטה, והעקומה הנורמלית (הסימטרית) שמה הסתברות גם על ערכים שלא יכולים לקרות.";
+    }
+    render();
+  };
+
+  /* ---------- sample-size planner for a proportion ---------- */
+  W.plan = function (root) {
+    let level = 0.95, d = 0.06, bound = false, pmax = 0.2;
+    const row = h("div", { class: "lab-row", style: "margin:0 0 8px" }, root);
+    const lvL = h("label", null, row); h("span", { text: "רמת ביטחון:" }, lvL);
+    seg(lvL, [{ value: 0.9, label: "90%" }, { value: 0.95, label: "95%" }, { value: 0.98, label: "98%" }, { value: 0.99, label: "99%" }], level, v => { level = v; render(); });
+    const dL = h("label", null, row); h("span", null, dL, "אורך מקסימלי \u2066d\u2069:");
+    const dI = h("input", { type: "number", min: 0.01, max: 0.5, step: 0.01, value: d, "aria-label": "אורך מקסימלי" }, dL);
+    dI.addEventListener("input", () => { const v = parseFloat(dI.value); if (v > 0 && v <= 1) { d = v; render(); } });
+    const row2 = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    const cL = h("label", null, row2);
+    const cb = h("input", { type: "checkbox" }, cL); h("span", null, cL, "ידוע ש-\u2066p ≤\u2069");
+    const pS = slider(row2, "", 0.02, 1, 0.01, pmax, v => { pmax = v; render(); }, 2);
+    cb.addEventListener("change", () => { bound = cb.checked; render(); });
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    function render() {
+      pS.inp.disabled = !bound;
+      holder.innerHTML = "";
+      const Wd = vbW(root);
+      const sv = svgEl("svg", { viewBox: `0 0 ${Wd} 230`, style: "direction:ltr", role: "img", "aria-label": "העקומה p(1-p)" }, holder);
+      const A = axes(sv, { L: 48, R: Wd - 16, T: 16, B: 196, xmin: 0, xmax: 1, ymin: 0, ymax: 0.28, xstep: Wd < 480 ? 0.2 : 0.1, xlabel: "p̂", ylabel: "p̂(1−p̂)" });
+      const top = bound ? Math.min(pmax, 1) : 1;
+      if (bound && top < 1) svgEl("rect", { x: A.X(top), y: 16, width: A.X(1) - A.X(top), height: 180, fill: "var(--surface-2)" }, sv);
+      svgEl("path", { d: curvePath(x => x * (1 - x), A.X, A.Y, 0, 1, 200), fill: "none", stroke: "var(--mean)", "stroke-width": 2.2 }, sv);
+      const pw = bound ? Math.min(pmax, 0.5) : 0.5, worst = pw * (1 - pw);
+      svgEl("line", { x1: A.X(0), x2: A.X(1), y1: A.Y(worst), y2: A.Y(worst), stroke: "var(--median)", "stroke-dasharray": "4 3" }, sv);
+      svgEl("circle", { cx: A.X(pw), cy: A.Y(worst), r: 6, fill: "var(--median)" }, sv);
+      svgText(sv, A.X(pw), A.Y(worst) - 12, "המקרה הגרוע: " + fmt(worst, 4), { "text-anchor": pw > 0.75 ? "end" : pw < 0.25 ? "start" : "middle", "font-size": 12, fill: "var(--median)" });
+      if (bound && top < 1) svgText(sv, (A.X(top) + A.X(1)) / 2, 34, "לא אפשרי", { "text-anchor": "middle", "font-size": 12, fill: "var(--muted)" });
+      const z = level === 0.98 ? 2.33 : level === 0.99 ? 2.58 : zOf(level);
+      const nn = 4 * z * z * worst / (d * d);
+      stats.innerHTML = "";
+      statTile(stats, "ערך התקן Z", fmt(z, 3));
+      statTile(stats, "הערך המוצב", fmt(worst, 4));
+      statTile(stats, "4z²·p̂(1−p̂)/d²", fmt(nn, 2));
+      statTile(stats, "גודל המדגם", String(Math.ceil(nn - 1e-9)));
+    }
+    render();
+  };
+
+  /* ---------- t vs z ---------- */
+  W.tz = function (root) {
+    let df = 4;
+    const row = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    slider(row, "דרגות חופש \u2066n−1\u2069:", 1, 60, 1, df, v => { df = v; render(); }, 0);
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    function render() {
+      holder.innerHTML = "";
+      const tq = D.tinv(0.975, df), xm = 5;
+      const Wd = vbW(root);
+      const sv = svgEl("svg", { viewBox: `0 0 ${Wd} 240`, style: "direction:ltr", role: "img", "aria-label": "התפלגות t מול נורמלית" }, holder);
+      const A = axes(sv, { L: 30, R: Wd - 16, T: 18, B: 206, xmin: -xm, xmax: xm, ymin: 0, ymax: 0.42, xstep: 1 });
+      [[-xm, -tq], [tq, xm]].forEach(([a, b]) => {
+        let d = `M${A.X(a)},206`;
+        for (let i = 0; i <= 60; i++) { const v = a + (b - a) * i / 60; d += `L${A.X(v).toFixed(1)},${A.Y(D.tpdf(v, df)).toFixed(1)}`; }
+        d += `L${A.X(b)},206Z`;
+        svgEl("path", { d: d, fill: "var(--bad-bg)", stroke: "none" }, sv);
+      });
+      svgEl("path", { d: curvePath(D.npdf, A.X, A.Y, -xm, xm, 300), fill: "none", stroke: "var(--ink-2)", "stroke-width": 1.6, "stroke-dasharray": "5 4" }, sv);
+      svgEl("path", { d: curvePath(v => D.tpdf(v, df), A.X, A.Y, -xm, xm, 300), fill: "none", stroke: "var(--mean)", "stroke-width": 2.4 }, sv);
+      [[-tq, "var(--mean)"], [tq, "var(--mean)"], [-1.96, "var(--ink-2)"], [1.96, "var(--ink-2)"]].forEach(([v, c]) => {
+        svgEl("line", { x1: A.X(v), x2: A.X(v), y1: 206, y2: 40, stroke: c, "stroke-width": 1, "stroke-dasharray": c === "var(--mean)" ? "none" : "2 3" }, sv);
+      });
+      svgText(sv, A.X(tq) + 4, 50, "t = " + fmt(tq, 3), { "text-anchor": "start", "font-size": 12, fill: "var(--mean)" });
+      svgText(sv, A.X(1.96) - 4, 66, "Z = 1.96", { "text-anchor": "end", "font-size": 12, fill: "var(--ink-2)" });
+      stats.innerHTML = "";
+      statTile(stats, "גודל מדגם n", String(df + 1));
+      statTile(stats, "t לפי 0.975", fmt(tq, 3));
+      statTile(stats, "Z לפי 0.975", "1.96");
+      statTile(stats, "הרווח רחב יותר פי", fmt(tq / 1.96, 3));
+    }
+    render();
+  };
+
+  /* ---------- mean interval vs single-observation range ---------- */
+  W.pi = function (root) {
+    const MU = 13, SIG = 2;
+    let n = 10, data = [];
+    const row = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    slider(row, "\u2066n\u2069", 5, 300, 1, n, v => { n = v; regen(); }, 0);
+    const b = h("button", { class: "btn primary", type: "button", text: "מדגם חדש" }, row);
+    b.addEventListener("click", regen);
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    function regen() { data = []; for (let i = 0; i < n; i++) data.push(MU + SIG * R.norm()); render(); }
+    function render() {
+      holder.innerHTML = "";
+      const m = S.mean(data), s = S.sd(data, 1), tq = D.tinv(0.975, n - 1);
+      const ci = tq * s / Math.sqrt(n), pi = tq * s * Math.sqrt(1 + 1 / n);
+      const xmin = MU - 4.5 * SIG, xmax = MU + 4.5 * SIG;
+      const Wd = vbW(root);
+      const sv = svgEl("svg", { viewBox: `0 0 ${Wd} 200`, style: "direction:ltr", role: "img", "aria-label": "רווח לממוצע מול טווח לתצפית" }, holder);
+      const A = axes(sv, { L: 16, R: Wd - 16, T: 10, B: 170, xmin: xmin, xmax: xmax, ymin: 0, ymax: 1, xstep: Wd < 480 ? 4 : 2 });
+      // points
+      data.forEach((v, i) => {
+        const y = 30 + ((i * 37) % 23);
+        if (v >= xmin && v <= xmax) svgEl("circle", { cx: A.X(v), cy: y, r: n > 120 ? 2 : 3, fill: "var(--ink-2)", opacity: 0.55 }, sv);
+      });
+      svgText(sv, Wd / 2, 80, "טווח לתצפית בודדת", { "text-anchor": "middle", "font-size": 12.5, fill: "var(--median)", "font-weight": 600 });
+      svgEl("line", { x1: A.X(clamp(m - pi, xmin, xmax)), x2: A.X(clamp(m + pi, xmin, xmax)), y1: 94, y2: 94, stroke: "var(--median)", "stroke-width": 10, "stroke-linecap": "round", opacity: 0.85 }, sv);
+      svgText(sv, Wd / 2, 124, "רווח סמך ל-μ", { "text-anchor": "middle", "font-size": 12.5, fill: "var(--mean)", "font-weight": 600 });
+      svgEl("line", { x1: A.X(m - ci), x2: A.X(m + ci), y1: 138, y2: 138, stroke: "var(--mean)", "stroke-width": 10, "stroke-linecap": "round" }, sv);
+      svgEl("line", { x1: A.X(MU), x2: A.X(MU), y1: 18, y2: 170, stroke: "var(--ink)", "stroke-dasharray": "4 3" }, sv);
+      svgText(sv, A.X(MU), 14, "μ", { "text-anchor": "middle", "font-size": 12, fill: "var(--ink)" });
+      stats.innerHTML = "";
+      statTile(stats, "x̄", fmt(m, 2));
+      statTile(stats, "S", fmt(s, 2));
+      statTile(stats, "חצי רוחב: רווח ל-μ", fmt(ci, 2));
+      statTile(stats, "חצי רוחב: תצפית בודדת", fmt(pi, 2));
+      statTile(stats, "יחס", "×" + fmt(pi / ci, 1));
+    }
+    const dt = root.closest("details"); if (dt) dt.addEventListener("toggle", () => { if (dt.open) render(); });
+    regen();
+  };
+
+  /* ---------- quiz ---------- */
+  W.quiz = function (root) {
+    const Q = [
+      { q: "חישבנו רווח סמך של 95% לתוחלת, ויצא \\(20.1\\le\\mu\\le23.5\\). מה המשמעות של ה-95%?", o: ["95% מהתצפיות בין 20.1 ל-23.5", "אם נחזור על הדגימה הרבה פעמים, בכ-95% מהמדגמים הרווח שנקבל יכיל את \\(\\mu\\)", "95% מהממוצעים של מדגמים עתידיים ייפלו בין 20.1 ל-23.5", "\\(\\mu=21.8\\) בהסתברות 0.95"], a: 1, e: "רמת הביטחון מתארת באיזה חלק מהמדגמים הרווח מכיל את \\(\\mu\\). הרווח הוא על \\(\\mu\\), לא על התצפיות, ורק כ-83% מהממוצעים העתידיים ייפלו בתוכו." },
+      { q: "מה יגרום לרווח סמך לתוחלת להיות רחב יותר?", o: ["הגדלת המדגם", "העלאת רמת הביטחון", "הקטנת \\(\\sigma\\)", "ממוצע מדגם גבוה יותר"], a: 1, e: "ביטחון גבוה יותר דורש ערך תקן גדול יותר מהטבלה, ולכן רווח רחב יותר. הגדלת \\(n\\) והקטנת \\(\\sigma\\) מצרות את הרווח." },
+      { q: "הגדלנו את גודל המדגם פי 4, וכל השאר נשאר. מה קורה לאורך הרווח?", o: ["קטן פי 4", "קטן פי 2", "קטן פי 16", "לא משתנה"], a: 1, e: "האורך פרופורציונלי ל-\\(1/\\sqrt n\\), ו-\\(\\sqrt4=2\\)." },
+      { q: "12 תצפיות, \\(\\sigma\\) לא ידועה, ומניחים שהאוכלוסייה נורמלית. באיזה ערך מהטבלה משתמשים לרווח של 95%?", o: ["\\(Z_{0.975}=1.96\\)", "\\(t^{(12)}_{0.975}\\)", "\\(t^{(11)}_{0.975}\\)", "\\(t^{(11)}_{0.95}\\)"], a: 2, e: "\\(S\\) במקום \\(\\sigma\\) פירושו \\(t\\), עם \\(n-1=11\\) דרגות חופש. ברווח דו-צדדי מחפשים את \\(1-\\frac{\\alpha}{2}=0.975\\)." },
+      { q: "בסקר של 400 אנשים, 100 ענו \"כן\". מהו רווח הסמך של 95% לשיעור עוני ה\"כן\"?", o: ["\\(0.208\\le p\\le0.292\\)", "\\(0.229\\le p\\le0.271\\)", "\\(0.15\\le p\\le0.35\\)", "\\(0.243\\le p\\le0.257\\)"], a: 0, e: "\\(\\hat p=0.25\\), \\(SE=\\sqrt{0.25\\cdot0.75/400}=0.0217\\), ו-\\(0.25\\pm1.96\\cdot0.0217=0.25\\pm0.042\\)." },
+      { q: "כמה צריך לדגום כדי שרווח סמך של 95% לפרופורציה יהיה באורך 0.1 לכל היותר, בלי מידע מוקדם על \\(p\\)?", o: ["97", "196", "385", "384"], a: 2, e: "\\(n\\ge(1.96/0.1)^2=384.16\\), ומעגלים כלפי מעלה: 385. ‏97 יוצא אם מתייחסים ל-0.1 כטעות אמידה, כלומר לאורך של 0.2, ו-384 הוא עיגול כלפי מטה." },
+      { q: "למה בחישוב גודל המדגם לפרופורציה מציבים \\(\\hat p=0.5\\)?", o: ["כי זה הערך הכי סביר של \\(p\\)", "כי זה נותן את הרווח הרחב ביותר, וכך האורך מובטח לכל \\(\\hat p\\) שייצא", "כי כך מובטחת רמת הביטחון", "כי זה מקטין את גודל המדגם"], a: 1, e: "את \\(\\hat p\\) לא יודעים לפני הדגימה. \\(\\hat p(1-\\hat p)\\) מקסימלי ב-0.5, ולכן זה המקרה הגרוע ביותר עבור האורך. רמת הביטחון מובטחת בכל מקרה דרך \\(z\\)." },
+      { q: "ידוע ש-\\(p\\le0.1\\). מה זה עושה לגודל המדגם הנדרש?", o: ["מגדיל אותו", "מקטין אותו, כי המקרה הגרוע הוא עכשיו \\(0.1\\cdot0.9=0.09\\) במקום 0.25", "לא משנה", "אי אפשר לחשב גודל מדגם במקרה הזה"], a: 1, e: "בתחום \\([0,\\,0.1]\\) הביטוי \\(p(1-p)\\) עולה, ולכן המקרה הגרוע הוא \\(p=0.1\\). המדגם קטן פי \\(0.25/0.09\\approx2.8\\)." },
+      { q: "במדגם של 40 פריטים נמצאו 2 פגומים. מה נכון לגבי הנוסחה \\(\\hat p\\pm Z\\cdot SE\\)?", o: ["אפשר להשתמש בה, המדגם גדול מ-30", "התנאי \\(n\\hat p\\ge5\\) לא מתקיים, והקירוב הנורמלי לא מוצדק", "צריך להשתמש ב-\\(t\\)", "הרווח יהיה תקין, רק צר"], a: 1, e: "\\(n\\hat p=2\\), ולכן התנאי לא מתקיים, ולא בונים רווח סמך לפי הנוסחה במקרה כזה. כלל ה-30 שייך לתוחלת, לא לפרופורציה." },
+      { q: "איך כותבים נכון רווח סמך לתוחלת?", o: ["\\(12.0\\le\\bar x\\le14.8\\)", "\\(12.0\\le\\mu\\le14.8\\)", "\\(P(12.0\\le\\mu\\le14.8)=0.95\\)", "\\(12.0\\le X\\le14.8\\)"], a: 1, e: "באמצע הפרמטר. \\(\\bar x\\) תמיד באמצע הרווח שלו. אחרי ההצבה כותבים בלי \\(P\\), כי אין יותר מקריות." },
+      { q: "רווח סמך של 95% לתוחלת גובה עצים הוא 4.1 עד 4.5 מטר, ממדגם של 200 עצים. מה נכון?", o: ["כ-95% מהעצים בגובה 4.1 עד 4.5 מטר", "עץ בודד שנדגום יהיה כנראה בגובה 4.1 עד 4.5", "אם נדגום 2,000 עצים, הרווח יתקצר, אבל הפיזור של גובה העצים לא ישתנה", "אם נדגום 2,000 עצים, גם הרווח וגם הפיזור של גובה העצים יקטנו"], a: 2, e: "הרווח הוא על הממוצע, והוא מתכווץ כמו \\(1/\\sqrt n\\). הפיזור של עצים בודדים הוא \\(\\sigma\\), תכונה של האוכלוסייה, והוא לא קטן כשדוגמים יותר." },
+      { q: "\\(\\sigma=12\\), \\(n=64\\), והרווח שדווח הוא \\(35.53\\le\\mu\\le40.47\\). באיזו רמת ביטחון?", o: ["95%", "90%", "99%", "68%"], a: 1, e: "חצי הרוחב 2.47, ו-\\(SE=12/8=1.5\\). מספר הצעדים \\(2.47/1.5\\approx1.645\\), שמתאים ל-\\(1-\\frac{\\alpha}{2}=0.95\\), כלומר 90%." },
+      { q: "8 תצפיות מאוכלוסייה מוטה מאוד, ו-\\(\\sigma\\) לא ידועה. מה הבעיה ברווח \\(t\\)?", o: ["אין בעיה, \\(t\\) נועד למדגמים קטנים", "צריך להחליף ל-\\(z\\)", "הנוסחה מניחה ש-\\(\\bar X\\) נורמלי. באוכלוסייה מוטה ובמדגם קטן זה לא מתקיים, והכיסוי האמיתי נמוך מ-95%", "צריך פשוט להעלות את רמת הביטחון"], a: 2, e: "\\(t\\) מפצה על אמידת \\(\\sigma\\), אבל רק בתנאי שהאוכלוסייה נורמלית. כאן אין נורמליות ואין מדגם גדול, ולכן אף אחת מהנוסחאות לא מוצדקת." },
+      { q: "מה משפט הגבול המרכזי נותן לרווח סמך, שחוק המספרים הגדולים לא נותן?", o: ["ש-\\(\\bar X\\) מתקרב ל-\\(\\mu\\)", "את צורת ההתפלגות של \\(\\bar X-\\mu\\), וממנה את ערך התקן \\(Z\\)", "שהאוכלוסייה נורמלית", "ש-\\(S=\\sigma\\)"], a: 1, e: "חוק המספרים הגדולים אומר לאן \\(\\bar X\\) הולך. המשפט אומר באיזו צורה וברוחב הוא מתפזר, וזה מה שמאפשר לחשב רווח שתופס בדיוק \\(1-\\alpha\\)." }
+    ];
+    const score = h("p", { class: "score" }, root);
+    let right = 0, answered = 0;
+    const upd = () => { score.textContent = `ציון: ${right} מתוך ${answered} שנענו (${Q.length} שאלות)`; };
+    Q.forEach((it, idx) => {
+      const box = h("div", { class: "quiz-q" }, root);
+      const qh = h("div", { class: "qh" }, box);
+      h("span", { class: "qn", text: `${idx + 1}.` }, qh);
+      h("span", null, qh, it.q);
+      const opts = h("div", { class: "quiz-opts" }, box);
+      const exp = h("div", { class: "quiz-exp" }, box);
+      const btns = it.o.map((t, i) => {
+        const b = h("button", { type: "button" }, opts, t);
+        b.addEventListener("click", () => {
+          btns.forEach(x => x.disabled = true);
+          answered++;
+          if (i === it.a) { right++; b.classList.add("right"); exp.innerHTML = "<strong>נכון.</strong> " + it.e; }
+          else { b.classList.add("wrong"); btns[it.a].classList.add("right"); exp.innerHTML = "<strong>לא בדיוק.</strong> " + it.e; }
+          if (window.renderMathInElement) window.renderMathInElement(exp, { delimiters: [{ left: "\\(", right: "\\)", display: false }], throwOnError: false });
+          upd();
+        });
+        return b;
+      });
+    });
+    upd();
+  };
+
+  /* ================= boot ================= */
+  function boot() {
+    document.querySelectorAll("[data-w]").forEach(el => {
+      const fn = W[el.dataset.w];
+      if (fn) {
+        try { fn(el); } catch (e) { console.error("widget " + el.dataset.w, e); el.textContent = "שגיאה בטעינת הרכיב."; }
+      }
+    });
+
+    // theme toggle
+    const themeBtn = document.getElementById("toggle-theme");
+    const root = document.documentElement;
+    const isDark = () => root.dataset.theme ? root.dataset.theme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const syncTheme = () => { themeBtn.textContent = isDark() ? "מצב בהיר" : "מצב כהה"; themeBtn.setAttribute("aria-pressed", String(isDark())); };
+    try { const saved = localStorage.getItem("stats-guide-theme"); if (saved === "dark" || saved === "light") root.dataset.theme = saved; } catch (e) { /* storage unavailable */ }
+    themeBtn.addEventListener("click", () => {
+      root.dataset.theme = isDark() ? "light" : "dark";
+      try { localStorage.setItem("stats-guide-theme", root.dataset.theme); } catch (e) { /* storage unavailable */ }
+      syncTheme();
+    });
+    syncTheme();
+
+    // extension controls
+    const openBtn = document.getElementById("toggle-ext-open");
+    let allOpen = false;
+    openBtn.addEventListener("click", () => {
+      allOpen = !allOpen;
+      document.querySelectorAll("details.ext").forEach(d => { d.open = allOpen; });
+      openBtn.textContent = allOpen ? "סגור את כל ההרחבות" : "פתח את כל ההרחבות";
+    });
+
+    // toc highlighting
+    const links = Array.from(document.querySelectorAll("nav.toc a"));
+    const map = new Map(links.map(a => [a.getAttribute("href").slice(1), a]));
+    const secs = Array.from(document.querySelectorAll("section.chapter"));
+    let lastActive = null, ticking = false;
+    function syncToc() {
+      ticking = false;
+      const line = window.innerHeight * 0.3;
+      let cur = secs[0];
+      secs.forEach(sec => { if (sec.getBoundingClientRect().top <= line) cur = sec; });
+      if (cur === lastActive) return;
+      lastActive = cur;
+      links.forEach(l => l.classList.remove("active"));
+      const a = map.get(cur.id);
+      if (a) { a.classList.add("active"); if (window.innerWidth <= 920) { const toc = a.closest("nav.toc"), r = a.getBoundingClientRect(), t = toc.getBoundingClientRect(); toc.scrollBy({ left: (r.left + r.width / 2) - (t.left + t.width / 2), behavior: "smooth" }); } }
+    }
+    window.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(syncToc); } }, { passive: true });
+    syncToc();
+
+    // math
+    if (window.renderMathInElement) {
+      window.renderMathInElement(document.body, {
+        delimiters: [{ left: "$$", right: "$$", display: true }, { left: "\\(", right: "\\)", display: false }],
+        throwOnError: false
+      });
+    }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
+})();
+
+});
+</script>
+</body>
+</html>
