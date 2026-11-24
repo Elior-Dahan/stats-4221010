@@ -1,0 +1,1772 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>הרצאה 6 – רווח סמך לשתי אוכלוסיות · סטטיסטיקה</title>
+<meta name="description" content="מדריך למידה אינטראקטיבי להרצאה 6 בקורס סטטיסטיקה 4221010: רווח סמך להפרש פרופורציות, להפרש תוחלות ולמדגם מזווג">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=IBM+Plex+Sans+Hebrew:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<meta name="robots" content="noindex">
+<script src="../../assets/common.js" defer></script>
+<style>
+:root {
+  color-scheme: light;
+  --paper: #f5f7fa;
+  --grid: rgba(31, 78, 140, 0.055);
+  --surface: #ffffff;
+  --surface-2: #eef2f7;
+  --ink: #17202d;
+  --ink-2: #445063;
+  --muted: #6a7486;
+  --rule: #d6dde7;
+  --rule-strong: #b5c0cf;
+  --accent: #1f4e8c;
+  --accent-soft: #e3ecf8;
+  --mean: #2a78d6;
+  --median: #eb6834;
+  --mode: #1baf7a;
+  --neg: #e34948;
+  --pos: #2a78d6;
+  --ext: #5a47cf;
+  --ext-bg: #f2f0fd;
+  --ext-rule: #cfc8f5;
+  --good: #0f7a3e;
+  --good-bg: #e6f4ec;
+  --bad: #b3261e;
+  --bad-bg: #fbe9e7;
+  --radius: 10px;
+  --font-body: "IBM Plex Sans Hebrew", "Segoe UI", Arial, sans-serif;
+  --font-head: "Frank Ruhl Libre", "David", Georgia, serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #13171d;
+    --grid: rgba(140, 170, 220, 0.05);
+    --surface: #1b2129;
+    --surface-2: #232b36;
+    --ink: #e9edf3;
+    --ink-2: #bcc5d2;
+    --muted: #8f9aab;
+    --rule: #2f3946;
+    --rule-strong: #46525f;
+    --accent: #8db6ec;
+    --accent-soft: #22324a;
+    --mean: #3987e5;
+    --median: #d95926;
+    --mode: #199e70;
+    --neg: #e66767;
+    --pos: #3987e5;
+    --ext: #a397f0;
+    --ext-bg: #201d36;
+    --ext-rule: #3d3670;
+    --good: #5fc98d;
+    --good-bg: #17301f;
+    --bad: #f08a80;
+    --bad-bg: #3a1c1a;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #13171d;
+  --grid: rgba(140, 170, 220, 0.05);
+  --surface: #1b2129;
+  --surface-2: #232b36;
+  --ink: #e9edf3;
+  --ink-2: #bcc5d2;
+  --muted: #8f9aab;
+  --rule: #2f3946;
+  --rule-strong: #46525f;
+  --accent: #8db6ec;
+  --accent-soft: #22324a;
+  --mean: #3987e5;
+  --median: #d95926;
+  --mode: #199e70;
+  --neg: #e66767;
+  --pos: #3987e5;
+  --ext: #a397f0;
+  --ext-bg: #201d36;
+  --ext-rule: #3d3670;
+  --good: #5fc98d;
+  --good-bg: #17301f;
+  --bad: #f08a80;
+  --bad-bg: #3a1c1a;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+
+body {
+  margin: 0;
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+
+/* ---------- header ---------- */
+.masthead {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 48px 24px 8px;
+}
+.course-line { color: var(--muted); font-size: 15px; margin: 0 0 10px; }
+.masthead h1 {
+  font-family: var(--font-head);
+  font-weight: 900;
+  font-size: clamp(38px, 6.4vw, 72px);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.masthead h1 .h1-second { display: block; color: var(--ink-2); font-weight: 500; }
+.masthead .lede { max-width: 640px; font-size: 19px; color: var(--ink-2); margin: 18px 0 0; }
+
+.hero-lab { max-width: 1180px; margin: 28px auto 0; padding: 0 24px; }
+
+.controls-bar {
+  max-width: 1180px; margin: 24px auto 0; padding: 0 24px;
+  display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center;
+  font-size: 15px; color: var(--ink-2);
+}
+.legend-ext { display: inline-flex; align-items: center; gap: 8px; }
+
+/* ---------- layout ---------- */
+.layout {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px 24px 80px;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 48px;
+}
+nav.toc {
+  position: sticky; top: 16px; align-self: start;
+  font-size: 15px; line-height: 1.5;
+  max-height: calc(100vh - 32px); overflow: auto;
+}
+nav.toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; }
+nav.toc li { counter-increment: toc; }
+nav.toc a {
+  display: grid; grid-template-columns: 26px 1fr; gap: 4px;
+  padding: 6px 10px; border-radius: 6px; text-decoration: none; color: var(--ink-2);
+  border-inline-start: 2px solid transparent;
+}
+nav.toc a::before { content: counter(toc); color: var(--muted); font-variant-numeric: tabular-nums; }
+nav.toc a:hover { background: var(--surface-2); color: var(--ink); }
+nav.toc a.active { color: var(--ink); border-inline-start-color: var(--accent); background: var(--surface); }
+nav.toc .toc-title { font-weight: 600; color: var(--ink); margin: 0 0 8px; padding-inline-start: 10px; }
+
+main { min-width: 0; max-width: 760px; }
+
+section.chapter { padding-top: 40px; }
+section.chapter + section.chapter { border-top: 1px solid var(--rule); margin-top: 40px; }
+.chapter-num { font-family: var(--font-head); color: var(--muted); font-size: 18px; margin: 0; }
+h2 {
+  font-family: var(--font-head); font-weight: 700;
+  font-size: clamp(28px, 3.6vw, 38px); line-height: 1.15; margin: 2px 0 14px;
+}
+h3 { font-size: 21px; line-height: 1.35; margin: 34px 0 8px; font-weight: 600; }
+h4 { font-size: 17px; margin: 22px 0 4px; font-weight: 600; }
+p { margin: 0 0 14px; }
+ul, ol { margin: 0 0 14px; padding-inline-start: 22px; }
+li { margin-bottom: 4px; }
+strong { font-weight: 600; }
+
+.slide {
+  display: inline-block; font-size: 13px; line-height: 1.4; white-space: nowrap;
+  padding: 1px 8px; border-radius: 999px; vertical-align: 2px;
+  border: 1px solid var(--rule-strong); color: var(--muted); background: var(--surface);
+  margin-inline-start: 6px; font-weight: 500;
+}
+h2 .slide, h3 .slide { vertical-align: 4px; }
+
+.def {
+  border-inline-start: 3px solid var(--accent);
+  padding: 4px 16px; margin: 14px 0 18px; background: var(--surface);
+  border-radius: 0 6px 6px 0;
+}
+[dir="rtl"] .def { border-radius: 6px 0 0 6px; }
+.def p:last-child { margin-bottom: 0; }
+
+.math-block { overflow-x: auto; overflow-y: hidden; padding: 4px 0; margin: 6px 0 14px; }
+.katex { direction: ltr; unicode-bidi: isolate; font-size: 1.05em; }
+.katex-display { margin: 0.4em 0; }
+.ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+.num { font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
+
+table.t {
+  border-collapse: collapse; width: 100%; margin: 10px 0 18px; font-size: 15.5px;
+  background: var(--surface); border-radius: 8px; overflow: hidden;
+}
+.table-wrap { overflow-x: auto; margin: 10px 0 18px; position: relative; }
+.table-wrap table.t { margin: 0; }
+table.t th, table.t td { padding: 8px 12px; text-align: start; border-bottom: 1px solid var(--rule); }
+table.t th { background: var(--surface-2); font-weight: 600; color: var(--ink); }
+table.t tr:last-child td { border-bottom: 0; }
+table.t td.n, table.t th.n { text-align: center; font-variant-numeric: tabular-nums; unicode-bidi: plaintext; }
+
+.note { color: var(--ink-2); font-size: 15.5px; }
+.callout {
+  background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius);
+  padding: 14px 18px; margin: 16px 0;
+}
+.callout > :last-child { margin-bottom: 0; }
+.callout .callout-h { font-weight: 600; margin-bottom: 4px; }
+.takeaway { font-family: var(--font-head); font-size: 22px; line-height: 1.45; margin: 22px 0; color: var(--ink); }
+
+/* ---------- extension blocks ---------- */
+details.ext {
+  border: 1px solid var(--ext-rule);
+  background: var(--ext-bg);
+  border-radius: var(--radius);
+  margin: 18px 0;
+}
+details.ext > summary {
+  list-style: none; cursor: pointer;
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px;
+  padding: 12px 16px; font-weight: 600; color: var(--ink);
+}
+details.ext > summary::-webkit-details-marker { display: none; }
+details.ext > summary::after {
+  content: "+"; margin-inline-start: auto; color: var(--ext); font-weight: 400; font-size: 22px; line-height: 1;
+}
+details.ext[open] > summary::after { content: "−"; }
+.ext-badge {
+  display: inline-block; font-size: 12.5px; font-weight: 600; line-height: 1.5;
+  color: #fff; background: var(--ext); padding: 1px 9px; border-radius: 999px;
+}
+:root[data-theme="dark"] .ext-badge { color: #15122b; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .ext-badge { color: #15122b; } }
+.ext-later { font-size: 13.5px; font-weight: 400; color: var(--ext); }
+details.ext .ext-body { padding: 2px 18px 16px; border-top: 1px dashed var(--ext-rule); }
+details.ext .ext-body > :first-child { margin-top: 12px; }
+details.ext .ext-body h4:first-child { margin-top: 12px; }
+
+/* ---------- reveal ---------- */
+details.reveal { margin: 8px 0 16px; }
+details.reveal > summary {
+  cursor: pointer; display: inline-block; font-size: 15px; font-weight: 600; color: var(--accent);
+  padding: 4px 12px; border: 1px solid var(--rule-strong); border-radius: 999px; background: var(--surface);
+}
+details.reveal > summary::-webkit-details-marker { display: none; }
+details.reveal[open] > summary { margin-bottom: 10px; }
+details.reveal .reveal-body { border-inline-start: 3px solid var(--rule-strong); padding: 2px 16px; }
+
+/* ---------- widgets ---------- */
+figure.lab {
+  margin: 22px 0; padding: 18px 18px 14px; background: var(--surface);
+  border: 1px solid var(--rule); border-radius: 14px;
+}
+.lab-title { font-weight: 600; margin: 0 0 2px; font-size: 16.5px; }
+.lab-hint { color: var(--muted); font-size: 14.5px; margin: 0 0 10px; }
+figure.lab svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: none; }
+figure.lab svg text { font-family: var(--font-body); }
+.lab-row { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin: 10px 0 0; font-size: 15px; }
+.lab-row label { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); }
+.btn {
+  font: inherit; font-size: 14.5px; font-weight: 500; cursor: pointer;
+  padding: 5px 14px; border-radius: 8px; border: 1px solid var(--rule-strong);
+  background: var(--surface); color: var(--ink);
+}
+.btn:hover { background: var(--surface-2); }
+.btn.primary { background: var(--accent); color: var(--surface); border-color: var(--accent); }
+.btn.primary:hover { filter: brightness(1.08); }
+.seg { display: inline-flex; border: 1px solid var(--rule-strong); border-radius: 8px; overflow: hidden; }
+.seg button { font: inherit; font-size: 14.5px; padding: 5px 12px; border: 0; background: var(--surface); color: var(--ink-2); cursor: pointer; }
+.seg button + button { border-inline-start: 1px solid var(--rule-strong); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--surface); }
+input[type="range"] { accent-color: var(--accent); width: 160px; }
+input[type="number"], textarea, select {
+  font: inherit; font-size: 15px; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--rule-strong); border-radius: 6px; padding: 4px 8px;
+}
+input[type="number"] { width: 72px; }
+textarea { width: 100%; min-height: 72px; direction: ltr; text-align: left; font-variant-numeric: tabular-nums; }
+
+.stats {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  gap: 8px; margin-top: 12px;
+}
+.stat {
+  border: 1px solid var(--rule); border-radius: 8px; padding: 6px 10px; background: var(--paper);
+}
+.stat .k { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.stat .v { font-size: 19px; font-weight: 600; font-variant-numeric: tabular-nums; direction: ltr; text-align: right; }
+.stat.ext-stat { border-color: var(--ext-rule); background: var(--ext-bg); }
+.swatch { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+.swatch.mean { background: var(--mean); }
+.swatch.median { background: repeating-linear-gradient(90deg, var(--median) 0 4px, transparent 4px 6px); }
+.swatch.mode { background: repeating-linear-gradient(90deg, var(--mode) 0 2px, transparent 2px 4px); }
+
+.twin { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.twin > div { min-width: 0; }
+.twin .tw-h { font-weight: 600; font-size: 15px; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.twin .tw-h .num { color: var(--ink-2); font-weight: 500; }
+
+.feedback { font-size: 15px; margin-top: 8px; min-height: 1.5em; }
+.feedback.ok { color: var(--good); }
+.feedback.no { color: var(--bad); }
+
+/* classifier */
+.classify { display: grid; gap: 10px; margin-top: 8px; }
+.cl-item { border: 1px solid var(--rule); border-radius: 10px; padding: 10px 12px; background: var(--paper); }
+.cl-item .cl-q { font-weight: 500; margin-bottom: 6px; }
+.cl-opts { display: flex; flex-wrap: wrap; gap: 6px; }
+.cl-opts button {
+  font: inherit; font-size: 14px; padding: 3px 12px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--rule-strong); background: var(--surface); color: var(--ink);
+}
+.cl-opts button.right { background: var(--good-bg); border-color: var(--good); color: var(--good); font-weight: 600; }
+.cl-opts button.wrong { background: var(--bad-bg); border-color: var(--bad); color: var(--bad); }
+.cl-why { font-size: 14.5px; color: var(--ink-2); margin-top: 6px; }
+
+/* quiz */
+.quiz-q { border: 1px solid var(--rule); background: var(--surface); border-radius: 12px; padding: 14px 16px; margin: 12px 0; }
+.quiz-q .qh { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; font-weight: 600; margin-bottom: 8px; }
+.quiz-q .qn { color: var(--muted); font-variant-numeric: tabular-nums; }
+.quiz-opts { display: grid; gap: 6px; }
+.quiz-opts button {
+  font: inherit; text-align: start; padding: 8px 12px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--rule); background: var(--paper); color: var(--ink);
+}
+.quiz-opts button:hover:not(:disabled) { border-color: var(--rule-strong); }
+.quiz-opts button.right { background: var(--good-bg); border-color: var(--good); }
+.quiz-opts button.wrong { background: var(--bad-bg); border-color: var(--bad); }
+.quiz-opts button:disabled { cursor: default; }
+.quiz-exp { margin-top: 10px; font-size: 15.5px; color: var(--ink-2); }
+.score { font-weight: 600; }
+
+/* kibbutz steps */
+.steps { counter-reset: st; }
+.step { border-inline-start: 2px solid var(--rule-strong); padding: 0 16px 6px; margin: 0 0 6px; position: relative; }
+.step-h { font-weight: 600; }
+
+/* tooltips */
+.tip {
+  position: fixed; z-index: 50; pointer-events: none; background: var(--ink); color: var(--paper);
+  font-size: 13.5px; padding: 4px 8px; border-radius: 6px; opacity: 0; transition: opacity .1s;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.tip.on { opacity: 1; }
+
+footer.foot { max-width: 1180px; margin: 0 auto; padding: 24px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--rule); }
+
+/* ---------- responsive ---------- */
+@media (max-width: 920px) {
+  .layout { grid-template-columns: 1fr; gap: 0; padding: 8px 16px 64px; }
+  nav.toc {
+    position: sticky; top: 0; z-index: 20; max-height: none; overflow-x: auto; overflow-y: hidden;
+    background: var(--paper); margin: 0 -16px; padding: 8px 16px; border-bottom: 1px solid var(--rule);
+  }
+  nav.toc .toc-title { display: none; }
+  nav.toc ol { display: flex; gap: 4px; white-space: nowrap; }
+  nav.toc a { display: inline-flex; gap: 6px; padding: 4px 10px; border-inline-start: 0; border-bottom: 2px solid transparent; border-radius: 6px 6px 0 0; }
+  nav.toc a.active { border-bottom-color: var(--accent); }
+  .masthead { padding: 32px 16px 4px; }
+  .hero-lab, .controls-bar { padding: 0 16px; }
+  html { scroll-padding-top: 60px; }
+}
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  .twin { grid-template-columns: 1fr; }
+  figure.lab { padding: 14px 12px 12px; margin-left: -4px; margin-right: -4px; }
+  table.t th, table.t td { padding: 6px 8px; }
+}
+@media print {
+  body { background: #fff; }
+  nav.toc, .controls-bar { display: none; }
+  .layout { display: block; }
+  details.ext { break-inside: avoid; }
+}
+
+figure.lab svg g .ring { opacity: 0; }
+figure.lab svg g:focus .ring { opacity: 1; }
+
+/* range sliders: min on the left, max on the right, like the number line */
+input[type="range"] { direction: ltr; }
+
+input[type="number"] { direction: ltr; text-align: right; }
+/* lecture 4 additions */
+.linkbtn { font: inherit; font-weight: 600; background: none; border: 0; padding: 0; color: var(--accent); cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
+table.grid-t td.hl, table.grid-t th.hl { background: var(--accent-soft); }
+table.t td.best { font-weight: 700; color: var(--good); background: var(--good-bg); }
+table.t td.sumc { font-weight: 600; color: var(--ink-2); }
+table.grid-t tr:last-child td { border-top: 1px solid var(--rule-strong); }
+.steps .step p:last-child { margin-bottom: 8px; }
+.lab-row input[type="number"] { width: 76px; }
+table.t td.n { direction: ltr; }
+.ctl-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin: 0 0 12px; }
+.ctl-group { border-inline-start: 3px solid var(--rule-strong); border-radius: 0; padding: 4px 12px 6px; background: var(--surface-2); }
+.ctl-h { margin: 0 0 4px; font-size: 13px; font-weight: 600; }
+
+/* lecture 5 additions */
+.classify .cl-item[data-done] .cl-opts button { cursor: default; }
+.ctl-group .seg { margin-top: 2px; }
+.lab-row label input[type="checkbox"] { accent-color: var(--accent); width: 16px; height: 16px; }
+.lab-row input:disabled { opacity: 0.45; }
+details.deep {
+  border: 1px solid var(--rule-strong);
+  border-inline-start: 4px solid var(--accent);
+  background: var(--surface);
+  border-radius: var(--radius);
+  margin: 18px 0;
+}
+details.deep > summary {
+  list-style: none; cursor: pointer;
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px;
+  padding: 12px 16px; font-weight: 600; color: var(--ink);
+}
+details.deep > summary::-webkit-details-marker { display: none; }
+details.deep > summary::after { content: "+"; margin-inline-start: auto; color: var(--accent); font-weight: 400; font-size: 22px; line-height: 1; }
+details.deep[open] > summary::after { content: "−"; }
+.deep-badge {
+  display: inline-block; font-size: 12.5px; font-weight: 600; line-height: 1.5;
+  color: #fff; background: var(--accent); padding: 1px 9px; border-radius: 999px;
+}
+:root[data-theme="dark"] .deep-badge { color: #0d1626; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .deep-badge { color: #0d1626; } }
+details.deep .deep-body { padding: 2px 18px 16px; border-top: 1px dashed var(--rule-strong); }
+details.deep .deep-body > :first-child { margin-top: 12px; }
+@media print { details.deep { break-inside: avoid; } }
+
+/* decision flow */
+.flow { display: grid; gap: 8px; margin: 14px 0 20px; }
+.flow-q { font-weight: 600; border: 1px solid var(--rule-strong); border-radius: 10px; padding: 9px 14px; background: var(--surface); margin-top: 6px; }
+.flow-a { margin-inline-start: 24px; border-inline-start: 3px solid var(--accent); border-radius: 0; padding: 6px 14px; background: var(--surface-2); }
+/* prediction question */
+.quiz-q.predict { border-color: var(--accent); }
+</style>
+</head>
+<body>
+<header class="masthead">
+  <h1>רווח סמך לשתי אוכלוסיות<span class="h1-second">מי גדול יותר, ובכמה</span></h1>
+  <p class="lede">עד עכשיו אמדנו פרמטר של אוכלוסייה אחת. אך הרבה פעמים דווקא השוואה מעניינת יותר: שתי קבוצות לקוחות, שני ספקים, גרסה ישנה מול חדשה. בהרצאה הזו בונים רווח סמך להפרש בין שתי אוכלוסיות, ורואים איך הדרך שבה נאספו הנתונים קובעת את השיטה. לפני חלק מהכלים מופיעה שאלה. נסו לענות עליה לפני שאתם בודקים בכלי.</p>
+</header>
+
+<div class="controls-bar">
+  <span class="legend-ext"><span class="ext-badge">הרחבה</span> חומר שמעבר לחומר ההרצאה. מקופל כברירת מחדל.</span>
+  <button class="btn" id="toggle-theme" type="button" aria-pressed="false">מצב כהה</button>
+  <button class="btn" id="toggle-ext-open" type="button">פתח את כל ההרחבות</button>
+</div>
+
+<div class="layout">
+  <nav class="toc" aria-label="תוכן המדריך">
+    <p class="toc-title">תוכן</p>
+    <ol>
+      <li><a href="#intro">מה משווים</a></li>
+      <li><a href="#se">טעות התקן של הפרש</a></li>
+      <li><a href="#prop">הפרש פרופורציות</a></li>
+      <li><a href="#means">הפרש תוחלות</a></li>
+      <li><a href="#paired">מדגם מזווג</a></li>
+      <li><a href="#choose">איך בוחרים שיטה</a></li>
+      <li><a href="#practice">תרגילים</a></li>
+      <li><a href="#quiz">בדקו את עצמכם</a></li>
+      <li><a href="#pitfalls">מלכודות נפוצות</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+<!-- ============ 1 ============ -->
+<section class="chapter" id="intro">
+  <p class="chapter-num">פרק 1</p>
+  <h2>משווים שתי אוכלוסיות</h2>
+  <p>הרבה שאלות עסקיות תלויות בהשוואה: האם בעלי PS5 קנו את GTA 6 בשבוע ההשקה יותר מבעלי Xbox? האם מנוע מדגם חדש מגיע לדחף מלא מהר יותר מהמדגם הקודם? האם גרסה חדשה של דף מוצר מוכרת יותר מהגרסה הישנה? בכל השאלות האלה מה שמעניין הוא <strong>הפער</strong> בין שתי קבוצות.</p>
+
+  <h3>מה אומדים: את ההפרש</h3>
+  <p>לכל אחת משתי האוכלוסיות יש פרמטר משלה, והשאלה היא מה ההפרש ביניהם. האומד הוא ההפרש בין האומדים של כל אוכלוסייה בנפרד, אותם אומדים שכבר מכירים: הממוצע המדגמי לתוחלת והפרופורציה המדגמית לפרופורציה.</p>
+  <div class="table-wrap"><table class="t">
+    <tr><th>מה משווים</th><th class="n">הפרמטר</th><th class="n">האומד</th></tr>
+    <tr><td>שתי פרופורציות</td><td class="n">\(p_x-p_y\)</td><td class="n">\(\hat P_x-\hat P_y\)</td></tr>
+    <tr><td>שתי תוחלות</td><td class="n">\(\mu_x-\mu_y\)</td><td class="n">\(\bar X-\bar Y\)</td></tr>
+  </table></div>
+  <p>כמו ב<a href="../05-confidence-intervals/">הרצאה 5</a>, אומדן נקודתי לא מספיק. רוצים טווח של ערכים סבירים להפרש, כלומר רווח סמך.</p>
+
+  <h3>מה אומר רווח סמך להפרש</h3>
+  <p>לפני שבונים רווח כזה, כדאי לדעת לקרוא אותו. נסו קודם בעצמכם:</p>
+  <div data-w="predict" data-id="zero"></div>
+  <p>הדבר הראשון שמסתכלים עליו ברווח סמך להפרש הוא איפה נמצא ה-0 ביחס לרווח:</p>
+  <figure class="lab" id="w-read">
+    <p class="lab-title">שלושה רווחים להפרש \(\mu_x-\mu_y\)</p>
+    <p class="lab-hint">הקו המקווקו הוא 0, כלומר "אין הבדל".</p>
+    <div data-w="read"></div>
+  </figure>
+  <ul>
+    <li><strong>הרווח כולו חיובי:</strong> ברמת הביטחון הזו, הפרמטר של \(x\) גדול יותר, בפער שבין הגבול התחתון לגבול העליון.</li>
+    <li><strong>הרווח כולו שלילי:</strong> הפרמטר של \(y\) גדול יותר. רווח של \(-5.1\) עד \(-1.3\) אומר ש-\(\mu_y\) גדולה מ-\(\mu_x\) בין 1.3 ל-5.1.</li>
+    <li><strong>הרווח מכיל את 0:</strong> ההפרש האמיתי יכול להיות חיובי, שלילי או אפס. ברמת הביטחון הזו <strong>אי אפשר לקבוע</strong> מי גדול יותר. זה לא אומר שאין הבדל, אלא שהנתונים לא מספיקים כדי לקבוע את כיוונו.</li>
+  </ul>
+  <p>הסימן תלוי בסדר החיסור. לפני שמפרשים, כותבים במפורש מי מחוסר ממי.</p>
+
+  <h3>שתי שאלות שקובעות את השיטה</h3>
+  <p>לא לכל השוואה מתאימה אותה נוסחה. השיטה נקבעת לפי שתי שאלות על הנתונים.</p>
+  <p><strong>מה סוג המשתנה?</strong> אם לכל תצפית יש תשובה של כן או לא (קנה או לא קנה, פגום או תקין), משווים <strong>פרופורציות</strong>. אם לכל תצפית יש ערך כמותי (זמן, משקל, ציון), משווים <strong>תוחלות</strong>.</p>
+  <p><strong>איך נאספו הנתונים?</strong></p>
+  <ul>
+    <li><strong>מדגמים בלתי תלויים:</strong> שתי קבוצות נפרדות. כל מדגם נלקח מאוכלוסייה אחרת, ואין קשר בין תצפית מסוימת במדגם אחד לתצפית מסוימת במדגם השני. לדוגמה: שואלים 400 בעלי PS5 ו-250 בעלי Xbox אם קנו את GTA 6. אלה אנשים שונים, ואין קשר בין התשובה של בעל PS5 מסוים לתשובה של בעל Xbox מסוים.</li>
+    <li><strong>מדגם מזווג:</strong> לכל תצפית במדגם אחד יש בת זוג טבעית במדגם השני. לדוגמה: אותם רכבים עם שני סוגי צמיגים, או אותם סטודנטים במבחן אמצע ובמבחן סוף.</li>
+  </ul>
+  <p>שתי השאלות יחד נותנות את מפת היחידה:</p>
+  <div class="table-wrap" id="map"><table class="t">
+    <tr><th></th><th>מדגמים בלתי תלויים</th><th>מדגם מזווג</th></tr>
+    <tr><td><strong>משתנה של כן או לא</strong></td><td>הפרש פרופורציות (<a href="#prop">פרק 3</a>)</td><td>לא נלמד בקורס</td></tr>
+    <tr><td><strong>משתנה כמותי</strong></td><td>הפרש תוחלות (<a href="#means">פרק 4</a>)</td><td>תוחלת ההפרשים (<a href="#paired">פרק 5</a>)</td></tr>
+  </table></div>
+
+  <figure class="lab" id="w-which-short">
+    <p class="lab-title">בלתי תלויים או מזווג?</p>
+    <p class="lab-hint">שלושה תרחישים. בחרו לכל אחד את סוג המדגם.</p>
+    <div data-w="which" data-set="short"></div>
+  </figure>
+</section>
+
+<!-- ============ 2 ============ -->
+<section class="chapter" id="se">
+  <p class="chapter-num">פרק 2</p>
+  <h2>טעות התקן של הפרש</h2>
+  <p>ב<a href="../05-confidence-intervals/#where">הרצאה 5</a> ראינו שרווח סמך בנוי בצורה קבועה: אומד ± מרווח. המרווח הוא מספר צעדים כפול גודל הצעד, או באופן רשמי יותר, ערך התקן מהטבלה כפול טעות התקן. ניתן לומר אם כן שהמרווח מתאר את התנודה של האומד סביב הפרמטר ממדגם למדגם.</p>
+  <p>האומד החדש הוא הפרש בין שני אומדים. לכן נשאלת השאלה: כמה מתנודד האומד להפרש בין אוכלוסיות ממדגם למדגם?</p>
+
+  <h3>נחזור על המחקר מחר</h3>
+  <p>חברה משווה את זמני האספקה של שני ספקים. היא דוגמת 25 הזמנות מכל ספק, מחשבת את זמן האספקה הממוצע של כל אחד, ומחסרת. נניח שיצא 6.2 ימים לספק א' ו-4.9 ימים לספק ב', כלומר הפרש של 1.3 ימים.</p>
+  <p>אילו החברה הייתה חוזרת על המחקר מחר, עם 25 הזמנות אחרות מכל ספק, הממוצע של ספק א' היה יוצא קצת אחר. גם הממוצע של ספק ב'. ולכן גם ההפרש.</p>
+  <div data-w="predict" data-id="stable"></div>
+
+  <figure class="lab" id="w-resample">
+    <p class="lab-title">חוזרים על המחקר שוב ושוב</p>
+    <p class="lab-hint">בסימולציה האמת ידועה: זמן האספקה הממוצע האמיתי הוא 6 ימים אצל ספק א' ו-5 ימים אצל ספק ב', עם סטיית תקן של 2 ימים אצל שניהם (הערכים האמיתיים מסומנים בקו מקווקו במרכז כל שורה). כל חזרה היא מחקר חדש, עם 25 הזמנות מכל ספק. שלוש השורות מצוירות באותו קנה מידה, כך שאפשר להשוות את הפיזור שלהן.</p>
+    <div data-w="resample"></div>
+  </figure>
+  <p>אחרי הרבה חזרות בולטים שני דברים:</p>
+  <ul>
+    <li>ההפרשים מתרכזים סביב ההפרש האמיתי, יום אחד.</li>
+    <li>ההפרשים מפוזרים <strong>יותר</strong> מכל אחד מהממוצעים.</li>
+  </ul>
+
+  <h3>ההפרשים מתרכזים סביב ההפרש האמיתי</h3>
+  <p>כל אחד מהממוצעים מתרכז סביב התוחלת שלו, ועל פי כללי הלינאריות של התוחלת (<a href="../02-probability/#expect">הרצאה 2</a>), תוחלת של הפרש היא הפרש התוחלות:</p>
+  <div class="math-block">$$E(\bar X-\bar Y)=E(\bar X)-E(\bar Y)=\mu_x-\mu_y$$</div>
+  <p>כלומר \(\bar X-\bar Y\) הוא אומד חסר הטיה להפרש (<a href="../03-unbiased-estimators/#unbiased">הרצאה 3</a>), ובאותו אופן \(\hat P_x-\hat P_y\) לפרופורציות. ראו עוד <a href="#ext-invariance" onclick="document.getElementById('ext-invariance').open=true">בהרחבה בסוף הפרק</a>.</p>
+
+  <h3>ההפרש מפוזר יותר מכל ממוצע לבדו</h3>
+  <p>ההפרש זז ממחקר למחקר משתי סיבות: כי הממוצע של ספק א' זז, וכי הממוצע של ספק ב' זז. אלה שני מקורות נפרדים של אי-ודאות, והחיסור לא מקזז אותם. לפעמים ממוצע אחד יוצא גבוה מדי והשני נמוך מדי, וההפרש סופג את שתי הטעויות יחד.</p>
+  <p>כשהמדגמים בלתי תלויים, השונויות של שני האומדים <strong>מתחברות</strong>, גם כשמחסרים:</p>
+  <div class="math-block">$$\mathrm{Var}(\bar X-\bar Y)=\mathrm{Var}(\bar X)+\mathrm{Var}(\bar Y)$$</div>
+  <p>ולכן טעות התקן של ההפרש היא:</p>
+  <div class="math-block">$$SE(\text{הפרש})=\sqrt{SE_x^2+SE_y^2}$$</div>
+  <p>בסימולציה, טעות התקן של כל ממוצע היא <span style="white-space:nowrap">\(\frac{2}{\sqrt{25}}=0.4\)</span>, ולכן טעות התקן של ההפרש היא:</p>
+  <div class="math-block">$$\sqrt{0.4^2+0.4^2}=0.57$$</div>
+  <p>זה הפיזור שרואים בשורה השלישית של הכלי.</p>
+
+  <h3>רווח הסמך להפרש</h3>
+  <p>נשארה צורת ההתפלגות. כשכל אחד משני האומדים מתפלג נורמלית, בדיוק או בקירוב, והמדגמים בלתי תלויים, גם ההפרש ביניהם מתפלג נורמלית. לכן רווח הסמך בנוי כמו בהרצאה 5:</p>
+  <p class="takeaway" style="text-align:center">אומדן ההפרש ± ערך מהטבלה × טעות התקן של ההפרש</p>
+  <p>ובכתיב רשמי, כש-\(\hat\theta_x\) ו-\(\hat\theta_y\) הם האומדים של שתי האוכלוסיות:</p>
+  <div class="math-block">$$(\hat\theta_x-\hat\theta_y)\;\pm\;Z_{1-\frac{\alpha}{2}}\cdot\sqrt{SE_x^2+SE_y^2}$$</div>
+  <p>זה המבנה של הרווחים בפרקים 3 ו-4. בין מקרה למקרה משתנים רק שני דברים: איך מחשבים את טעות התקן, והאם הערך מהטבלה הוא \(Z\), כמו כאן, או \(t\).</p>
+
+  <details class="ext" id="ext-normal-diff">
+    <summary><span class="ext-badge">הרחבה</span> למה הפרש של שני משתנים נורמליים הוא נורמלי</summary>
+    <div class="ext-body">
+      <p>זה לא מובן מאליו. ברוב ההתפלגויות, חיבור או חיסור משנה את הצורה. אם \(X\) ו-\(Y\) אחידים ובלתי תלויים, ההפרש \(X-Y\) <strong>לא</strong> אחיד: הוא יוצא משולש, עם הרבה ערכים קרובים ל-0 ומעט ערכים בקצוות.</p>
+      <p>אינטואיציה לנורמלית: לפי משפט הגבול המרכזי (<a href="../02-probability/#clt">הרצאה 2</a>), כשמחברים הרבה השפעות קטנות ובלתי תלויות, התוצאה נורמלית. אפשר לחשוב על משתנה נורמלי כעל סכום של הרבה "דחיפות" קטנות ואקראיות. \(X\) הוא ערימה אחת של דחיפות, \(Y\) הוא ערימה אחרת ובלתי תלויה, ו-\(-Y\) הוא אותן דחיפות בכיוון ההפוך. \(X-Y\) הוא פשוט ערימה גדולה יותר של דחיפות קטנות ובלתי תלויות, ולכן גם הוא נורמלי, רק רחב יותר. זו אינטואיציה ולא הוכחה. ההוכחה המלאה דורשת כלים שלא נלמדים בקורס.</p>
+      <figure class="lab" id="w-diffsim">
+        <p class="lab-title">ההפרש: משולש או פעמון?</p>
+        <p class="lab-hint">כל היסטוגרמה בנויה מ-20,000 הגרלות. בחרו את ההתפלגות של \(X\) ושל \(Y\), והשוו את צורת ההפרש לצורה של כל אחד מהם.</p>
+        <div data-w="diffsim"></div>
+      </figure>
+    </div>
+  </details>
+
+  <details class="ext" id="ext-invariance">
+    <summary><span class="ext-badge">הרחבה</span> האם זה כלל השמירה? (לא כמו שאמרתי בתרגול)</summary>
+    <div class="ext-body">
+      <p>בתרגול אמרתי שבגלל כלל השמירה, או כפי שקרוי בפי כל "כלל אלעד" (<a href="../04-mle/#known">הרצאה 4</a>), אפשר לומר שההפרש \(\hat P_x-\hat P_y\) הוא גם חסר הטיה. זה לא מדויק. יש דמיון חיצוני: בשני המקרים לוקחים פונקציה של הפרמטרים (\(p_x-p_y\)) ומציבים בה את האומדים (\(\hat P_x-\hat P_y\)). אבל אלה שתי תכונות שונות:</p>
+      <ul>
+        <li><strong>כלל השמירה</strong> הוא תכונה של <strong>אנ"מ</strong>: אם \(\hat\theta\) הוא האנ"מ של \(\theta\), אז \(g(\hat\theta)\) הוא האנ"מ של \(g(\theta)\), <strong>לכל פונקציה \(g\)</strong>.</li>
+        <li><strong>חוסר הטיה</strong> נשמר רק דרך פונקציות <strong>לינאריות</strong>: חיבור, חיסור והכפלה בקבוע. זה נובע מלינאריות התוחלת. דרך פונקציה לא לינארית חוסר ההטיה בדרך כלל לא נשמר, כי \(E(g(\hat\theta))\ne g(E(\hat\theta))\).</li>
+      </ul>
+      <p>דוגמה מ<a href="../03-unbiased-estimators/#unbiased">הרצאה 3</a>: \(S^2\) חסר הטיה ל-\(\sigma^2\), אבל \(S\) (שורש, פונקציה לא לינארית) <strong>לא</strong> חסר הטיה ל-\(\sigma\).</p>
+      <p>ביחידה הזו:</p>
+      <ul>
+        <li>\(\hat P_x-\hat P_y\) הוא גם חסר הטיה (כי הפרש הוא פונקציה לינארית) וגם אנ"מ (לפי כלל השמירה). שתי התכונות מתקיימות, אבל מסיבות שונות.</li>
+        <li>\(\hat P_x/\hat P_y\) (יחס, לא הפרש) הוא אנ"מ ל-\(p_x/p_y\) לפי כלל השמירה, אבל <strong>לא</strong> חסר הטיה.</li>
+      </ul>
+      <p class="takeaway">כלל השמירה עובד לכל פונקציה, אבל רק לאנ"מ. חוסר הטיה נשמר רק דרך פונקציות לינאריות.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============ 3 ============ -->
+<section class="chapter" id="prop">
+  <p class="chapter-num">פרק 3</p>
+  <h2>הפרש פרופורציות</h2>
+  <p>המקרה הראשון <a href="#map">במפה</a>: משתנה של כן או לא, ושני מדגמים בלתי תלויים.</p>
+  <div class="callout"><p class="callout-h">הבעיה: GTA 6 בשבוע ההשקה (נתונים בדויים)</p>
+    <p>GTA 6 יצא ב-19 בנובמבר 2026. בסקר בקרב גיימרים, 248 מתוך 400 בעלי PS5 ו-130 מתוך 250 בעלי Xbox קנו את המשחק בשבוע ההשקה. האם שיעור הקונים בקרב בעלי PS5 גבוה יותר, ובכמה?</p>
+  </div>
+  <p>לפי מה שראינו למעלה, כדי לבנות רווח סמך צריך שלושה דברים: אומדן להפרש, טעות התקן שלו, וערך מהטבלה.</p>
+
+  <h3>האומדן וטעות התקן</h3>
+  <p>האומד להפרש \(p_x-p_y\) הוא הפרש הפרופורציות המדגמיות, \(\hat P_x-\hat P_y\). בסקר: \(0.62-0.52=0.10\).</p>
+  <p>השונות של פרופורציה מדגמית היא \(\frac{p(1-p)}{n}\), וכפי שראינו קודם, השונויות של שני המדגמים מתחברות. \(p_x\) ו-\(p_y\) עצמם לא ידועים, ולכן מציבים במקומם את האומדנים:</p>
+  <div class="math-block">$$SE=\sqrt{\frac{\hat p_x(1-\hat p_x)}{n}+\frac{\hat p_y(1-\hat p_y)}{m}}$$</div>
+  <p>בסקר:</p>
+  <div class="math-block">$$SE=\sqrt{\frac{0.62\cdot0.38}{400}+\frac{0.52\cdot0.48}{250}}=\sqrt{0.000589+0.000998}=0.0398$$</div>
+
+  <h3>התנאי והערך מהטבלה</h3>
+  <p>פרופורציה מדגמית מתפלגת נורמלית בקירוב כשמתקיים התנאי מהרצאה 5: \(n\hat p\ge5\) וגם \(n(1-\hat p)\ge5\). ההפרש נורמלי רק אם שתי הפרופורציות נורמליות, ולכן בודקים את התנאי <strong>בכל אחד מהמדגמים</strong>: ארבע בדיקות, לא שתיים.</p>
+  <p>בסקר: 248 ו-152 במדגם הראשון, 130 ו-120 בשני. כולם לפחות 5, ולכן הערך מהטבלה הוא \(Z\).</p>
+
+  <h3>הרווח</h3>
+  <div class="math-block">$$(\hat p_x-\hat p_y)\;\pm\;Z_{1-\frac{\alpha}{2}}\cdot\sqrt{\frac{\hat p_x(1-\hat p_x)}{n}+\frac{\hat p_y(1-\hat p_y)}{m}}$$</div>
+  <p>ברמת ביטחון של 95%:</p>
+  <div class="math-block">$$0.10\pm1.96\cdot0.0398\;\Rightarrow\;0.022\le p_{PS5}-p_{Xbox}\le0.178$$</div>
+  <p>הרווח כולו חיובי. ברמת ביטחון של 95%, שיעור הקונים בשבוע ההשקה גבוה יותר בקרב בעלי PS5, בין 2.2 ל-17.8 נקודות אחוז.</p>
+  <p>ברמת ביטחון של 99% (\(Z=2.58\)) הרווח הוא \(-0.003\le p_{PS5}-p_{Xbox}\le0.203\). הוא כבר מכיל את 0, ולכן ברמה הזו אי אפשר לקבוע מי קנה יותר. אותם נתונים, מסקנה אחרת: ביטחון גבוה יותר דורש רווח רחב יותר.</p>
+
+  <h3>ומה אם מגדילים רק מדגם אחד?</h3>
+  <p>הרווח רחב למדי, והדרך לצמצם אותו היא להגדיל את המדגם. נניח שקל לסקור עוד בעלי PS5, וקשה למצוא עוד בעלי Xbox.</p>
+  <div data-w="predict" data-id="onesample"></div>
+  <figure class="lab" id="w-prop">
+    <p class="lab-title">הרווח מול האפס</p>
+    <p class="lab-hint">הכלי נפתח עם נתוני הסקר. שנו את גדלי המדגמים, את הפרופורציות ואת רמת הביטחון. הרווח ירוק כשהוא לא מכיל את 0, ואפור כשהוא מכיל אותו.</p>
+    <div data-w="prop"></div>
+  </figure>
+  <p>כשמגדילים את אחד המדגמים, הרווח הולך ומצטמצם, אבל בקצב פוחת: בהתחלה הוא מצטמצם מהר, ואחר כך, כשהמדגם כבר גדול, כמעט לא. הסיבה נמצאת בשני האיברים שמתחת לשורש, אחד לכל מדגם:</p>
+  <div class="math-block">$$SE=\sqrt{\underbrace{\frac{0.62\cdot0.38}{n}}_{\text{PS5}}+\underbrace{\frac{0.52\cdot0.48}{250}}_{\text{Xbox}}}$$</div>
+  <div class="table-wrap"><table class="t">
+    <tr><th>גודל מדגם ה-PS5</th><th class="n">האיבר של PS5</th><th class="n">האיבר של Xbox</th><th class="n">טעות התקן</th></tr>
+    <tr><td>400</td><td class="n">0.000589</td><td class="n">0.000998</td><td class="n">0.0398</td></tr>
+    <tr><td>4,000</td><td class="n">0.000059</td><td class="n">0.000998</td><td class="n">0.0325</td></tr>
+    <tr><td>40,000</td><td class="n">0.000006</td><td class="n">0.000998</td><td class="n">0.0317</td></tr>
+  </table></div>
+  <p>האיבר של PS5 קטן כש-\(n\) גדל, עד שהוא כמעט נעלם. האיבר של Xbox לא תלוי ב-\(n\) ונשאר כמו שהוא, ולכן טעות התקן לא יכולה לרדת מתחת ל-<span style="white-space:nowrap">\(\sqrt{0.000998}=0.0316\)</span>. גם אילו נסקרו כל בעלי ה-PS5 בעולם, הרווח היה מצטמצם ב-21% לכל היותר. הדיוק של הפרש מוגבל על ידי המדגם הקטן מבין השניים, ומי שרוצה רווח צר צריך להגדיל את שניהם.</p>
+</section>
+
+<!-- ============ 4 ============ -->
+<section class="chapter" id="means">
+  <p class="chapter-num">פרק 4</p>
+  <h2>הפרש תוחלות</h2>
+  <p>המקרה השני <a href="#map">במפה</a>: משתנה כמותי, ושני מדגמים בלתי תלויים.</p>
+  <p>האומד להפרש \(\mu_x-\mu_y\) הוא הפרש הממוצעים המדגמיים, \(\bar X-\bar Y\). טעות התקן של ממוצע מדגמי היא \(\frac{\sigma}{\sqrt n}\) (<a href="../03-unbiased-estimators/#se">הרצאה 3</a>), ולכן לפי פרק 2 טעות התקן של ההפרש היא:</p>
+  <div class="math-block">$$SE=\sqrt{\frac{\sigma_x^2}{n}+\frac{\sigma_y^2}{m}}$$</div>
+  <p>מכאן ממשיכים כמו ברווח סמך לתוחלת אחת (<a href="../05-confidence-intervals/#mean">הרצאה 5</a>). אם סטיות התקן של האוכלוסיות ידועות, מציבים אותן ומשתמשים ב-\(Z\). אם הן לא ידועות, אומדים אותן מהמדגמים ומשתמשים ב-\(t\).</p>
+
+  <h3>כשסטיות התקן ידועות</h3>
+  <p>סטיות התקן של האוכלוסיות, \(\sigma_x\) ו-\(\sigma_y\), ידועות, ולכן אין צורך לאמוד אותן. מציבים אותן בטעות התקן, והרווח הוא:</p>
+  <div class="math-block">$$(\bar x-\bar y)\;\pm\;Z_{1-\frac{\alpha}{2}}\cdot\sqrt{\frac{\sigma_x^2}{n}+\frac{\sigma_y^2}{m}}$$</div>
+  <p>הנוסחה מתבססת על כך שהאומד מתפלג נורמלית. התנאים לשימוש בה זהים לאלה של תוחלת אחת: מדגמים גדולים, או אוכלוסיות שמתפלגות נורמלית.</p>
+
+  <div class="callout"><p class="callout-h">דוגמה: פלדה מול אלומיניום</p>
+    <p>בטיסת הניסוי האחרונה של Starship, החללית חזרה מהמסלול ונתפסה בזרועות מגדל השיגור שלה. זו הפעם הראשונה ששלב עליון של משגר חזר מהמסלול ונתפס במגדל, וצעד מרכזי בדרך למשגר שאפשר להשתמש בו שוב ושוב. במשגרים אחרים, כמו Falcon 9, השלב העליון לא חוזר לשימוש.</p>
+    <p>כמה בחירות הנדסיות מאפשרות את זה, ואחת מהן היא החומר. Starship בנויה מפלדת אל-חלד, ולא מסגסוגות האלומיניום המקובלות במשגרים. פלדה עומדת בטמפרטורות גבוהות בהרבה, וזה קריטי בכניסה חזרה לאטמוספרה.</p>
+    <p>מהנדסים בדקו 36 דגימות מכל חומר, ומדדו לכל דגימה את הטמפרטורה המרבית שבה היא עדיין עומדת בעומס הנדרש. הממוצעים היו \(\bar x=805\) מעלות בפלדה ו-\(\bar y=155\) מעלות באלומיניום. מנתוני היצרנים ידוע ש-\(\sigma_x=24\) ו-\(\sigma_y=18\). נתוני המדגם בדויים, אבל סדרי הגודל אמיתיים: כ-800 מעלות לפלדת אל-חלד, לעומת כ-150 מעלות לסגסוגות אלומיניום.</p>
+    <div class="steps">
+      <div class="step"><p class="step-h">טעות התקן</p>
+        <div class="math-block">$$SE=\sqrt{\frac{24^2}{36}+\frac{18^2}{36}}=\sqrt{16+9}=5$$</div></div>
+      <div class="step"><p class="step-h">רווח של 95%</p>
+        <div class="math-block">$$650\pm1.96\cdot5\;\Rightarrow\;640.2\le\mu_x-\mu_y\le659.8$$</div>
+        <p>הרווח כולו חיובי, ורחוק מאוד מ-0. כאן אין ספק איזה חומר עמיד יותר, והרווח עונה על השאלה "בכמה": ברמת ביטחון של 95%, הפלדה עומדת בטמפרטורה גבוהה יותר ב-640 עד 660 מעלות בממוצע.</p></div>
+    </div>
+  </div>
+
+  <h3>כשסטיות התקן לא ידועות</h3>
+  <p>זה המצב הנפוץ: \(\sigma_x\) ו-\(\sigma_y\) לא ידועות, וצריך לאמוד אותן מהמדגמים. בשלב זה אנחנו מניחים הנחה אחת, שבהמשך גם נבחן אותה: לשתי האוכלוסיות <strong>אותה סטיית תקן</strong>, \(\sigma_x=\sigma_y=\sigma\) (למה בכלל מניחים שונויות שוות? <a href="#ext-welch" onclick="document.getElementById('ext-welch').open=true">ראו בהרחבה למטה</a>). הרווח נבנה בשלושה שלבים.</p>
+
+  <p><strong>שלב 1: מפשטים את טעות התקן.</strong> תחת ההנחה, \(\sigma^2\) יוצא כגורם משותף:</p>
+  <div class="math-block">$$\sqrt{\frac{\sigma^2}{n}+\frac{\sigma^2}{m}}=\sigma\sqrt{\frac1n+\frac1m}$$</div>
+  <p>נשאר מספר אחד לא ידוע, \(\sigma\).</p>
+
+  <p><strong>שלב 2: אומדים את \(\sigma\) משני המדגמים יחד.</strong> כל מדגם נותן אומד משלו ל-\(\sigma^2\): \(S_x^2\) מהראשון ו-\(S_y^2\) מהשני. שני אומדים לאותו מספר משלבים לאומד אחד, שנשען על כל התצפיות:</p>
+  <div class="math-block">$$S_p^2=\frac{(n-1)S_x^2+(m-1)S_y^2}{n+m-2}$$</div>
+  <p>\(S_p\) נקראת <strong>סטיית התקן האומדנית המשותפת</strong>. \(S_p^2\) היא ממוצע משוקלל של שתי השונויות המדגמיות, והמשקל של כל מדגם הוא מספר דרגות החופש שלו. לכן \(S_p\) תמיד נמצאת בין \(S_x\) ל-\(S_y\), וערך מחוץ לטווח הזה מעיד על טעות חישוב.</p>
+  <div data-w="predict" data-id="pool"></div>
+
+  <figure class="lab" id="w-pool">
+    <p class="lab-title">איפה נופל \(S_p\)</p>
+    <p class="lab-hint">הכלי נפתח עם הנתונים של השאלה שלפניו. הזיזו את גדלי המדגמים ואת סטיות התקן, ועקבו אחרי המיקום של \(S_p\) ואחרי המשקל של כל מדגם.</p>
+    <div data-w="pool"></div>
+  </figure>
+  <p>המדגם הגדול משפיע יותר, כי האומד שלו ל-\(\sigma^2\) מדויק יותר. שימו לב גם שכאשר המדגמים שווים בגודלם, \(S_p\) יוצאת 15.8 ולא 15: הממוצע הוא של השונויות, ולא של סטיות התקן.</p>
+
+  <p><strong>שלב 3: הרווח.</strong> מציבים \(S_p\) במקום \(\sigma\). כמו בהרצאה 5, כשמציבים אומד במקום \(\sigma\) עוברים מ-\(Z\) ל-\(t\). מספר דרגות החופש הוא \(n+m-2\): מכל מדגם יורדת דרגת חופש אחת, מאותה סיבה שבשונות המדגמית מחלקים ב-\(n-1\) (<a href="../03-unbiased-estimators/#unbiased">הרצאה 3</a>).</p>
+  <div class="math-block">$$(\bar x-\bar y)\;\pm\;t^{(n+m-2)}_{1-\frac{\alpha}{2}}\cdot S_p\sqrt{\frac1n+\frac1m}$$</div>
+  <p>הנוסחה משמשת בכל גודל מדגם. במדגמים קטנים מניחים שהאוכלוסיות מתפלגות נורמלית.</p>
+
+  <div class="callout"><p class="callout-h">דוגמה: מנועי Raptor (נתונים בדויים)</p>
+    <p>Starship V3 מונעת במנועי Raptor 3. מהנדסים מדדו במבחני קרקע את הזמן (באלפיות שנייה) מההצתה ועד דחף מלא, ב-6 מנועי Raptor 2 וב-5 מנועי Raptor 3. מניחים שהזמנים מתפלגים נורמלית, עם אותה סטיית תקן בשני הדגמים.</p>
+    <div class="table-wrap"><table class="t">
+      <tr><th>דגם</th><th class="n">זמנים</th></tr>
+      <tr><td>Raptor 2</td><td class="n">412, 398, 425, 405, 418, 402</td></tr>
+      <tr><td>Raptor 3</td><td class="n">371, 389, 365, 380, 375</td></tr>
+    </table></div>
+    <div class="steps">
+      <div class="step"><p class="step-h">ממוצעים ושונויות</p>
+        <ul>
+          <li>דגם Raptor 2: \(\bar x=410\), \(S_x^2=105.2\), \(S_x=10.26\).</li>
+          <li>דגם Raptor 3: \(\bar y=376\), \(S_y^2=83.0\), \(S_y=9.11\).</li>
+        </ul>
+        <p>סטיות התקן המדגמיות קרובות, ואין בנתונים סימן נגד ההנחה.</p></div>
+      <div class="step"><p class="step-h">\(S_p\)</p>
+        <div class="math-block">$$S_p^2=\frac{5\cdot105.2+4\cdot83.0}{9}=\frac{858}{9}=95.33,\qquad S_p=9.76$$</div>
+        <p>9.76 נמצא בין 9.11 ל-10.26, קרוב יותר ל-\(S_x\), כי ל-Raptor 2 יש יותר תצפיות.</p></div>
+      <div class="step"><p class="step-h">טעות התקן וערך \(t\)</p>
+        <p>\(SE=9.76\cdot\sqrt{\frac16+\frac15}=9.76\cdot0.606=5.91\). דרגות החופש: \(6+5-2=9\), ולכן \(t^{(9)}_{0.975}=2.262\).</p></div>
+      <div class="step"><p class="step-h">הרווח</p>
+        <div class="math-block">$$34\pm2.262\cdot5.91\;\Rightarrow\;20.6\le\mu_{R2}-\mu_{R3}\le47.4$$</div>
+        <p>ברמת ביטחון של 95%, Raptor 3 מגיע לדחף מלא מהר יותר בממוצע, ב-20.6 עד 47.4 אלפיות שנייה. אם המהנדסים טענו לשיפור של 40 אלפיות, הטענה מתיישבת עם הנתונים. טענה לשיפור של 50 כבר לא.</p></div>
+    </div>
+  </div>
+
+  <details class="ext" id="ext-welch">
+    <summary><span class="ext-badge">הרחבה</span> למה מניחים שהשונויות שוות? ומה קורה כשלא מניחים כך?</summary>
+    <div class="ext-body">
+      <p><strong>למה מניחים.</strong> בזכות ההנחה יש רק \(\sigma\) אחת לאמוד, ואומדים אותה מכל התצפיות יחד. התמורה: הסטטיסטי מתפלג \(t\) מדויק עם \(n+m-2\) דרגות חופש, ואפשר לעבוד עם הטבלה.</p>
+      <p><strong>מה בדיוק מניחים.</strong> השוויון הוא בין סטיות התקן של האוכלוסיות, והנוסחה נשענת עליו. \(S_x\) ו-\(S_y\) עצמן כמעט אף פעם לא יוצאות שוות, בגלל רעש הדגימה. כשהן קרובות זו לזו, אין בנתונים סימן נגד ההנחה, אבל זו לא הוכחה שהיא נכונה. בדיקה פורמלית של ההנחה תילמד בהמשך, במבחני השערות.</p>
+      <p><strong>מה קורה כשלא מניחים.</strong> אין \(\sigma\) משותפת, ומציבים כל \(S\) במקום ה-\(\sigma\) שלה: \(\sqrt{\frac{S_x^2}{n}+\frac{S_y^2}{m}}\). זו שיטה קיימת, שנקראת שיטת Welch. החיסרון שלה: הסטטיסטי שמתקבל לא מתפלג \(t\) מדויק, ואת דרגות החופש מחשבים בנוסחת קירוב מסורבלת, שבדרך כלל נותנת מספר לא שלם.</p>
+      <p>כש-\(n=m\), שתי השיטות נותנות בדיוק אותה טעות תקן:</p>
+      <div class="math-block">$$S_p^2\cdot\frac2n=\frac{S_x^2+S_y^2}{2}\cdot\frac2n=\frac{S_x^2}{n}+\frac{S_y^2}{n}$$</div>
+      <p>ההבדל הוא רק בדרגות החופש. כשגדלי המדגמים שונים, גם טעויות התקן נבדלות: בדוגמת Raptor היא 5.84 בשיטת Welch, לעומת 5.91 עם \(S_p\).</p>
+    </div>
+  </details>
+
+  <h3>סיכום: איזו נוסחה מתי</h3>
+  <div class="table-wrap"><table class="t">
+    <tr><th>סטיות התקן של האוכלוסיות</th><th class="n">טעות התקן</th><th class="n">הערך מהטבלה</th></tr>
+    <tr><td>ידועות</td><td class="n">\(\displaystyle\sqrt{\frac{\sigma_x^2}{n}+\frac{\sigma_y^2}{m}}\)</td><td class="n">\(Z_{1-\frac{\alpha}{2}}\)</td></tr>
+    <tr><td>לא ידועות, מניחים שהן שוות</td><td class="n">\(\displaystyle S_p\sqrt{\frac1n+\frac1m}\)</td><td class="n">\(t^{(n+m-2)}_{1-\frac{\alpha}{2}}\)</td></tr>
+  </table></div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section class="chapter" id="paired">
+  <p class="chapter-num">פרק 5</p>
+  <h2>מדגם מזווג</h2>
+  <p>המקרה השלישי <a href="#map">במפה</a>: משתנה כמותי, אבל הנתונים באים בזוגות.</p>
+  <div class="callout"><p class="callout-h">הבעיה: אנבידיה מול AMD (נתונים בדויים)</p>
+    <p>התשואות היומיות (באחוזים) של שתי המניות באותם 8 ימי מסחר. האם התשואה היומית הממוצעת של אנבידיה גבוהה יותר?</p>
+    <div class="table-wrap"><table class="t">
+      <tr><th>יום</th><th class="n">1</th><th class="n">2</th><th class="n">3</th><th class="n">4</th><th class="n">5</th><th class="n">6</th><th class="n">7</th><th class="n">8</th></tr>
+      <tr><td>אנבידיה</td><td class="n">1.8</td><td class="n">−2.1</td><td class="n">0.9</td><td class="n">3.2</td><td class="n">−0.7</td><td class="n">1.5</td><td class="n">−1.2</td><td class="n">2.4</td></tr>
+      <tr><td>AMD</td><td class="n">1.2</td><td class="n">−2.6</td><td class="n">0.4</td><td class="n">2.1</td><td class="n">−1.5</td><td class="n">1.1</td><td class="n">−1.0</td><td class="n">1.6</td></tr>
+    </table></div>
+  </div>
+
+  <h3>ניסיון ראשון: כמו בפרק 4</h3>
+  <p>יש שתי שורות של 8 מספרים, ולכן מפתה להתייחס אליהן כשני מדגמים בלתי תלויים. הממוצעים הם 0.725 ו-0.1625, וסטיות התקן המדגמיות 1.87 ו-1.67. עם \(S_p\) ו-14 דרגות חופש, הרווח של 95% יוצא:</p>
+  <div class="math-block">$$-1.34\le\mu_x-\mu_y\le2.46$$</div>
+  <p>הרווח מכיל את 0, והמסקנה היא שאי אפשר לקבוע איזו מניה מניבה יותר.</p>
+  <p>אבל מבט בטבלה מראה משהו אחר: ב-7 מתוך 8 הימים אנבידיה הניבה יותר מ-AMD. מה הניתוח החמיץ?</p>
+  <p>בכל יום מסחר שתי המניות חשופות לאותו מצב שוק. ביום 2 שתיהן ירדו ביותר מ-2%, וביום 4 שתיהן עלו ביותר מ-2%. רוב התנודה בכל שורה היא מצב השוק של אותו יום, ולא ההבדל בין המניות. הניתוח של פרק 4 מתייחס לכל התנודה הזו כאל רעש.</p>
+  <div data-w="predict" data-id="dspread"></div>
+
+  <h3>השיטה: משווים בתוך כל זוג</h3>
+  <p>שתי התשואות של אותו יום הן <strong>זוג</strong>. במקום להשוות שורה לשורה, מחשבים לכל זוג את ההפרש \(D_i=X_i-Y_i\):</p>
+  <div class="table-wrap"><table class="t">
+    <tr><th>יום</th><th class="n">1</th><th class="n">2</th><th class="n">3</th><th class="n">4</th><th class="n">5</th><th class="n">6</th><th class="n">7</th><th class="n">8</th></tr>
+    <tr><td>אנבידיה (\(X\))</td><td class="n">1.8</td><td class="n">−2.1</td><td class="n">0.9</td><td class="n">3.2</td><td class="n">−0.7</td><td class="n">1.5</td><td class="n">−1.2</td><td class="n">2.4</td></tr>
+    <tr><td>AMD (\(Y\))</td><td class="n">1.2</td><td class="n">−2.6</td><td class="n">0.4</td><td class="n">2.1</td><td class="n">−1.5</td><td class="n">1.1</td><td class="n">−1.0</td><td class="n">1.6</td></tr>
+    <tr><td><strong>\(D\)</strong></td><td class="n">0.6</td><td class="n">0.5</td><td class="n">0.5</td><td class="n">1.1</td><td class="n">0.8</td><td class="n">0.4</td><td class="n">−0.2</td><td class="n">0.8</td></tr>
+  </table></div>
+  <p>מצב השוק של היום נמצא בשתי התשואות, ולכן הוא מתבטל בהפרש. ההפרשים יציבים בהרבה מהתשואות עצמן: סטיית התקן שלהם היא 0.38, לעומת כ-1.8 בכל שורה.</p>
+  <p>מכאן והלאה יש מדגם <strong>אחד</strong>, של \(n\) הפרשים, והפרמטר הוא תוחלת ההפרשים \(\mu_D\). זה רווח סמך לתוחלת מ<a href="../05-confidence-intervals/#mean">הרצאה 5</a>, על המשתנה \(D\):</p>
+  <div class="math-block">$$\bar D=\frac{\sum D_i}{n},\qquad S_D^2=\frac{\sum D_i^2-n\bar D^2}{n-1}$$</div>
+  <div class="math-block">$$\bar D\;\pm\;t^{(n-1)}_{1-\frac{\alpha}{2}}\cdot\frac{S_D}{\sqrt n}$$</div>
+  <p>\(n\) הוא <strong>מספר הזוגות</strong>, ולכן דרגות החופש הן מספר הזוגות פחות 1. אם \(\sigma_D\) ידועה, מה שקורה לעתים רחוקות, משתמשים בה וב-\(Z\).</p>
+  <div class="callout"><p class="callout-h">הפתרון</p>
+    <div class="steps">
+      <div class="step"><p class="step-h">ממוצע ההפרשים</p>
+        <p>\(\sum D_i=4.5\), ולכן \(\bar D=0.5625\).</p></div>
+      <div class="step"><p class="step-h">שונות ההפרשים</p>
+        <div class="math-block">$$S_D^2=\frac{3.55-8\cdot0.5625^2}{7}=\frac{3.55-2.531}{7}=0.1455,\qquad S_D=0.381$$</div></div>
+      <div class="step"><p class="step-h">הרווח</p>
+        <p>\(SE=\frac{0.381}{\sqrt8}=0.135\), ו-\(t^{(7)}_{0.975}=2.365\).</p>
+        <div class="math-block">$$0.5625\pm2.365\cdot0.135\;\Rightarrow\;0.24\le\mu_D\le0.88$$</div>
+        <p>ברמת ביטחון של 95%, התשואה היומית של אנבידיה גבוהה מזו של AMD בממוצע, ב-0.24 עד 0.88 נקודות אחוז. הרווח הזה צר פי 6 מהרווח של הניסיון הראשון.</p></div>
+    </div>
+  </div>
+
+  <div class="callout"><p class="callout-h">הפרש תוחלות ותוחלת ההפרשים</p>
+    <p>שני הרווחים שחישבנו ממורכזים באותה נקודה. ההפרש בין הממוצעים, \(0.725-0.1625=0.5625\), הוא בדיוק \(\bar D\). זה לא מקרי: סכום ההפרשים שווה לסכום ערכי \(X\) פחות סכום ערכי \(Y\). אחרי חלוקה ב-\(n\) מקבלים <span style="white-space:nowrap">\(\bar D=\bar X-\bar Y\)</span>. באותו אופן, באוכלוסייה <span style="white-space:nowrap">\(\mu_D=\mu_x-\mu_y\)</span>.</p>
+    <p>כלומר רווח סמך לתוחלת ההפרשים ורווח סמך להפרש התוחלות (פרק 4) אומדים את אותו פרמטר, ויוצאים מאותו אומדן. ההבדל ביניהם הוא רק בטעות התקן, כלומר ברוחב הרווח: 0.135 כאן, לעומת 0.887 בניסיון הראשון.</p>
+  </div>
+
+  <h3>למה הזיווג עוזר, ומתי לא</h3>
+  <p>ההבדל בין שתי טעויות התקן בא מהנוסחה המלאה לשונות של הפרש (<a href="../02-probability/#cov">הרצאה 2</a>):</p>
+  <div class="math-block">$$\mathrm{Var}(X-Y)=\mathrm{Var}(X)+\mathrm{Var}(Y)-2\,\mathrm{Cov}(X,Y)$$</div>
+  <p>בפרק 2 המדגמים היו בלתי תלויים, \(\mathrm{Cov}=0\), ונשארו רק שני האיברים הראשונים. בזוגות ששני הערכים שלהם נעים יחד, \(\mathrm{Cov}\) חיובי וגדול, והוא מוריד הרבה מהשונות של ההפרש. כמה בדיוק, תלוי בעוצמת הקשר בתוך הזוגות.</p>
+  <div data-w="predict" data-id="corr0"></div>
+
+  <figure class="lab" id="w-pair">
+    <p class="lab-title">כמה בני הזוג דומים?</p>
+    <p class="lab-hint">כל קו מחבר את שתי התצפיות של זוג אחד. המחוון קובע את מקדם המתאם, חיובי או שלילי, בין שתי התצפיות של אותו זוג. הממוצעים וסטיות התקן של שני המדגמים לא משתנים, רק הזיווג. למטה: הרווח המזווג (הנכון) והרווח שהיה יוצא אילו התייחסנו לנתונים כבלתי תלויים.</p>
+    <div data-w="pair"></div>
+  </figure>
+  <ul>
+    <li><strong>מתאם חיובי חזק:</strong> הקווים כמעט מקבילים, השונות של \(D\) קטנה, והרווח המזווג צר בהרבה.</li>
+    <li><strong>אין מתאם:</strong> הקווים מצטלבים באקראי, והזיווג לא מבטל שום דבר. הרווח המזווג אפילו רחב מעט יותר, כי יש לו פחות דרגות חופש (\(n-1\) במקום \(2n-2\)).</li>
+    <li><strong>מתאם שלילי:</strong> כשאחד מחברי הזוג עולה, השני יורד, ו-\(-2\,\mathrm{Cov}\) <strong>מוסיף</strong> לשונות של \(D\). הרווח המזווג רחב יותר. לדוגמה: מכירות קוקה-קולה ופפסי באותה חנות באותו יום.</li>
+  </ul>
+  <p>זיווג לא תמיד מצמצם את הרווח, אבל השיטה לא נבחרת לפי הרוחב. <strong>השיטה נקבעת לפי הדרך שבה נאספו הנתונים.</strong> כשהנתונים מזווגים, הניתוח הנכון הוא מזווג גם אם המתאם חלש או שלילי. נוסחת המדגמים הבלתי תלויים מניחה \(\mathrm{Cov}=0\): במתאם חיובי היא נותנת רווח רחב מדי, ובמתאם שלילי רווח צר מדי, כלומר ביטחון שאין לנו.</p>
+
+  <h3>מתי מדגם הוא מזווג</h3>
+  <p class="takeaway">לכל תצפית במדגם אחד יש בת זוג טבעית ומוגדרת במדגם השני.</p>
+  <p>שלושה סוגים נפוצים:</p>
+  <ul>
+    <li><strong>אותו נבדק נמדד פעמיים:</strong> משקל לפני דיאטה ואחריה, ציון במבחן אמצע ובמבחן סוף, דופק לפני ריצה ואחריה.</li>
+    <li><strong>אותה יחידה, שתי שיטות:</strong> אותן דגימות דם בשתי מעבדות, אותן משימות בשני אלגוריתמים, אותם ימי מסחר לשתי מניות.</li>
+    <li><strong>זיווג מכוון של נבדקים שונים:</strong> תאומים שאחד מהם מקבל טיפול והשני לא, או חלקות שדה סמוכות. שני חברי הזוג דומים זה לזה (אותם גנים, אותה אדמה) יותר משני נבדקים אקראיים. במחקרים רפואיים החוקר לפעמים <strong>יוצר</strong> את הזיווג: לכל חולה בן 65 בקבוצת הטיפול הוא מחפש אדם בן 65 מאותו מין לקבוצת הביקורת.</li>
+  </ul>
+
+  <h3>התנאים</h3>
+  <ul>
+    <li>הזוגות בלתי תלויים זה בזה.</li>
+    <li>במדגם קטן מניחים שההפרשים \(D\) מתפלגים נורמלית. ההנחה היא על ההפרשים, ולא על \(X\) ועל \(Y\) בנפרד.</li>
+  </ul>
+</section>
+
+<!-- ============ 6 ============ -->
+<section class="chapter" id="choose">
+  <p class="chapter-num">פרק 6</p>
+  <h2>איך בוחרים שיטה</h2>
+  <p>בתרגיל לא כתוב איזו נוסחה מתאימה. מזהים את המקרה לפי השאלות מפרק 1, בסדר הזה:</p>
+  <div class="flow">
+    <div class="flow-q">1. האם לכל תצפית במדגם אחד יש בת זוג טבעית במדגם השני?</div>
+    <div class="flow-a"><strong>כן:</strong> מדגם מזווג. עוברים להפרשים \(D\), ומשתמשים ב-\(t\) עם מספר הזוגות פחות 1 דרגות חופש (<a href="#paired">פרק 5</a>).</div>
+    <div class="flow-a"><strong>לא:</strong> המדגמים בלתי תלויים. ממשיכים לשאלה 2.</div>
+    <div class="flow-q">2. המשתנה הוא של כן או לא, או כמותי?</div>
+    <div class="flow-a"><strong>כן או לא:</strong> הפרש פרופורציות, עם \(Z\). בודקים את התנאי בשני המדגמים (<a href="#prop">פרק 3</a>).</div>
+    <div class="flow-a"><strong>כמותי:</strong> הפרש תוחלות. ממשיכים לשאלה 3.</div>
+    <div class="flow-q">3. האם סטיות התקן של האוכלוסיות ידועות?</div>
+    <div class="flow-a"><strong>כן:</strong> מציבים אותן, ומשתמשים ב-\(Z\) (<a href="#means">פרק 4</a>).</div>
+    <div class="flow-a"><strong>לא:</strong> מניחים שהן שוות, מחשבים \(S_p\), ומשתמשים ב-\(t\) עם \(n+m-2\) דרגות חופש (<a href="#means">פרק 4</a>).</div>
+  </div>
+
+  <h3>מקרים מבלבלים בשאלה הראשונה</h3>
+  <p>הזיהוי של מדגם מזווג הוא חלק שעלולים לטעות בו:</p>
+  <ul>
+    <li><strong>גודל מדגם שווה לא הופך מדגם למזווג.</strong> 30 לקוחות בסניף תל אביב ו-30 לקוחות בסניף חיפה הם מדגמים בלתי תלויים.</li>
+    <li><strong>"לפני ואחרי" על אנשים שונים הוא בלתי תלוי.</strong> אם סקר לפני תוכנית נעשה על 100 תושבים, וסקר אחריה על 100 תושבים אחרים, אין זוגות.</li>
+    <li><strong>זיווג לפי סדר ברשימה הוא לא זיווג.</strong> אם מצמידים את האיש הראשון ברשימה אחת לאישה הראשונה ברשימה אחרת, אין ביניהם שום דבר משותף.</li>
+    <li><strong>אותן מניות, ימים שונים.</strong> אם לכל מניה נדגמו ימי מסחר אחרים, אין מצב שוק משותף, והמדגמים בלתי תלויים.</li>
+  </ul>
+  <p>מבחן פשוט: האם יש סיבה לצפות שהערכים של שני חברי זוג יהיו קשורים זה לזה? אם כן, המדגם מזווג. אם אפשר לערבב את הסדר בתוך אחד המדגמים בלי לאבד שום משמעות, המדגמים בלתי תלויים.</p>
+
+  <figure class="lab" id="w-which">
+    <p class="lab-title">איזו שיטה מתאימה?</p>
+    <p class="lab-hint">עשרה תרחישים. בחרו לכל אחד את השיטה.</p>
+    <div data-w="which" data-set="full"></div>
+  </figure>
+</section>
+
+<!-- ============ 7 ============ -->
+<section class="chapter" id="practice">
+  <p class="chapter-num">פרק 7</p>
+  <h2>תרגילים</h2>
+  <p>בכל תרגיל, הצעד הראשון הוא לזהות את המקרה לפי השאלות של פרק 6. נסו לפתור כל סעיף לבד לפני שאתם פותחים את הפתרון. הנתונים בדויים.</p>
+
+  <h3>תרגיל 1: ניסוי A/B בחנות מקוונת</h3>
+  <p>חנות מקוונת הציגה ל-1,200 מבקרים דף מוצר בגרסה A, ול-1,000 מבקרים אחרים גרסה B. ‏108 ממבקרי A ו-62 ממבקרי B ביצעו רכישה.</p>
+
+  <p><strong>א.</strong> בנו רווח סמך של 95% להפרש בין שיעורי הרכישה.</p>
+  <details class="reveal"><summary>פתרון</summary><div class="reveal-body">
+    <p>כל מבקר רכש או לא רכש, ושתי קבוצות המבקרים נפרדות: הפרש פרופורציות במדגמים בלתי תלויים. \(\hat p_A=108/1200=0.09\), \(\hat p_B=62/1000=0.062\), וההפרש \(0.028\).</p>
+    <p>התנאי: 108, 1,092, 62 ו-938, כולם לפחות 5.</p>
+    <div class="math-block">$$SE=\sqrt{\frac{0.09\cdot0.91}{1200}+\frac{0.062\cdot0.938}{1000}}=\sqrt{0.0000683+0.0000582}=0.01124$$</div>
+    <div class="math-block">$$0.028\pm1.96\cdot0.01124\;\Rightarrow\;0.006\le p_A-p_B\le0.050$$</div>
+  </div></details>
+
+  <p><strong>ב.</strong> האם אפשר לומר שגרסה A מוכרת יותר? ומה אם דורשים ביטחון של 99%?</p>
+  <details class="reveal"><summary>פתרון</summary><div class="reveal-body">
+    <p>ברמת ביטחון של 95% הרווח כולו חיובי, ולכן כן: שיעור הרכישה בגרסה A גבוה יותר, ב-0.6 עד 5 נקודות אחוז.</p>
+    <p>ב-99%: \(0.028\pm2.58\cdot0.01124\), כלומר \(-0.001\le p_A-p_B\le0.057\). הרווח מכיל את 0, וברמה הזו אי אפשר לקבוע איזו גרסה טובה יותר. ההחלטה תלויה ברמת הביטחון שדורשים.</p>
+  </div></details>
+
+  <p><strong>ג.</strong> מנהל המוצר רוצה רווח צר יותר, ומציע להגדיל רק את הקבוצה של גרסה A ל-10,000 מבקרים. כמה זה יעזור, בהנחה שהפרופורציות לא ישתנו?</p>
+  <details class="reveal"><summary>פתרון</summary><div class="reveal-body">
+    <p>האיבר של A יורד מ-0.0000683 ל-\(\frac{0.09\cdot0.91}{10000}=0.0000082\), אבל האיבר של B נשאר 0.0000582. טעות התקן: \(\sqrt{0.0000664}=0.00815\). חצי הרוחב יורד מ-0.022 ל-0.016 בלבד, אף שקבוצה A גדלה פי 8. הדיוק של ההפרש מוגבל על ידי המדגם הקטן, ולכן עדיף להגדיל את שתי הקבוצות.</p>
+  </div></details>
+
+  <h3>תרגיל 2: זמן טעינה של רכבים חשמליים</h3>
+  <p>נמדד הזמן (בדקות) לטעינה מ-10% ל-80% בשני דגמים של רכב חשמלי. מניחים שזמני הטעינה מתפלגים נורמלית.</p>
+  <div class="table-wrap"><table class="t">
+    <tr><th>דגם</th><th class="n">מספר טעינות</th><th class="n">ממוצע</th><th class="n">סטיית תקן מדגמית</th></tr>
+    <tr><td>A</td><td class="n">10</td><td class="n">42.5</td><td class="n">6.1</td></tr>
+    <tr><td>B</td><td class="n">12</td><td class="n">36.8</td><td class="n">5.4</td></tr>
+  </table></div>
+
+  <p><strong>א.</strong> האם ההנחה על שוויון סטיות התקן נראית סבירה? חשבו את \(S_p\).</p>
+  <details class="reveal"><summary>פתרון</summary><div class="reveal-body">
+    <p>משתנה כמותי, שתי קבוצות נפרדות של טעינות, וסטיות התקן של האוכלוסיות לא ידועות: הפרש תוחלות עם \(S_p\). סטיות התקן המדגמיות קרובות (6.1 ו-5.4), כך שאין בנתונים סימן נגד ההנחה.</p>
+    <div class="math-block">$$S_p^2=\frac{9\cdot6.1^2+11\cdot5.4^2}{20}=\frac{334.89+320.76}{20}=32.78,\qquad S_p=5.73$$</div>
+    <p>5.73 נמצא בין 5.4 ל-6.1, כמו שצריך.</p>
+  </div></details>
+
+  <p><strong>ב.</strong> בנו רווח סמך של 95% להפרש התוחלות.</p>
+  <details class="reveal"><summary>פתרון</summary><div class="reveal-body">
+    <p>\(SE=5.73\cdot\sqrt{\frac1{10}+\frac1{12}}=5.73\cdot0.428=2.452\). דרגות החופש: \(10+12-2=20\), ו-\(t^{(20)}_{0.975}=2.086\).</p>
+    <div class="math-block">$$5.7\pm2.086\cdot2.452\;\Rightarrow\;0.59\le\mu_A-\mu_B\le10.81$$</div>
+    <p>ברמת ביטחון של 95%, דגם B נטען מהר יותר בממוצע, ב-0.59 עד 10.81 דקות.</p>
+  </div></details>
+
+  <p><strong>ג.</strong> יצרן דגם B טוען שהוא נטען מהר יותר ב-10 דקות בממוצע. האם הנתונים מתיישבים עם הטענה ברמת ביטחון של 95%? ושל 90%?</p>
+  <details class="reveal"><summary>פתרון</summary><div class="reveal-body">
+    <p>ב-95%: 10 נמצא בתוך הרווח (0.59 עד 10.81), ולכן הנתונים מתיישבים עם הטענה. הם לא מוכיחים אותה, רק לא סותרים אותה.</p>
+    <p>ב-90%: \(t^{(20)}_{0.95}=1.725\), והרווח הוא \(5.7\pm1.725\cdot2.452\), כלומר \(1.47\le\mu_A-\mu_B\le9.93\). ‏10 כבר מחוץ לרווח. ברמה הזו הנתונים לא מתיישבים עם הטענה.</p>
+  </div></details>
+
+  <p><strong>ד.</strong> אתר ביקורות דיווח, מאותם נתונים, על הרווח \(2.45\le\mu_A-\mu_B\le8.95\). באיזו רמת ביטחון?</p>
+  <details class="reveal"><summary>פתרון</summary><div class="reveal-body">
+    <p>מרכז הרווח: \(\frac{2.45+8.95}{2}=5.7=\bar x-\bar y\), כלומר אותם נתונים. חצי האורך: \(\frac{8.95-2.45}{2}=3.25\).</p>
+    <p>מספר טעויות התקן: \(3.25/2.452=1.325\). בטבלת \(t\) עם 20 דרגות חופש, 1.325 הוא \(t^{(20)}_{0.90}\). לכן \(1-\frac{\alpha}{2}=0.90\), כלומר \(\alpha=0.2\), ורמת הביטחון היא 80%.</p>
+  </div></details>
+
+  <p><strong>ה.</strong> נניח שמהיסטוריית הבדיקות של היצרנים ידוע ש-\(\sigma_A=6\) ו-\(\sigma_B=5.5\). מה הרווח של 95% עכשיו?</p>
+  <details class="reveal"><summary>פתרון</summary><div class="reveal-body">
+    <p>סטיות התקן של האוכלוסיות ידועות, ולכן מציבים אותן ומשתמשים ב-\(Z\).</p>
+    <div class="math-block">$$SE=\sqrt{\frac{36}{10}+\frac{30.25}{12}}=2.474,\qquad 5.7\pm1.96\cdot2.474\;\Rightarrow\;0.85\le\mu_A-\mu_B\le10.55$$</div>
+  </div></details>
+
+  <h3>תרגיל 3: צמיגים חסכוניים</h3>
+  <p>צי רכב בדק שני סוגי צמיגים. כל אחד מ-8 רכבים נסע אותו מסלול פעמיים, פעם עם צמיג מסוג A ופעם עם צמיג מסוג B. צריכת הדלק (ליטר ל-100 ק"מ):</p>
+  <div class="table-wrap"><table class="t">
+    <tr><th>רכב</th><th class="n">1</th><th class="n">2</th><th class="n">3</th><th class="n">4</th><th class="n">5</th><th class="n">6</th><th class="n">7</th><th class="n">8</th></tr>
+    <tr><td>A</td><td class="n">6.8</td><td class="n">7.4</td><td class="n">5.9</td><td class="n">8.1</td><td class="n">6.5</td><td class="n">7.0</td><td class="n">7.8</td><td class="n">6.2</td></tr>
+    <tr><td>B</td><td class="n">6.5</td><td class="n">7.0</td><td class="n">5.8</td><td class="n">7.6</td><td class="n">6.4</td><td class="n">6.6</td><td class="n">7.3</td><td class="n">6.1</td></tr>
+  </table></div>
+
+  <p><strong>א.</strong> איזה רווח סמך מתאים? למה?</p>
+  <details class="reveal"><summary>פתרון</summary><div class="reveal-body">
+    <p>מדגם מזווג: כל רכב נמדד עם שני סוגי הצמיגים. רכב כבד או בעל מנוע גדול צורך יותר בשני הסוגים, ולכן שתי המדידות של אותו רכב קשורות זו לזו. הפרמטר: \(\mu_D\), עם \(D=A-B\).</p>
+  </div></details>
+
+  <p><strong>ב.</strong> בנו רווח סמך של 90% לתוחלת ההפרשים.</p>
+  <details class="reveal"><summary>פתרון</summary><div class="reveal-body">
+    <p>ההפרשים: 0.3, 0.4, 0.1, 0.5, 0.1, 0.4, 0.5, 0.1. ‏\(\sum D_i=2.4\), \(\bar D=0.3\), \(\sum D_i^2=0.94\).</p>
+    <div class="math-block">$$S_D^2=\frac{0.94-8\cdot0.3^2}{7}=\frac{0.22}{7}=0.0314,\qquad S_D=0.177,\qquad SE=\frac{0.177}{\sqrt8}=0.0627$$</div>
+    <p>\(t^{(7)}_{0.95}=1.895\):</p>
+    <div class="math-block">$$0.3\pm1.895\cdot0.0627\;\Rightarrow\;0.18\le\mu_D\le0.42$$</div>
+    <p>ברמת ביטחון של 90%, צמיג B חוסך בממוצע 0.18 עד 0.42 ליטר ל-100 ק"מ.</p>
+  </div></details>
+
+  <p><strong>ג.</strong> סטודנט ניתח את הנתונים כשני מדגמים בלתי תלויים. מה הוא קיבל, ומה המסקנה שלו?</p>
+  <details class="reveal"><summary>פתרון</summary><div class="reveal-body">
+    <p>\(\bar x-\bar y=6.9625-6.6625=0.3\), אותו אומדן בדיוק. אבל \(S_x^2=0.591\) ו-\(S_y^2=0.366\), כי רכבים שונים מאוד זה מזה. \(S_p=0.692\), \(SE=0.692\cdot\sqrt{\frac28}=0.346\), ועם \(t^{(14)}_{0.95}=1.761\):</p>
+    <div class="math-block">$$-0.31\le\mu_A-\mu_B\le0.91$$</div>
+    <p>הרווח מכיל את 0, והסטודנט יסיק שאי אפשר לקבוע איזה צמיג חסכוני יותר. הרווח שלו רחב פי 5 מהרווח הנכון, כי הוא השאיר בפנים את ההבדלים בין הרכבים, שהזיווג נועד לבטל.</p>
+  </div></details>
+
+  <h3>תרגיל 4: שלושה מקרים קצרים</h3>
+  <p>בכל מקרה: זהו את השיטה, בנו רווח סמך של 95% וכתבו מסקנה. בפתרונות מופיעות רק תוצאות הביניים.</p>
+
+  <p><strong>א. אפליקציות ניווט.</strong> 9 נהגים נסעו אותו מסלול פעמיים, פעם עם אפליקציה A ופעם עם אפליקציה B. זמני הנסיעה בדקות:</p>
+  <div class="table-wrap"><table class="t">
+    <tr><th>נהג</th><th class="n">1</th><th class="n">2</th><th class="n">3</th><th class="n">4</th><th class="n">5</th><th class="n">6</th><th class="n">7</th><th class="n">8</th><th class="n">9</th></tr>
+    <tr><td>A</td><td class="n">32</td><td class="n">41</td><td class="n">27</td><td class="n">36</td><td class="n">45</td><td class="n">30</td><td class="n">38</td><td class="n">29</td><td class="n">34</td></tr>
+    <tr><td>B</td><td class="n">30</td><td class="n">38</td><td class="n">28</td><td class="n">33</td><td class="n">41</td><td class="n">29</td><td class="n">35</td><td class="n">27</td><td class="n">33</td></tr>
+  </table></div>
+  <details class="reveal"><summary>פתרון</summary><div class="reveal-body">
+    <p>מדגם מזווג: כל נהג נסע עם שתי האפליקציות. ההפרשים (A פחות B): 2, 3, −1, 3, 4, 1, 3, 2, 1.</p>
+    <p>\(\bar D=2\), \(S_D^2=\frac{54-9\cdot2^2}{8}=2.25\), \(S_D=1.5\), \(SE=\frac{1.5}{\sqrt9}=0.5\), \(t^{(8)}_{0.975}=2.306\).</p>
+    <div class="math-block">$$2\pm2.306\cdot0.5\;\Rightarrow\;0.85\le\mu_D\le3.15$$</div>
+    <p>ברמת ביטחון של 95%, הנסיעה עם אפליקציה B קצרה יותר בממוצע, ב-0.85 עד 3.15 דקות.</p>
+  </div></details>
+
+  <p><strong>ב. נוסחי מייל.</strong> מתוך 500 לקוחות שקיבלו מייל שיווקי בנוסח A, 140 פתחו אותו. מתוך 400 לקוחות אחרים, שקיבלו את נוסח B, 88 פתחו.</p>
+  <details class="reveal"><summary>פתרון</summary><div class="reveal-body">
+    <p>הפרש פרופורציות: כל לקוח פתח או לא פתח, והקבוצות נפרדות. \(\hat p_A=0.28\), \(\hat p_B=0.22\). התנאי: 140, 360, 88 ו-312, כולם לפחות 5.</p>
+    <p>\(SE=\sqrt{0.000403+0.000429}=0.0288\).</p>
+    <div class="math-block">$$0.06\pm1.96\cdot0.0288\;\Rightarrow\;0.003\le p_A-p_B\le0.117$$</div>
+    <p>הרווח כולו חיובי, ולכן ברמת ביטחון של 95% נוסח A נפתח יותר. הגבול התחתון קרוב מאוד ל-0, כך שייתכן שהיתרון זעיר.</p>
+  </div></details>
+
+  <p><strong>ג. מוקדי שירות.</strong> זמן ההמתנה (בדקות) נמדד ב-16 שיחות במוקד הראשון וב-12 שיחות במוקד השני. הממוצעים היו 7.4 ו-9.0, וסטיות התקן המדגמיות 2.1 ו-2.6. מניחים שזמני ההמתנה מתפלגים נורמלית, עם אותה סטיית תקן בשני המוקדים.</p>
+  <details class="reveal"><summary>פתרון</summary><div class="reveal-body">
+    <p>הפרש תוחלות עם \(S_p\): משתנה כמותי, שתי קבוצות נפרדות, וסטיות התקן של האוכלוסיות לא ידועות.</p>
+    <p>\(S_p^2=\frac{15\cdot2.1^2+11\cdot2.6^2}{26}=5.40\), \(S_p=2.325\), \(SE=2.325\cdot\sqrt{\frac1{16}+\frac1{12}}=0.888\), \(t^{(26)}_{0.975}=2.056\).</p>
+    <div class="math-block">$$-1.6\pm2.056\cdot0.888\;\Rightarrow\;-3.42\le\mu_1-\mu_2\le0.22$$</div>
+    <p>הרווח מכיל את 0. ברמת ביטחון של 95% אי אפשר לקבוע באיזה מוקד ממתינים יותר.</p>
+  </div></details>
+</section>
+
+<!-- ============ 8 ============ -->
+<section class="chapter" id="quiz">
+  <p class="chapter-num">פרק 8</p>
+  <h2>בדקו את עצמכם</h2>
+  <p>לחצו על תשובה כדי לקבל משוב והסבר.</p>
+  <div data-w="quiz"></div>
+</section>
+
+<!-- ============ 9 ============ -->
+<section class="chapter" id="pitfalls">
+  <p class="chapter-num">פרק 9</p>
+  <h2>מלכודות נפוצות</h2>
+  <ul>
+    <li><strong>לחסר שונויות.</strong> במדגמים בלתי תלויים השונויות מתחברות, גם כשמחסרים את האומדים.</li>
+    <li><strong>לחבר שונויות במדגם מזווג.</strong> הכלל "השונויות מתחברות" נכון רק למדגמים בלתי תלויים. במדגם מזווג עובדים עם ההפרשים, ו-\(S_D\) מחושבת מעמודת ההפרשים, לא מ-\(S_x\) ומ-\(S_y\).</li>
+    <li><strong>"גודל מדגם שווה, אז מזווג".</strong> מזווג פירושו שלכל תצפית יש בת זוג טבעית. גם "לפני ואחרי" על אנשים שונים הוא מדגמים בלתי תלויים.</li>
+    <li><strong>לבדוק את התנאי רק במדגם אחד.</strong> בהפרש פרופורציות בודקים \(n\hat p\ge5\) ו-\(n(1-\hat p)\ge5\) בכל אחד משני המדגמים.</li>
+    <li><strong>\(t\) כשסטיות התקן ידועות.</strong> כשסטיות התקן של האוכלוסיות ידועות, מציבים אותן ומשתמשים ב-\(Z\).</li>
+    <li><strong>דרגות חופש לא נכונות.</strong> עם \(S_p\): \(n+m-2\). במדגם מזווג: מספר הזוגות פחות 1.</li>
+    <li><strong>לשקלל סטיות תקן במקום שונויות.</strong> בנוסחה של \(S_p^2\) מציבים \(S_x^2\) ו-\(S_y^2\). התוצאה \(S_p\) חייבת לצאת בין \(S_x\) ל-\(S_y\).</li>
+    <li><strong>לבלבל את כיוון ההפרש.</strong> כתבו במפורש מה מחוסר ממה. רווח שלילי ל-\(\mu_x-\mu_y\) פירושו ש-\(\mu_y\) גדולה יותר.</li>
+    <li><strong>"הרווח מכיל את 0, אז אין הבדל".</strong> המסקנה הנכונה: ברמת הביטחון הזו אי אפשר לקבוע מי גדול יותר.</li>
+    <li><strong>להגדיל רק מדגם אחד.</strong> הדיוק של הפרש מוגבל על ידי המדגם הקטן מבין השניים.</li>
+  </ul>
+</section>
+
+  </main>
+</div>
+
+<footer class="foot">
+  מדריך למידה לקורס סטטיסטיקה 4221010, אוניברסיטת אריאל. חומר שמסומן "הרחבה" הוא מעבר לחומר ההרצאה.
+</footer>
+<div class="tip" id="tip" role="status" aria-live="polite"></div>
+<script>
+window.addEventListener("DOMContentLoaded", function () {
+(function () {
+  "use strict";
+
+  /* ================= utilities ================= */
+  const NS = "http://www.w3.org/2000/svg";
+  function svgEl(tag, attrs, parent) {
+    const e = document.createElementNS(NS, tag);
+    if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function h(tag, attrs, parent, html) {
+    const e = document.createElement(tag);
+    if (attrs) for (const k in attrs) {
+      if (k === "class") e.className = attrs[k];
+      else if (k === "text") e.textContent = attrs[k];
+      else e.setAttribute(k, attrs[k]);
+    }
+    if (html !== undefined) e.innerHTML = html;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function svgText(parent, x, y, str, attrs) {
+    const t = svgEl("text", Object.assign({ x: x, y: y }, attrs || {}), parent);
+    t.textContent = /[\u0590-\u05FF]/.test(str) ? "\u2067" + str.replace(/[−-]?\d[\d.,]*%?/g, m => "\u2066" + m + "\u2069") + "\u2069" : str;
+    return t;
+  }
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const vbW = el => clamp(Math.round((el && el.clientWidth) || 640), 340, 640);
+
+  function fmt(x, d) {
+    if (x === null || x === undefined || Number.isNaN(x)) return "—";
+    if (!Number.isFinite(x)) return "∞";
+    if (d === undefined) d = 2;
+    const r = Number(x.toFixed(d));
+    return (Object.is(r, -0) ? 0 : r).toString();
+  }
+  function fmtList(arr) { return arr.length ? arr.map(v => fmt(v)).join(", ") : "אין"; }
+
+  const S = {
+    sum: a => a.reduce((s, v) => s + v, 0),
+    mean: a => a.length ? S.sum(a) / a.length : NaN,
+    sorted: a => a.slice().sort((x, y) => x - y),
+    median(a) {
+      if (!a.length) return NaN;
+      const s = S.sorted(a), n = s.length, m = Math.floor(n / 2);
+      return n % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+    },
+    modes(a) {
+      if (!a.length) return [];
+      const c = new Map();
+      a.forEach(v => c.set(v, (c.get(v) || 0) + 1));
+      if (c.size === 1) return [a[0]];
+      let mx = 0; c.forEach(v => { if (v > mx) mx = v; });
+      const top = []; c.forEach((v, k) => { if (v === mx) top.push(k); });
+      if (top.length === c.size) return []; // every value equally frequent: no mode (slide 51)
+      return top.sort((x, y) => x - y);
+    },
+    ss(a) { const m = S.mean(a); return a.reduce((s, v) => s + (v - m) * (v - m), 0); },
+    variance(a, ddof) { const n = a.length; return n - ddof > 0 ? S.ss(a) / (n - ddof) : NaN; },
+    sd(a, ddof) { return Math.sqrt(S.variance(a, ddof)); },
+    quartiles(a) {
+      const s = S.sorted(a), n = s.length;
+      if (n < 2) return { q1: NaN, q3: NaN };
+      const half = Math.floor(n / 2);
+      const lower = s.slice(0, half), upper = s.slice(n % 2 ? half + 1 : half);
+      return { q1: S.median(lower), q3: S.median(upper) };
+    },
+    mad(a) { const m = S.mean(a); return S.mean(a.map(v => Math.abs(v - m))); },
+    skew(a) {
+      const n = a.length, m = S.mean(a), s = S.sd(a, 1);
+      if (n < 3 || !(s > 0)) return NaN;
+      return a.reduce((t, v) => t + Math.pow(v - m, 3), 0) / (n * s * s * s);
+    }
+  };
+
+  function niceStep(span, target) {
+    const raw = span / (target || 8);
+    const p = Math.pow(10, Math.floor(Math.log10(raw)));
+    const f = raw / p;
+    return (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * p;
+  }
+
+  /* tooltip */
+  const tip = document.getElementById("tip");
+  function showTip(text, ev) {
+    if (!tip) return;
+    tip.textContent = text;
+    tip.classList.add("on");
+    const x = ev.clientX, y = ev.clientY;
+    const r = tip.getBoundingClientRect();
+    tip.style.left = clamp(x - r.width / 2, 8, window.innerWidth - r.width - 8) + "px";
+    tip.style.top = Math.max(8, y - r.height - 14) + "px";
+  }
+  function hideTip() { if (tip) tip.classList.remove("on"); }
+
+  function svgPoint(svg, ev) {
+    const pt = svg.createSVGPoint();
+    pt.x = ev.clientX; pt.y = ev.clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
+  }
+
+  function statTile(parent, key, value, opts) {
+    opts = opts || {};
+    const d = h("div", { class: "stat" + (opts.ext ? " ext-stat ext-only" : "") }, parent);
+    const k = h("div", { class: "k" }, d);
+    if (opts.swatch) h("span", { class: "swatch " + opts.swatch }, k);
+    h("span", { text: key }, k);
+    h("div", { class: "v", text: value }, d);
+    return d;
+  }
+
+  function seg(parent, options, value, onChange) {
+    const wrap = h("div", { class: "seg", role: "group" }, parent);
+    const btns = options.map(o => {
+      const b = h("button", { type: "button", "aria-pressed": String(o.value === value), text: o.label }, wrap);
+      b.addEventListener("click", () => {
+        btns.forEach(x => x.setAttribute("aria-pressed", "false"));
+        b.setAttribute("aria-pressed", "true");
+        onChange(o.value);
+      });
+      return b;
+    });
+    return wrap;
+  }
+
+  const W = {};
+  function fmtP(x) {
+    if (!Number.isFinite(x)) return "—";
+    if (x === 0) return "0";
+    if (Math.abs(x) >= 0.001) return fmt(x, 4);
+    if (Math.abs(x) >= 1e-6) return Number(x.toPrecision(3)).toString();
+    return "\u2066" + x.toExponential(2) + "\u2069";
+  }
+  function slider(parent, label, min, max, step, value, onInput, digits) {
+    const l = h("label", null, parent);
+    h("span", null, l, label);
+    const inp = h("input", { type: "range", min: min, max: max, step: step, value: value, "aria-label": label.replace(/<[^>]+>/g, "") }, l);
+    const out = h("strong", { class: "num", text: fmt(value, digits === undefined ? 2 : digits) }, l);
+    inp.addEventListener("input", () => { const v = parseFloat(inp.value); out.textContent = fmt(v, digits === undefined ? 2 : digits); onInput(v); });
+    return { inp: inp, out: out, set(v) { inp.value = v; out.textContent = fmt(v, digits === undefined ? 2 : digits); } };
+  }
+  function axes(svg, o) {
+    const { L, R, T, B, xmin, xmax, ymin, ymax } = o;
+    const X = v => L + (v - xmin) / (xmax - xmin) * (R - L);
+    const Y = v => B - (clamp(v, ymin, ymax) - ymin) / (ymax - ymin) * (B - T);
+    svgEl("line", { x1: L, x2: R, y1: B, y2: B, stroke: "var(--rule-strong)" }, svg);
+    svgEl("line", { x1: L, x2: L, y1: T, y2: B, stroke: "var(--rule-strong)" }, svg);
+    const st = o.xstep || niceStep(xmax - xmin, 5);
+    for (let t = Math.ceil(xmin / st - 1e-9) * st; t <= xmax + 1e-9; t += st) {
+      svgEl("line", { x1: X(t), x2: X(t), y1: B, y2: B + 4, stroke: "var(--rule-strong)" }, svg);
+      svgText(svg, X(t), B + 16, fmt(t, 2), { "text-anchor": "middle", "font-size": 11, fill: "var(--muted)" });
+    }
+    if (o.xlabel) svgText(svg, (L + R) / 2, B + 32, o.xlabel, { "text-anchor": "middle", "font-size": 12, fill: "var(--ink-2)" });
+    if (o.ylabel) svgText(svg, L, T - 6, o.ylabel, { "text-anchor": "start", "font-size": 11.5, fill: "var(--ink-2)" });
+    return { X, Y };
+  }
+  function curvePath(f, X, Y, a, b, N) {
+    let d = "";
+    for (let i = 0; i <= N; i++) {
+      const t = a + (b - a) * i / N, v = f(t);
+      if (!Number.isFinite(v)) continue;
+      d += (d ? "L" : "M") + X(t).toFixed(1) + "," + Y(v).toFixed(1);
+    }
+    return d;
+  }
+
+  /* ================= distributions ================= */
+  const D = {
+    erf(x) { // Abramowitz-Stegun 7.1.26
+      const s = x < 0 ? -1 : 1; x = Math.abs(x);
+      const t = 1 / (1 + 0.3275911 * x);
+      const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+      return s * y;
+    },
+    npdf: x => Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI),
+    ncdf(x) { return 0.5 * (1 + D.erf(x / Math.SQRT2)); },
+    ninv(p) { let lo = -10, hi = 10; for (let i = 0; i < 80; i++) { const m = (lo + hi) / 2; if (D.ncdf(m) < p) lo = m; else hi = m; } return (lo + hi) / 2; },
+    lgamma(z) {
+      const g = 7, c = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+      if (z < 0.5) return Math.log(Math.PI / Math.abs(Math.sin(Math.PI * z))) - D.lgamma(1 - z);
+      z -= 1; let x = c[0];
+      for (let i = 1; i < g + 2; i++) x += c[i] / (z + i);
+      const t = z + g + 0.5;
+      return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
+    },
+    betacf(a, b, x) {
+      const MAXIT = 200, EPS = 3e-14, FPMIN = 1e-300;
+      let qab = a + b, qap = a + 1, qam = a - 1, c = 1, d = 1 - qab * x / qap;
+      if (Math.abs(d) < FPMIN) d = FPMIN; d = 1 / d; let hh = d;
+      for (let m = 1; m <= MAXIT; m++) {
+        const m2 = 2 * m;
+        let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+        d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN; c = 1 + aa / c; if (Math.abs(c) < FPMIN) c = FPMIN; d = 1 / d; hh *= d * c;
+        aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+        d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN; c = 1 + aa / c; if (Math.abs(c) < FPMIN) c = FPMIN; d = 1 / d;
+        const del = d * c; hh *= del; if (Math.abs(del - 1) < EPS) break;
+      }
+      return hh;
+    },
+    ibeta(x, a, b) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      const bt = Math.exp(D.lgamma(a + b) - D.lgamma(a) - D.lgamma(b) + a * Math.log(x) + b * Math.log(1 - x));
+      return x < (a + 1) / (a + b + 2) ? bt * D.betacf(a, b, x) / a : 1 - bt * D.betacf(b, a, 1 - x) / b;
+    },
+    tpdf(t, df) { return Math.exp(D.lgamma((df + 1) / 2) - D.lgamma(df / 2) - 0.5 * Math.log(df * Math.PI) - (df + 1) / 2 * Math.log(1 + t * t / df)); },
+    tcdf(t, df) { const x = df / (df + t * t), p = 0.5 * D.ibeta(x, df / 2, 0.5); return t > 0 ? 1 - p : p; },
+    tinv(p, df) { let lo = -200, hi = 200; for (let i = 0; i < 90; i++) { const m = (lo + hi) / 2; if (D.tcdf(m, df) < p) lo = m; else hi = m; } return (lo + hi) / 2; },
+    binpmf(n, k, p) {
+      if (p <= 0) return k === 0 ? 1 : 0; if (p >= 1) return k === n ? 1 : 0;
+      return Math.exp(D.lgamma(n + 1) - D.lgamma(k + 1) - D.lgamma(n - k + 1) + k * Math.log(p) + (n - k) * Math.log(1 - p));
+    }
+  };
+  const R = {
+    _spare: null,
+    norm() { if (R._spare !== null) { const s = R._spare; R._spare = null; return s; } let u = 0, v = 0; while (u === 0) u = Math.random(); v = Math.random(); const r = Math.sqrt(-2 * Math.log(u)); R._spare = r * Math.sin(2 * Math.PI * v); return r * Math.cos(2 * Math.PI * v); },
+    expo() { let u = 0; while (u === 0) u = Math.random(); return -Math.log(u); }
+  };
+  const LEVELS = [{ value: 0.8, label: "80%" }, { value: 0.9, label: "90%" }, { value: 0.95, label: "95%" }, { value: 0.99, label: "99%" }];
+  const zOf = c => D.ninv(1 - (1 - c) / 2);
+
+
+  const LV3 = [{ value: 0.9, label: "90%" }, { value: 0.95, label: "95%" }, { value: 0.99, label: "99%" }];
+  function rng(seed) {
+    let s = seed >>> 0;
+    const u = () => { s = (s * 1664525 + 1013904223) >>> 0; return (s + 0.5) / 4294967296; };
+    return { u: u, norm() { const a = u(), b = u(); return Math.sqrt(-2 * Math.log(a)) * Math.cos(2 * Math.PI * b); } };
+  }
+
+  /* ---------- extension: shape of a difference ---------- */
+  W.diffsim = function (root) {
+    let dist = "unif";
+    const row = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    const lb = h("label", null, row); h("span", { text: "ההתפלגות של X ושל Y:" }, lb);
+    seg(lb, [{ value: "unif", label: "אחידה" }, { value: "norm", label: "נורמלית" }], dist, v => { dist = v; render(); });
+    const again = h("button", { class: "btn", type: "button", text: "הגרל מחדש" }, row);
+    again.addEventListener("click", () => render());
+    const grid = h("div", { style: "display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px" }, root);
+    const note = h("p", { class: "feedback", style: "margin:8px 0 0" }, root);
+    const N = 20000, B = 40, LO = -2.6, HI = 2.6, SDU = Math.sqrt(1 / 3);
+    function draw(cell, data, label, color) {
+      const cnt = new Array(B).fill(0);
+      data.forEach(v => { const i = Math.floor((v - LO) / (HI - LO) * B); if (i >= 0 && i < B) cnt[i]++; });
+      const mx = Math.max.apply(null, cnt);
+      const Wd = 220, Hd = 140, L = 6, Rr = Wd - 6, T = 22, Bt = Hd - 18;
+      const sv = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "היסטוגרמה של " + label }, cell);
+      svgText(sv, Wd / 2, 14, label, { "text-anchor": "middle", "font-size": 13, fill: "var(--ink-2)", "font-weight": 600 });
+      const bw = (Rr - L) / B;
+      cnt.forEach((k, i) => { const hh = k / mx * (Bt - T); svgEl("rect", { x: L + i * bw + 0.4, y: Bt - hh, width: bw - 0.8, height: hh, fill: color, opacity: 0.85 }, sv); });
+      svgEl("line", { x1: L, x2: Rr, y1: Bt, y2: Bt, stroke: "var(--rule-strong)" }, sv);
+      const X0 = L + (0 - LO) / (HI - LO) * (Rr - L);
+      svgEl("line", { x1: X0, x2: X0, y1: T, y2: Bt + 4, stroke: "var(--rule-strong)", "stroke-dasharray": "3 3" }, sv);
+      svgText(sv, X0, Hd - 4, "0", { "text-anchor": "middle", "font-size": 11, fill: "var(--muted)" });
+    }
+    function render() {
+      grid.innerHTML = "";
+      const gen = dist === "unif" ? () => Math.random() * 2 - 1 : () => SDU * R.norm();
+      const X = [], Y = [], Dd = [];
+      for (let i = 0; i < N; i++) { const x = gen(), y = gen(); X.push(x); Y.push(y); Dd.push(x - y); }
+      [[X, "X", "var(--accent)"], [Y, "Y", "var(--accent)"], [Dd, "X − Y", "var(--mean)"]].forEach(([d, l, c]) => draw(h("div", null, grid), d, l, c));
+      note.className = "feedback";
+      note.textContent = dist === "unif"
+        ? "X ו-Y שטוחים, אבל ההפרש יוצא משולש: הצורה השתנתה."
+        : "X ו-Y פעמונים, וגם ההפרש פעמון, רק רחב יותר (השונויות התחברו).";
+    }
+    render();
+  };
+
+  /* ---------- reading an interval against 0 ---------- */
+  W.read = function (root) {
+    const rows = [
+      { lo: 2.1, hi: 6.3, txt: "כולו חיובי: ⁦μx⁩ גדולה יותר", col: "var(--good)" },
+      { lo: -5.1, hi: -1.3, txt: "כולו שלילי: ⁦μy⁩ גדולה יותר", col: "var(--bad)" },
+      { lo: -1.8, hi: 3.4, txt: "מכיל את 0: אי אפשר לקבוע", col: "var(--muted)" }
+    ];
+    const Wd = vbW(root), Hd = 168, L = 16, Rr = Wd - 16, xmin = -7, xmax = 8;
+    const X = v => L + (v - xmin) / (xmax - xmin) * (Rr - L);
+    const sv = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "שלושה רווחי סמך ביחס לאפס" }, root);
+    svgEl("line", { x1: X(0), x2: X(0), y1: 6, y2: Hd - 24, stroke: "var(--ink-2)", "stroke-dasharray": "4 4" }, sv);
+    svgText(sv, X(0), Hd - 8, "0", { "text-anchor": "middle", "font-size": 12, fill: "var(--ink-2)" });
+    rows.forEach((r, i) => {
+      const y = 22 + i * 44;
+      svgEl("line", { x1: X(r.lo), x2: X(r.hi), y1: y + 8, y2: y + 8, stroke: r.col, "stroke-width": 8, "stroke-linecap": "round" }, sv);
+      svgText(sv, X(r.lo) - 4, y + 12, fmt(r.lo, 1), { "text-anchor": "end", "font-size": 11, fill: "var(--muted)" });
+      svgText(sv, X(r.hi) + 4, y + 12, fmt(r.hi, 1), { "text-anchor": "start", "font-size": 11, fill: "var(--muted)" });
+      svgText(sv, (X(r.lo) + X(r.hi)) / 2, y - 2, r.txt, { "text-anchor": "middle", "font-size": 12, fill: "var(--ink-2)" });
+    });
+  };
+
+  /* ---------- difference of proportions ---------- */
+  W.prop = function (root) {
+    let n = 400, px = 0.62, m = 250, py = 0.52, level = 0.95;
+    const groups = h("div", { class: "ctl-groups" }, root);
+    const g1 = h("div", { class: "ctl-group" }, groups); h("p", { class: "ctl-h", text: "מדגם PS5" }, g1);
+    const r1 = h("div", { class: "lab-row", style: "margin:0" }, g1);
+    slider(r1, "⁦n⁩", 20, 5000, 10, n, v => { n = v; render(); }, 0);
+    slider(r1, "⁦p̂⁩", 0.01, 0.99, 0.01, px, v => { px = v; render(); }, 2);
+    const g2 = h("div", { class: "ctl-group" }, groups); h("p", { class: "ctl-h", text: "מדגם Xbox" }, g2);
+    const r2 = h("div", { class: "lab-row", style: "margin:0" }, g2);
+    slider(r2, "⁦m⁩", 20, 5000, 10, m, v => { m = v; render(); }, 0);
+    slider(r2, "⁦p̂⁩", 0.01, 0.99, 0.01, py, v => { py = v; render(); }, 2);
+    const g3 = h("div", { class: "ctl-group" }, groups); h("p", { class: "ctl-h", text: "רמת ביטחון" }, g3);
+    seg(g3, LV3, level, v => { level = v; render(); });
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    const verdict = h("p", { class: "feedback", style: "margin:8px 0 0" }, root);
+    function render() {
+      holder.innerHTML = "";
+      const z = zOf(level), d = px - py, se = Math.sqrt(px * (1 - px) / n + py * (1 - py) / m);
+      const lo = d - z * se, hi = d + z * se;
+      const cond = Math.min(n * px, n * (1 - px), m * py, m * (1 - py)) >= 5;
+      const a = Math.min(lo, 0), b = Math.max(hi, 0), pad = Math.max(0.03, (b - a) * 0.15);
+      const xmin = a - pad, xmax = b + pad;
+      const Wd = vbW(root), Hd = 96, L = 16, Rr = Wd - 16;
+      const X = v => L + (v - xmin) / (xmax - xmin) * (Rr - L);
+      const sv = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "רווח סמך להפרש הפרופורציות" }, holder);
+      svgEl("line", { x1: L, x2: Rr, y1: 70, y2: 70, stroke: "var(--rule-strong)" }, sv);
+      svgEl("line", { x1: X(0), x2: X(0), y1: 14, y2: 76, stroke: "var(--ink-2)", "stroke-dasharray": "4 4" }, sv);
+      svgText(sv, X(0), 90, "0", { "text-anchor": "middle", "font-size": 12, fill: "var(--ink-2)" });
+      const has0 = lo <= 0 && hi >= 0, col = has0 ? "var(--muted)" : "var(--good)";
+      svgEl("line", { x1: X(lo), x2: X(hi), y1: 40, y2: 40, stroke: col, "stroke-width": 10, "stroke-linecap": "round", opacity: cond ? 1 : 0.35 }, sv);
+      svgEl("circle", { cx: X(d), cy: 40, r: 5, fill: "var(--surface)", stroke: "var(--ink)", "stroke-width": 1.5 }, sv);
+      svgText(sv, X(lo), 22, fmt(lo, 3), { "text-anchor": "middle", "font-size": 11, fill: "var(--muted)" });
+      svgText(sv, X(hi), 22, fmt(hi, 3), { "text-anchor": "middle", "font-size": 11, fill: "var(--muted)" });
+      stats.innerHTML = "";
+      statTile(stats, "ההפרש (PS5 פחות Xbox)", fmt(d, 3));
+      statTile(stats, "SE", fmt(se, 4));
+      statTile(stats, "Z", fmt(z, 3));
+      statTile(stats, "חצי הרוחב", fmt(z * se, 3));
+      statTile(stats, "התנאי (ארבע בדיקות ≥ 5)", cond ? "מתקיים" : "לא מתקיים");
+      if (!cond) { verdict.className = "feedback no"; verdict.textContent = "התנאי לא מתקיים באחד המדגמים, ולכן לא בונים רווח לפי הנוסחה."; }
+      else if (has0) { verdict.className = "feedback"; verdict.textContent = "הרווח מכיל את 0: ברמת הביטחון הזו אי אפשר לקבוע באיזו קבוצה שיעור הקונים גבוה יותר."; }
+      else { verdict.className = "feedback ok"; verdict.textContent = (lo > 0 ? "הרווח כולו חיובי: שיעור הקונים גבוה יותר בקרב בעלי PS5" : "הרווח כולו שלילי: שיעור הקונים גבוה יותר בקרב בעלי Xbox") + ", ברמת ביטחון של " + Math.round(level * 100) + "%."; }
+    }
+    render();
+  };
+
+  /* ---------- where S_p falls ---------- */
+  W.pool = function (root) {
+    let n = 10, sx = 10, m = 10, sy = 20;
+    const groups = h("div", { class: "ctl-groups" }, root);
+    const g1 = h("div", { class: "ctl-group" }, groups); h("p", { class: "ctl-h", text: "מדגם x" }, g1);
+    const r1 = h("div", { class: "lab-row", style: "margin:0" }, g1);
+    slider(r1, "⁦n⁩", 2, 60, 1, n, v => { n = v; render(); }, 0);
+    slider(r1, "⁦Sx⁩", 1, 25, 0.1, sx, v => { sx = v; render(); }, 1);
+    const g2 = h("div", { class: "ctl-group" }, groups); h("p", { class: "ctl-h", text: "מדגם y" }, g2);
+    const r2 = h("div", { class: "lab-row", style: "margin:0" }, g2);
+    slider(r2, "⁦m⁩", 2, 60, 1, m, v => { m = v; render(); }, 0);
+    slider(r2, "⁦Sy⁩", 1, 25, 0.1, sy, v => { sy = v; render(); }, 1);
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    function render() {
+      holder.innerHTML = "";
+      const df = n + m - 2, wx = (n - 1) / df, sp = Math.sqrt(((n - 1) * sx * sx + (m - 1) * sy * sy) / df);
+      const xmax = 26;
+      const Wd = vbW(root), Hd = 128, L = 16, Rr = Wd - 16;
+      const X = v => L + v / xmax * (Rr - L);
+      const sv = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "מיקום סטיית התקן המשותפת" }, holder);
+      svgEl("line", { x1: L, x2: Rr, y1: 70, y2: 70, stroke: "var(--rule-strong)" }, sv);
+      for (let t = 0; t <= 25; t += 5) { svgEl("line", { x1: X(t), x2: X(t), y1: 70, y2: 74, stroke: "var(--rule-strong)" }, sv); svgText(sv, X(t), 86, String(t), { "text-anchor": "middle", "font-size": 11, fill: "var(--muted)" }); }
+      const a = Math.min(sx, sy), b = Math.max(sx, sy);
+      svgEl("line", { x1: X(a), x2: X(b), y1: 70, y2: 70, stroke: "var(--accent-soft)", "stroke-width": 8 }, sv);
+      [[sx, "Sx", "var(--accent)", 16, Math.round(wx * 100) + "%"], [sy, "Sy", "var(--median)", 104, Math.round((1 - wx) * 100) + "%"]].forEach(([v, l, c, y, w]) => {
+        svgEl("circle", { cx: X(v), cy: 70, r: 6, fill: c }, sv);
+        svgText(sv, X(v), y, l + " (משקל " + w + ")", { "text-anchor": "middle", "font-size": 12, fill: c, "font-weight": 600 });
+      });
+      svgEl("line", { x1: X(sp), x2: X(sp), y1: 54, y2: 86, stroke: "var(--mean)", "stroke-width": 3 }, sv);
+      svgText(sv, X(sp), 44, "Sp", { "text-anchor": "middle", "font-size": 12.5, fill: "var(--mean)", "font-weight": 600 });
+      stats.innerHTML = "";
+      statTile(stats, "Sp²", fmt(sp * sp, 2));
+      statTile(stats, "Sp", fmt(sp, 2));
+      statTile(stats, "דרגות חופש n+m−2", String(df));
+      statTile(stats, "משקל מדגם x", fmt(wx * 100, 0) + "%");
+    }
+    render();
+  };
+
+  /* ---------- paired vs. as-if-independent ---------- */
+  W.pair = function (root) {
+    const N = 10, MX = 52, MY = 50, SIG = 6;
+    let rho = 0.9, seed = 7, z1 = [], z2 = [];
+    function draw() {
+      const g = rng(seed); let a = [], b = [];
+      for (let i = 0; i < N; i++) { a.push(g.norm()); b.push(g.norm()); }
+      const std = v => { const m = S.mean(v), s = S.sd(v, 1); return v.map(t => (t - m) / s); };
+      a = std(a); b = std(b);
+      const r = S.sum(a.map((t, i) => t * b[i])) / (N - 1);
+      z1 = a; z2 = std(b.map((t, i) => t - r * a[i]));
+    }
+    draw();
+    const row = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    slider(row, "המתאם בתוך הזוג", -0.9, 0.98, 0.02, rho, v => { rho = v; render(); }, 2);
+    const again = h("button", { class: "btn", type: "button", text: "דגום מחדש" }, row);
+    again.addEventListener("click", () => { seed = Math.floor(Math.random() * 1e9); draw(); render(); });
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    const verdict = h("p", { class: "feedback", style: "margin:8px 0 0" }, root);
+    function render() {
+      holder.innerHTML = "";
+      const c = Math.sqrt(1 - rho * rho);
+      const x = z1.map(v => MX + SIG * v), y = z1.map((v, i) => MY + SIG * (rho * v + c * z2[i]));
+      const d = x.map((v, i) => v - y[i]);
+      const dbar = S.mean(d), sd = S.sd(d, 1), seP = sd / Math.sqrt(N), tP = D.tinv(0.975, N - 1);
+      const sp = Math.sqrt((S.variance(x, 1) + S.variance(y, 1)) / 2), seI = sp * Math.sqrt(2 / N), tI = D.tinv(0.975, 2 * N - 2);
+      const Wd = vbW(root);
+      const sv = svgEl("svg", { viewBox: `0 0 ${Wd} 330`, style: "direction:ltr", role: "img", "aria-label": "זוגות של תצפיות ורווחי סמך" }, holder);
+      const lo = Math.min.apply(null, x.concat(y)) - 2, hi = Math.max.apply(null, x.concat(y)) + 2;
+      const xl = Wd * 0.3, xr = Wd * 0.7, T = 24, Bt = 180;
+      const Y = v => Bt - (v - lo) / (hi - lo) * (Bt - T);
+      svgEl("line", { x1: xl, x2: xl, y1: T - 6, y2: Bt + 4, stroke: "var(--rule-strong)" }, sv);
+      svgEl("line", { x1: xr, x2: xr, y1: T - 6, y2: Bt + 4, stroke: "var(--rule-strong)" }, sv);
+      svgText(sv, xl, 12, "X", { "text-anchor": "middle", "font-size": 13, fill: "var(--accent)", "font-weight": 600 });
+      svgText(sv, xr, 12, "Y", { "text-anchor": "middle", "font-size": 13, fill: "var(--median)", "font-weight": 600 });
+      for (let i = 0; i < N; i++) {
+        svgEl("line", { x1: xl, x2: xr, y1: Y(x[i]), y2: Y(y[i]), stroke: "var(--ink-2)", "stroke-width": 1.2, opacity: 0.55 }, sv);
+        svgEl("circle", { cx: xl, cy: Y(x[i]), r: 4, fill: "var(--accent)" }, sv);
+        svgEl("circle", { cx: xr, cy: Y(y[i]), r: 4, fill: "var(--median)" }, sv);
+      }
+      const iv = [[dbar - tP * seP, dbar + tP * seP, "מזווג (נכון)", "var(--mean)"], [dbar - tI * seI, dbar + tI * seI, "כאילו בלתי תלויים", "var(--muted)"]];
+      const a = Math.min(iv[1][0], iv[0][0], 0), b = Math.max(iv[1][1], iv[0][1], 0), pad = (b - a) * 0.08;
+      const L = 16, Rr = Wd - 16, X = v => L + (v - (a - pad)) / ((b + pad) - (a - pad)) * (Rr - L);
+      svgEl("line", { x1: X(0), x2: X(0), y1: 206, y2: 312, stroke: "var(--ink-2)", "stroke-dasharray": "4 4" }, sv);
+      svgText(sv, X(0), 326, "0", { "text-anchor": "middle", "font-size": 12, fill: "var(--ink-2)" });
+      iv.forEach((r, i) => {
+        const yy = 238 + i * 46;
+        svgText(sv, (X(r[0]) + X(r[1])) / 2, yy - 12, r[2], { "text-anchor": "middle", "font-size": 12, fill: "var(--ink-2)" });
+        svgEl("line", { x1: X(r[0]), x2: X(r[1]), y1: yy, y2: yy, stroke: r[3], "stroke-width": 9, "stroke-linecap": "round" }, sv);
+        svgEl("circle", { cx: X(dbar), cy: yy, r: 4.5, fill: "var(--surface)", stroke: "var(--ink)", "stroke-width": 1.3 }, sv);
+      });
+      stats.innerHTML = "";
+      statTile(stats, "אומדן ההפרש", fmt(dbar, 2));
+      statTile(stats, "S_D", fmt(sd, 2));
+      statTile(stats, "SE מזווג", fmt(seP, 2));
+      statTile(stats, "SE כאילו בלתי תלויים", fmt(seI, 2));
+      statTile(stats, "יחס הרוחבים", "×" + fmt((tI * seI) / (tP * seP), 1));
+      const ratio = (tI * seI) / (tP * seP);
+      verdict.className = "feedback";
+      verdict.textContent = rho < -0.05
+        ? "מתאם שלילי: כשאחד עולה, השני יורד, ולכן ההפרשים קופצים יותר והרווח המזווג רחב יותר. הוא עדיין הניתוח הנכון: הרווח \"כאילו בלתי תלויים\" מניח Cov = 0, ולכן הוא צר מדי."
+        : ratio > 1.5
+        ? "בני הזוג דומים: ההפרשים יציבים, והרווח המזווג צר בהרבה. שני הרווחים ממורכזים באותה נקודה."
+        : ratio > 1.05 ? "דמיון חלש: הזיווג עוזר רק מעט." : "כמעט אין דמיון: הזיווג לא עוזר, והרווח המזווג אפילו רחב מעט יותר בגלל פחות דרגות חופש.";
+    }
+    render();
+  };
+
+  /* ---------- prediction questions ---------- */
+  const PRED = {
+    zero: {
+      q: "חוקרת בנתה רווח סמך של 95% להפרש \\(\\mu_x-\\mu_y\\), וקיבלה שההפרש נמצא בין \\(-0.4\\) ל-5.2. מה אפשר להסיק?",
+      o: ["\\(\\mu_x\\) גדולה יותר, כי כמעט כל הרווח חיובי", "אין הבדל בין שתי האוכלוסיות", "ברמת הביטחון הזו אי אפשר לקבוע איזו תוחלת גדולה יותר"],
+      a: 2,
+      e: "הרווח מכיל ערכים חיוביים, ערכים שליליים ואת 0, ולכן כל האפשרויות נשארות פתוחות. \"כמעט כל הרווח\" לא קובע כלום, וזה גם לא אומר שאין הבדל: הנתונים פשוט לא מספיקים כדי לקבוע את כיוונו."
+    },
+    stable: {
+      q: "מה יציב יותר ממחקר למחקר: הממוצע של ספק אחד, או ההפרש בין שני הממוצעים?",
+      o: ["ההפרש יציב יותר, כי בחיסור הטעויות של שני הממוצעים מתקזזות", "ההפרש יציב פחות, כי הוא סופג את התנודות של שני הממוצעים", "שניהם יציבים באותה מידה"],
+      a: 1,
+      e: "ההפרש מתנודד יותר מכל אחד מהממוצעים. הטעויות של שני המדגמים בלתי תלויות, ולכן הן לא מתקזזות באופן שיטתי. בדקו בכלי: חזרו על המחקר הרבה פעמים, והשוו את הפיזור של שלוש השורות."
+    },
+    onesample: {
+      q: "מגדילים רק את מדגם בעלי ה-PS5 פי 10, מ-400 ל-4,000, והפרופורציות לא משתנות. בכמה יצטמצם הרווח?",
+      o: ["בערך פי 3, כי \\(\\sqrt{10}\\approx3.2\\)", "בערך פי 1.5", "בפחות מ-20%"],
+      a: 2,
+      e: "הרווח מצטמצם ב-18% בלבד. בדקו בכלי: הגדילו את \\(n\\) של מדגם ה-PS5 ל-4,000, ועקבו אחרי חצי הרוחב. ההסבר מופיע אחרי הכלי."
+    },
+    pool: {
+      q: "נתון \\(S_x=10\\) ו-\\(S_y=20\\), ובכל מדגם 10 תצפיות. מגדילים את מדגם \\(x\\) ל-50 תצפיות, ו-\\(S_x\\) לא משתנה. מה יקרה ל-\\(S_p\\)?",
+      o: ["תתקרב ל-\\(S_x\\)", "תתקרב ל-\\(S_y\\)", "לא תשתנה"],
+      a: 0,
+      e: "\\(S_p\\) יורדת מ-15.8 ל-12.1, לכיוון \\(S_x\\). המדגם הגדול מקבל משקל גדול יותר בממוצע המשוקלל. בדקו בכלי: הגדילו את \\(n\\) ל-50."
+    },
+    dspread: {
+      q: "סטיית התקן של התשואות בכל שורה היא בערך 1.8. מה לדעתכם סטיית התקן של ההפרשים היומיים בין שתי המניות?",
+      o: ["גדולה יותר, בערך 2.5, כי בהפרש השונויות מתחברות", "דומה, בערך 1.8", "קטנה בהרבה, פחות מ-0.5"],
+      a: 2,
+      e: "סטיית התקן של ההפרשים היא 0.38. הכלל \"השונויות מתחברות\" מפרק 2 נכון רק למדגמים בלתי תלויים, וכאן שתי התשואות של אותו יום קשורות זו לזו."
+    },
+    corr0: {
+      q: "בנתוני המניות המתאם בתוך הזוגות גבוה מאוד, והרווח המזווג צר פי 6. מה יקרה לרווח המזווג אם המתאם בתוך הזוגות יהיה 0?",
+      o: ["יישאר צר, כי עדיין משווים בתוך כל זוג", "יהיה רחב בערך כמו הרווח של מדגמים בלתי תלויים", "יהיה צר עוד יותר"],
+      a: 1,
+      e: "בלי קשר בתוך הזוגות, ההפרש לא מבטל שום דבר, והרווח המזווג דומה לרווח של מדגמים בלתי תלויים. הוא אפילו מעט רחב יותר, כי יש לו פחות דרגות חופש. בדקו בכלי: הזיזו את המתאם ל-0."
+    }
+  };
+  const MATH_INLINE = { delimiters: [{ left: "\\(", right: "\\)", display: false }], throwOnError: false };
+  W.predict = function (root) {
+    const it = PRED[root.dataset.id];
+    if (!it) return;
+    const box = h("div", { class: "quiz-q predict" }, root);
+    const qh = h("div", { class: "qh" }, box);
+    h("span", null, qh, it.q);
+    const opts = h("div", { class: "quiz-opts" }, box);
+    const exp = h("div", { class: "quiz-exp" }, box);
+    const btns = it.o.map((t, i) => {
+      const b = h("button", { type: "button" }, opts, t);
+      b.addEventListener("click", () => {
+        btns.forEach(x => x.disabled = true);
+        if (i === it.a) { b.classList.add("right"); exp.innerHTML = "<strong>נכון.</strong> " + it.e; }
+        else { b.classList.add("wrong"); btns[it.a].classList.add("right"); exp.innerHTML = "<strong>לא בדיוק.</strong> " + it.e; }
+        if (window.renderMathInElement) window.renderMathInElement(exp, MATH_INLINE);
+      });
+      return b;
+    });
+  };
+
+  /* ---------- repeating the study: two means and their difference ---------- */
+  W.resample = function (root) {
+    const MX = 6, MY = 5, SIG = 2, N = 25, LIM = 2.2, B = 33;
+    let xs = [], ys = [], last = null;
+    const row = h("div", { class: "lab-row", style: "margin:0 0 10px" }, root);
+    const b1 = h("button", { class: "btn primary", type: "button", text: "חזרו על המחקר" }, row);
+    const b2 = h("button", { class: "btn", type: "button", text: "עוד 200 חזרות" }, row);
+    const b3 = h("button", { class: "btn", type: "button", text: "איפוס" }, row);
+    const holder = h("div", null, root);
+    const stats = h("div", { class: "stats" }, root);
+    const note = h("p", { class: "feedback", style: "margin:8px 0 0" }, root);
+    function study() {
+      let sx = 0, sy = 0;
+      for (let i = 0; i < N; i++) { sx += MX + SIG * R.norm(); sy += MY + SIG * R.norm(); }
+      last = [sx / N, sy / N]; xs.push(last[0]); ys.push(last[1]);
+    }
+    b1.addEventListener("click", () => { study(); render(); });
+    b2.addEventListener("click", () => { for (let i = 0; i < 200; i++) study(); render(); });
+    b3.addEventListener("click", () => { xs = []; ys = []; last = null; render(); });
+    const num = v => "⁦" + fmt(v, 2) + "⁩";
+    function render() {
+      holder.innerHTML = "";
+      const ds = xs.map((v, i) => v - ys[i]);
+      const rows = [
+        { label: "הממוצע של ספק א'", data: xs, c: MX, col: "var(--accent)", last: last ? last[0] : null },
+        { label: "הממוצע של ספק ב'", data: ys, c: MY, col: "var(--median)", last: last ? last[1] : null },
+        { label: "ההפרש בין הממוצעים", data: ds, c: MX - MY, col: "var(--mean)", last: last ? last[0] - last[1] : null }
+      ];
+      const bins = rows.map(r => { const cnt = new Array(B).fill(0); r.data.forEach(v => { const i = Math.floor((v - r.c + LIM) / (2 * LIM) * B); if (i >= 0 && i < B) cnt[i]++; }); return cnt; });
+      const mx = Math.max(1, Math.max.apply(null, bins.map(c => Math.max.apply(null, c))));
+      const Wd = vbW(root), RH = 96, Hd = RH * 3, L = 14, Rr = Wd - 14;
+      const X = dv => L + (dv + LIM) / (2 * LIM) * (Rr - L);
+      const sv = svgEl("svg", { viewBox: `0 0 ${Wd} ${Hd}`, style: "direction:ltr", role: "img", "aria-label": "התפלגות שני הממוצעים וההפרש ביניהם על פני החזרות" }, holder);
+      rows.forEach((r, k) => {
+        const top = k * RH + 24, base = k * RH + 70, bw = (Rr - L) / B;
+        svgText(sv, Wd / 2, k * RH + 14, r.label, { "text-anchor": "middle", "font-size": 12.5, fill: "var(--ink-2)", "font-weight": 600 });
+        bins[k].forEach((c, i) => { if (!c) return; const hh = c / mx * (base - top); svgEl("rect", { x: L + i * bw + 0.5, y: base - hh, width: bw - 1, height: hh, fill: r.col, opacity: 0.85 }, sv); });
+        svgEl("line", { x1: L, x2: Rr, y1: base, y2: base, stroke: "var(--rule-strong)" }, sv);
+        svgEl("line", { x1: X(0), x2: X(0), y1: top - 4, y2: base + 4, stroke: "var(--ink-2)", "stroke-dasharray": "3 3" }, sv);
+        for (let t = -2; t <= 2; t++) {
+          svgEl("line", { x1: X(t), x2: X(t), y1: base, y2: base + 4, stroke: "var(--rule-strong)" }, sv);
+          svgText(sv, X(t), base + 16, fmt(r.c + t, 0), { "text-anchor": "middle", "font-size": 11, fill: t === 0 ? "var(--ink)" : "var(--muted)", "font-weight": t === 0 ? 600 : 400 });
+        }
+        if (r.last !== null) svgEl("circle", { cx: X(clamp(r.last - r.c, -LIM, LIM)), cy: base, r: 4.5, fill: "var(--surface)", stroke: "var(--ink)", "stroke-width": 1.5 }, sv);
+      });
+      const n = xs.length, sdx = n > 1 ? S.sd(xs, 1) : NaN, sdy = n > 1 ? S.sd(ys, 1) : NaN, sdd = n > 1 ? S.sd(ds, 1) : NaN;
+      stats.innerHTML = "";
+      statTile(stats, "חזרות", String(n));
+      statTile(stats, "סטיית התקן של ממוצעי א'", n >= 10 ? fmt(sdx, 2) : "—");
+      statTile(stats, "סטיית התקן של ממוצעי ב'", n >= 10 ? fmt(sdy, 2) : "—");
+      statTile(stats, "סטיית התקן של ההפרשים", n >= 10 ? fmt(sdd, 2) : "—");
+      note.className = "feedback";
+      if (!n) note.textContent = "לחצו כדי לבצע את המחקר הראשון. הקו המקווקו בכל שורה הוא הערך האמיתי.";
+      else if (n < 30) note.textContent = "במחקר האחרון: ממוצע א' " + num(last[0]) + ", ממוצע ב' " + num(last[1]) + ", וההפרש " + num(last[0] - last[1]) + ". העיגול מסמן אותו בכל שורה.";
+      else note.textContent = "ההפרשים מתרכזים סביב 1, ומפוזרים יותר מכל אחד מהממוצעים: סטיית התקן שלהם " + num(sdd) + ", לעומת " + num(sdx) + " ו-" + num(sdy) + " של הממוצעים.";
+    }
+    render();
+  };
+
+  /* ---------- which kind of sample / which method ---------- */
+  W.which = function (root) {
+    const SETS = {
+      short: {
+        opts: [["p", "מזווג"], ["i", "בלתי תלויים"]],
+        items: [
+          { s: "המשקל של אותם 20 אנשים לפני דיאטה ואחריה.", a: "p", e: "כל אדם נמדד פעמיים, ולכל מדידה של \"לפני\" יש בת זוג של \"אחרי\"." },
+          { s: "השכר של 40 עובדים בחברה אחת ושל 40 עובדים בחברה אחרת.", a: "i", e: "שתי קבוצות נפרדות. אין קשר בין עובד מסוים בחברה הראשונה לעובד מסוים בשנייה, גם כשגודל המדגמים שווה." },
+          { s: "זמן הריצה של שני אלגוריתמים על אותם 15 קבצים.", a: "p", e: "כל קובץ נותן שתי מדידות. קובץ גדול ירוץ לאט בשני האלגוריתמים, ולכן שתי המדידות שלו קשורות." }
+        ]
+      },
+      full: {
+        opts: [["prop", "הפרש פרופורציות"], ["mean", "הפרש תוחלות"], ["pair", "מדגם מזווג"]],
+        items: [
+          { s: "ציוני אותם 25 סטודנטים במבחן אמצע ובמבחן סוף.", a: "pair", e: "כל סטודנט מופיע בשני המדגמים, וסטודנט חזק נוטה לקבל ציון גבוה בשני המבחנים." },
+          { s: "זמן ההמתנה של 30 לקוחות בסניף תל אביב ושל 30 לקוחות בסניף חיפה.", a: "mean", e: "משתנה כמותי ושתי קבוצות נפרדות. גודל מדגם שווה לא יוצר זוגות: אין קשר בין לקוח מסוים בתל אביב ללקוח מסוים בחיפה." },
+          { s: "שיעור מחדשי המנוי בקרב 500 לקוחות שקיבלו הנחה, ובקרב 500 לקוחות שלא קיבלו.", a: "prop", e: "לכל לקוח יש תשובה של כן או לא (חידש או לא חידש), והקבוצות נפרדות." },
+          { s: "התשואה היומית של אנבידיה ושל AMD באותם 50 ימי מסחר.", a: "pair", e: "בכל יום מסחר מניות שתי החברות הן זוג: שתיהן חשופות לאותו מצב שוק." },
+          { s: "התשואה היומית של אנבידיה ב-50 ימים אקראיים, ושל AMD ב-50 ימים אקראיים אחרים.", a: "mean", e: "הימים שונים, ולכן אין מצב שוק משותף שמחבר בין שתי תצפיות. המדגמים בלתי תלויים." },
+          { s: "ציון שביעות רצון (1 עד 10) של 100 תושבים לפני פתיחת פארק, ושל 100 תושבים אחרים שנה אחרי הפתיחה.", a: "mean", e: "\"לפני ואחרי\", אבל על אנשים שונים. אין זוגות, ולכן אלה מדגמים בלתי תלויים." },
+          { s: "שיעור המוצרים הפגומים בקו ייצור א' ובקו ייצור ב'.", a: "prop", e: "כל מוצר פגום או תקין, ושני הקווים הם שתי קבוצות נפרדות." },
+          { s: "בלאי של צמיג מסוג A בגלגל השמאלי ושל צמיג מסוג B בגלגל הימני, באותם 12 רכבים.", a: "pair", e: "כל רכב הוא הגורם המקשר של הזוג: אותו נהג, אותן דרכים, אותו משקל." },
+          { s: "מספר שעות המשחק ב-GTA 6 בשבוע הראשון: 200 שחקני PS5 ו-200 שחקני Xbox.", a: "mean", e: "משתנה כמותי ושתי קבוצות שחקנים שונות. שוב, גודל שווה לא הופך את המדגם למזווג." },
+          { s: "האם השחקן סיים את הקמפיין של GTA 6 בחודש הראשון: 300 שחקני PS5 ו-250 שחקני Xbox.", a: "prop", e: "המשתנה הוא של כן או לא (סיים או לא סיים), ולכן משווים פרופורציות." }
+        ]
+      }
+    };
+    const set = SETS[root.dataset.set] || SETS.full;
+    const wrap = h("div", { class: "classify" }, root);
+    const score = h("p", { class: "score", style: "margin:10px 0 0" }, root);
+    let done = 0, right = 0;
+    const upd = () => { score.textContent = done ? `${right} נכונות מתוך ${done}` : ""; };
+    set.items.forEach(q => {
+      const it = h("div", { class: "cl-item" }, wrap);
+      h("div", { class: "cl-q" }, it, q.s);
+      const opts = h("div", { class: "cl-opts" }, it);
+      const why = h("div", { class: "cl-why" }, it);
+      const bs = set.opts.map(([v, label]) => {
+        const b = h("button", { type: "button", text: label }, opts);
+        b.addEventListener("click", () => {
+          if (it.dataset.done) return;
+          it.dataset.done = "1"; done++;
+          const ok = v === q.a; if (ok) right++;
+          bs.forEach((x, i) => { if (set.opts[i][0] === q.a) x.classList.add("right"); });
+          if (!ok) b.classList.add("wrong");
+          why.innerHTML = "<strong>" + (ok ? "צדקתם." : "לא בדיוק.") + "</strong> " + q.e;
+          upd();
+        });
+        return b;
+      });
+    });
+    const again = h("button", { class: "btn", type: "button", text: "התחל מחדש", style: "margin-top:8px" }, root);
+    again.addEventListener("click", () => {
+      done = right = 0; upd();
+      wrap.querySelectorAll(".cl-item").forEach(it => { delete it.dataset.done; it.querySelector(".cl-why").innerHTML = ""; it.querySelectorAll("button").forEach(b => b.classList.remove("right", "wrong")); });
+    });
+  };
+
+  /* ---------- quiz ---------- */
+  W.quiz = function (root) {
+    const Q = [
+      { q: "שני מדגמים בלתי תלויים. מהי השונות של \\(\\bar X-\\bar Y\\)?", o: ["\\(\\frac{\\sigma_x^2}{n}-\\frac{\\sigma_y^2}{m}\\)", "\\(\\frac{\\sigma_x^2}{n}+\\frac{\\sigma_y^2}{m}\\)", "\\(\\frac{\\sigma_x^2+\\sigma_y^2}{n+m}\\)", "\\(\\frac{\\sigma_x}{\\sqrt n}+\\frac{\\sigma_y}{\\sqrt m}\\)"], a: 1, e: "באי-תלות \\(\\mathrm{Cov}=0\\), והשונויות מתחברות גם כשמחסרים. האפשרות האחרונה מחברת סטיות תקן, ולא שונויות." },
+      { q: "שני מדגמים בלתי תלויים. טעות התקן של \\(\\bar X\\) היא 3, ושל \\(\\bar Y\\) היא 4. מהי טעות התקן של \\(\\bar X-\\bar Y\\)?", o: ["1", "5", "7", "3.5"], a: 1, e: "השונויות מתחברות: \\(\\sqrt{3^2+4^2}=5\\). לא מחסרים (1), ולא מחברים את טעויות התקן עצמן (7)." },
+      { q: "רווח סמך של 95% ל-\\(\\mu_x-\\mu_y\\) יצא \\(-5.1\\le\\mu_x-\\mu_y\\le-1.3\\). מה המסקנה?", o: ["\\(\\mu_x\\) גדולה יותר", "\\(\\mu_y\\) גדולה מ-\\(\\mu_x\\) ב-1.3 עד 5.1", "אי אפשר לקבוע", "הרווח שגוי, כי לא ייתכן הפרש שלילי"], a: 1, e: "הרווח כולו שלילי, כלומר \\(\\mu_x-\\mu_y<0\\). הפוך את הסימנים כדי לקרוא את הפער לטובת \\(y\\)." },
+      { q: "רווח סמך של 95% להפרש פרופורציות יצא \\(-0.02\\le p_x-p_y\\le0.09\\). מה נכון?", o: ["\\(p_x=p_y\\)", "\\(p_x\\) גדולה יותר, כי רוב הרווח חיובי", "ברמת ביטחון של 95% אי אפשר לקבוע איזו פרופורציה גדולה יותר", "צריך להגדיל את רמת הביטחון כדי לקבל תשובה"], a: 2, e: "הרווח מכיל את 0. זה לא מוכיח שאין הבדל, ו\"רוב הרווח\" לא קובע כלום. הגדלת רמת הביטחון רק מרחיבה את הרווח." },
+      { q: "בהפרש פרופורציות, איך בודקים את התנאי לקירוב הנורמלי?", o: ["מספיק לבדוק את המדגם הגדול", "בודקים \\(n\\hat p\\ge5\\) ו-\\(n(1-\\hat p)\\ge5\\) בכל אחד משני המדגמים", "בודקים ש-\\(n+m\\ge30\\)", "אין תנאי, כי ההפרש תמיד נורמלי"], a: 1, e: "ההפרש נורמלי רק אם כל אחת מהפרופורציות נורמלית בקירוב. לכן ארבע בדיקות, שתיים לכל מדגם." },
+      { q: "סטיות התקן של שתי האוכלוסיות ידועות. באיזה ערך מהטבלה משתמשים?", o: ["\\(t\\) עם \\(n+m-2\\) דרגות חופש", "\\(Z\\)", "\\(t\\) עם \\(n-1\\) דרגות חופש", "זה תלוי רק בגודל המדגמים"], a: 1, e: "\\(t\\) מופיע רק כשמציבים אומד (\\(S\\)) במקום \\(\\sigma\\). כשסטיות התקן ידועות, מציבים אותן ומשתמשים ב-\\(Z\\)." },
+      { q: "\\(S_x=4\\) ו-\\(S_y=6\\). איזה מהערכים יכול להיות \\(S_p\\)?", o: ["3.5", "5.2", "6.4", "10"], a: 1, e: "\\(S_p\\) הוא ממוצע משוקלל, ולכן תמיד נמצא בין \\(S_x\\) ל-\\(S_y\\)." },
+      { q: "\\(n=9\\), \\(S_x^2=20\\), \\(m=7\\), \\(S_y^2=34\\). מהו \\(S_p\\)?", o: ["5.10", "27.0", "5.20", "26.0"], a: 0, e: "\\(S_p^2=\\frac{8\\cdot20+6\\cdot34}{14}=\\frac{364}{14}=26\\), ו-\\(S_p=\\sqrt{26}=5.10\\). ‏26 היא השונות, לא סטיית התקן, ו-27 הוא ממוצע לא משוקלל." },
+      { q: "למה משתמשים ב-\\(S_p\\) ולא ב-\\(S_x\\) וב-\\(S_y\\) בנפרד?", o: ["כי \\(S_p\\) תמיד קטן יותר", "כי מניחים ש-\\(\\sigma\\) משותפת, ושתי ההערכות שלה מאוחדות להערכה אחת. התמורה: התפלגות \\(t\\) מדויקת עם \\(n+m-2\\) דרגות חופש", "כי אסור להציב שתי סטיות תקן באותה נוסחה", "כי כך הרווח תמיד מכיל את 0"], a: 1, e: "ההנחה \\(\\sigma_x=\\sigma_y\\) מאפשרת לאחד את המידע, ומחזירה התפלגות \\(t\\) מדויקת. בלי ההנחה, הסטטיסטי לא מתפלג \\(t\\) מדויק." },
+      { q: "מדגם מזווג של 12 זוגות. כמה דרגות חופש?", o: ["24", "22", "12", "11"], a: 3, e: "במדגם מזווג עובדים עם 12 הפרשים, כלומר מדגם אחד בגודל 12: \\(n-1=11\\)." },
+      { q: "איזה מהמדגמים הבאים מזווג?", o: ["50 עובדים בסניף א' ו-50 עובדים בסניף ב'", "תפוקה של אותם 15 עובדים לפני השתלמות ואחריה", "100 תושבים שנסקרו לפני פרויקט, ו-100 אחרים שנסקרו אחריו", "שחקני PS5 ושחקני Xbox, באותו גודל מדגם"], a: 1, e: "רק בתפוקה של אותם עובדים לכל תצפית יש בן זוג טבעי. גודל מדגם שווה או \"לפני ואחרי\" על אנשים שונים לא יוצרים זוגות." },
+      { q: "באותם נתונים, מנתחים פעם כמדגם מזווג ופעם (בטעות) כשני מדגמים בלתי תלויים. מה נכון?", o: ["האומדן הנקודתי שונה, והרוחב זהה", "האומדן הנקודתי זהה (\\(\\bar D=\\bar X-\\bar Y\\)), והרוחב שונה", "גם האומדן וגם הרוחב זהים", "גם האומדן וגם הרוחב שונים"], a: 1, e: "ממוצע ההפרשים שווה להפרש הממוצעים. מה שמשתנה הוא טעות התקן: במזווג היא מחושבת מפיזור ההפרשים." },
+      { q: "מתי הזיווג מצמצם את הרווח הכי הרבה?", o: ["כשהתצפיות בתוך כל זוג דומות זו לזו מאוד", "כשאין שום קשר בין חברי הזוג", "כשמספר הזוגות קטן", "כשההפרשים גדולים"], a: 0, e: "\\(\\mathrm{Var}(D)=\\mathrm{Var}(X)+\\mathrm{Var}(Y)-2\\,\\mathrm{Cov}(X,Y)\\). ככל שחברי הזוג דומים יותר, \\(\\mathrm{Cov}\\) גדול יותר והשונות של \\(D\\) קטנה יותר." },
+      { q: "מגדילים פי 10 רק את אחד משני המדגמים בהפרש פרופורציות. מה קורה לרווח?", o: ["מצטמצם פי \\(\\sqrt{10}\\)", "מצטמצם, אבל מוגבל: האיבר של המדגם השני מתחת לשורש לא משתנה", "לא משתנה", "מתרחב"], a: 1, e: "\\(SE=\\sqrt{\\frac{p_x(1-p_x)}{n}+\\frac{p_y(1-p_y)}{m}}\\). רק האיבר של המדגם שהוגדל קטן, ולכן הרווח לא יורד מתחת למה שהמדגם השני מאפשר." }
+    ];
+    const score = h("p", { class: "score" }, root);
+    let right = 0, answered = 0;
+    const upd = () => { score.textContent = `ציון: ${right} מתוך ${answered} שנענו (${Q.length} שאלות)`; };
+    Q.forEach((it, idx) => {
+      const box = h("div", { class: "quiz-q" }, root);
+      const qh = h("div", { class: "qh" }, box);
+      h("span", { class: "qn", text: `${idx + 1}.` }, qh);
+      h("span", null, qh, it.q);
+      const opts = h("div", { class: "quiz-opts" }, box);
+      const exp = h("div", { class: "quiz-exp" }, box);
+      const btns = it.o.map((t, i) => {
+        const b = h("button", { type: "button" }, opts, t);
+        b.addEventListener("click", () => {
+          btns.forEach(x => x.disabled = true);
+          answered++;
+          if (i === it.a) { right++; b.classList.add("right"); exp.innerHTML = "<strong>נכון.</strong> " + it.e; }
+          else { b.classList.add("wrong"); btns[it.a].classList.add("right"); exp.innerHTML = "<strong>לא בדיוק.</strong> " + it.e; }
+          if (window.renderMathInElement) window.renderMathInElement(exp, { delimiters: [{ left: "\\(", right: "\\)", display: false }], throwOnError: false });
+          upd();
+        });
+        return b;
+      });
+    });
+    upd();
+  };
+
+
+  /* ================= boot ================= */
+  function boot() {
+    document.querySelectorAll("[data-w]").forEach(el => {
+      const fn = W[el.dataset.w];
+      if (fn) {
+        try { fn(el); } catch (e) { console.error("widget " + el.dataset.w, e); el.textContent = "שגיאה בטעינת הרכיב."; }
+      }
+    });
+
+    // theme toggle
+    const themeBtn = document.getElementById("toggle-theme");
+    const root = document.documentElement;
+    const isDark = () => root.dataset.theme ? root.dataset.theme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const syncTheme = () => { themeBtn.textContent = isDark() ? "מצב בהיר" : "מצב כהה"; themeBtn.setAttribute("aria-pressed", String(isDark())); };
+    try { const saved = localStorage.getItem("stats-guide-theme"); if (saved === "dark" || saved === "light") root.dataset.theme = saved; } catch (e) { /* storage unavailable */ }
+    themeBtn.addEventListener("click", () => {
+      root.dataset.theme = isDark() ? "light" : "dark";
+      try { localStorage.setItem("stats-guide-theme", root.dataset.theme); } catch (e) { /* storage unavailable */ }
+      syncTheme();
+    });
+    syncTheme();
+
+    // extension controls
+    const openBtn = document.getElementById("toggle-ext-open");
+    let allOpen = false;
+    openBtn.addEventListener("click", () => {
+      allOpen = !allOpen;
+      document.querySelectorAll("details.ext").forEach(d => { d.open = allOpen; });
+      openBtn.textContent = allOpen ? "סגור את כל ההרחבות" : "פתח את כל ההרחבות";
+    });
+
+    // toc highlighting
+    const links = Array.from(document.querySelectorAll("nav.toc a"));
+    const map = new Map(links.map(a => [a.getAttribute("href").slice(1), a]));
+    const secs = Array.from(document.querySelectorAll("section.chapter"));
+    let lastActive = null, ticking = false;
+    function syncToc() {
+      ticking = false;
+      const line = window.innerHeight * 0.3;
+      let cur = secs[0];
+      secs.forEach(sec => { if (sec.getBoundingClientRect().top <= line) cur = sec; });
+      if (cur === lastActive) return;
+      lastActive = cur;
+      links.forEach(l => l.classList.remove("active"));
+      const a = map.get(cur.id);
+      if (a) { a.classList.add("active"); if (window.innerWidth <= 920) { const toc = a.closest("nav.toc"), r = a.getBoundingClientRect(), t = toc.getBoundingClientRect(); toc.scrollBy({ left: (r.left + r.width / 2) - (t.left + t.width / 2), behavior: "smooth" }); } }
+    }
+    window.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(syncToc); } }, { passive: true });
+    syncToc();
+
+    // math
+    if (window.renderMathInElement) {
+      window.renderMathInElement(document.body, {
+        delimiters: [{ left: "$$", right: "$$", display: true }, { left: "\\(", right: "\\)", display: false }],
+        throwOnError: false
+      });
+    }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
+})();
+
+});
+</script>
+</body>
+</html>
